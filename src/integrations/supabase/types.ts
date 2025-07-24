@@ -14,7 +14,140 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      blockchain_events: {
+        Row: {
+          amount: number
+          block_number: number | null
+          created_at: string
+          from_address: string
+          id: string
+          offramp_request_id: string | null
+          processed: boolean
+          to_address: string
+          token_address: string
+          token_symbol: string
+          transaction_hash: string
+        }
+        Insert: {
+          amount: number
+          block_number?: number | null
+          created_at?: string
+          from_address: string
+          id?: string
+          offramp_request_id?: string | null
+          processed?: boolean
+          to_address: string
+          token_address: string
+          token_symbol: string
+          transaction_hash: string
+        }
+        Update: {
+          amount?: number
+          block_number?: number | null
+          created_at?: string
+          from_address?: string
+          id?: string
+          offramp_request_id?: string | null
+          processed?: boolean
+          to_address?: string
+          token_address?: string
+          token_symbol?: string
+          transaction_hash?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "blockchain_events_offramp_request_id_fkey"
+            columns: ["offramp_request_id"]
+            isOneToOne: false
+            referencedRelation: "offramp_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      exchange_rates: {
+        Row: {
+          base_currency: string
+          created_at: string
+          id: string
+          last_updated: string
+          margin: number
+          rate: number
+          target_currency: string
+        }
+        Insert: {
+          base_currency?: string
+          created_at?: string
+          id?: string
+          last_updated?: string
+          margin?: number
+          rate: number
+          target_currency?: string
+        }
+        Update: {
+          base_currency?: string
+          created_at?: string
+          id?: string
+          last_updated?: string
+          margin?: number
+          rate?: number
+          target_currency?: string
+        }
+        Relationships: []
+      }
+      offramp_requests: {
+        Row: {
+          amount: number
+          bsc_address: string
+          created_at: string
+          exchange_rate: number
+          id: string
+          momo_number: string
+          momo_provider: string | null
+          notes: string | null
+          request_ip: string | null
+          status: string
+          token: string
+          transaction_hash: string | null
+          updated_at: string
+          usd_amount: number
+          xof_amount: number
+        }
+        Insert: {
+          amount: number
+          bsc_address?: string
+          created_at?: string
+          exchange_rate: number
+          id?: string
+          momo_number: string
+          momo_provider?: string | null
+          notes?: string | null
+          request_ip?: string | null
+          status?: string
+          token: string
+          transaction_hash?: string | null
+          updated_at?: string
+          usd_amount: number
+          xof_amount: number
+        }
+        Update: {
+          amount?: number
+          bsc_address?: string
+          created_at?: string
+          exchange_rate?: number
+          id?: string
+          momo_number?: string
+          momo_provider?: string | null
+          notes?: string | null
+          request_ip?: string | null
+          status?: string
+          token?: string
+          transaction_hash?: string | null
+          updated_at?: string
+          usd_amount?: number
+          xof_amount?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

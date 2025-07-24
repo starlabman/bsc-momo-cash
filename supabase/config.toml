@@ -1,1 +1,10 @@
 project_id = "xusensadnrsodukuzndm"
+
+[functions.get-exchange-rate]
+verify_jwt = false
+
+[functions.create-offramp-request]
+verify_jwt = false
+
+[functions.admin-dashboard]
+verify_jwt = false
