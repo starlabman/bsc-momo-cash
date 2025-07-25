@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_users: {
+        Row: {
+          created_at: string
+          id: string
+          password_hash: string
+          updated_at: string
+          username: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          password_hash: string
+          updated_at?: string
+          username: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          password_hash?: string
+          updated_at?: string
+          username?: string
+        }
+        Relationships: []
+      }
       blockchain_events: {
         Row: {
           amount: number
@@ -156,6 +180,10 @@ export type Database = {
       get_request_stats: {
         Args: Record<PropertyKey, never>
         Returns: Json
+      }
+      verify_admin_credentials: {
+        Args: { p_username: string; p_password: string }
+        Returns: boolean
       }
     }
     Enums: {
