@@ -22,7 +22,7 @@ serve(async (req) => {
     const url = new URL(req.url);
     const action = url.searchParams.get('action');
 
-    if (req.method === 'GET') {
+    if (req.method === 'GET' || req.method === 'POST') {
       // Get all offramp requests with pagination
       const page = parseInt(url.searchParams.get('page') || '1');
       const limit = parseInt(url.searchParams.get('limit') || '20');
