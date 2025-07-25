@@ -307,6 +307,7 @@ const OfframpForm = () => {
                     <SelectItem value="MTN">MTN</SelectItem>
                     <SelectItem value="Orange">Orange</SelectItem>
                     <SelectItem value="Wave">Wave</SelectItem>
+                    <SelectItem value="Mixx by Yas">Mixx by Yas</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
