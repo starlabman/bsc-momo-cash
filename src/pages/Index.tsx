@@ -1,15 +1,11 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { ArrowRightLeft, Shield, Zap, Users, Settings } from 'lucide-react';
+import { ArrowRightLeft, Shield, Zap, Users } from 'lucide-react';
 import OfframpForm from '@/components/OfframpForm';
-import AdminDashboard from '@/components/AdminDashboard';
 
 const Index = () => {
-  const [activeTab, setActiveTab] = useState('offramp');
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
       {/* Header */}
@@ -34,70 +30,53 @@ const Index = () => {
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
-          <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto">
-            <TabsTrigger value="offramp" className="flex items-center gap-2">
-              <ArrowRightLeft className="h-4 w-4" />
-              Conversion
-            </TabsTrigger>
-            <TabsTrigger value="admin" className="flex items-center gap-2">
-              <Settings className="h-4 w-4" />
-              Admin
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="offramp" className="space-y-8">
-            {/* Hero Section */}
-            <div className="text-center space-y-4 py-8">
-              <h2 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-                Convertissez vos cryptos en XOF
-              </h2>
-              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                Solution rapide et sécurisée pour convertir vos USDC/USDT (BSC) directement sur votre Mobile Money
-              </p>
+        <div className="space-y-8">
+          {/* Hero Section */}
+          <div className="text-center space-y-4 py-8">
+            <h2 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+              Convertissez vos cryptos en XOF
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              Solution rapide et sécurisée pour convertir vos USDC/USDT (BSC) directement sur votre Mobile Money
+            </p>
+            
+            {/* Features */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12 max-w-4xl mx-auto">
+              <Card className="border-primary/20">
+                <CardContent className="pt-6 text-center">
+                  <Shield className="h-12 w-12 text-primary mx-auto mb-4" />
+                  <h3 className="font-semibold mb-2">Sans KYC</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Aucune vérification d'identité requise, conversion rapide et anonyme
+                  </p>
+                </CardContent>
+              </Card>
               
-              {/* Features */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12 max-w-4xl mx-auto">
-                <Card className="border-primary/20">
-                  <CardContent className="pt-6 text-center">
-                    <Shield className="h-12 w-12 text-primary mx-auto mb-4" />
-                    <h3 className="font-semibold mb-2">Sans KYC</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Aucune vérification d'identité requise, conversion rapide et anonyme
-                    </p>
-                  </CardContent>
-                </Card>
-                
-                <Card className="border-primary/20">
-                  <CardContent className="pt-6 text-center">
-                    <Zap className="h-12 w-12 text-primary mx-auto mb-4" />
-                    <h3 className="font-semibold mb-2">Instantané</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Transaction détectée automatiquement, paiement mobile sous 24h
-                    </p>
-                  </CardContent>
-                </Card>
-                
-                <Card className="border-primary/20">
-                  <CardContent className="pt-6 text-center">
-                    <Users className="h-12 w-12 text-primary mx-auto mb-4" />
-                    <h3 className="font-semibold mb-2">Tous opérateurs</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Compatible Moov, MTN, Orange Money et Wave
-                    </p>
-                  </CardContent>
-                </Card>
-              </div>
+              <Card className="border-primary/20">
+                <CardContent className="pt-6 text-center">
+                  <Zap className="h-12 w-12 text-primary mx-auto mb-4" />
+                  <h3 className="font-semibold mb-2">Instantané</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Transaction détectée automatiquement, paiement mobile sous 24h
+                  </p>
+                </CardContent>
+              </Card>
+              
+              <Card className="border-primary/20">
+                <CardContent className="pt-6 text-center">
+                  <Users className="h-12 w-12 text-primary mx-auto mb-4" />
+                  <h3 className="font-semibold mb-2">Tous opérateurs</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Compatible Moov, MTN, Orange Money et Wave
+                  </p>
+                </CardContent>
+              </Card>
             </div>
+          </div>
 
-            {/* Conversion Form */}
-            <OfframpForm />
-          </TabsContent>
-
-          <TabsContent value="admin" className="space-y-8">
-            <AdminDashboard />
-          </TabsContent>
-        </Tabs>
+          {/* Conversion Form */}
+          <OfframpForm />
+        </div>
       </main>
 
       {/* Footer */}
