@@ -5,10 +5,12 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Coins, ArrowRight, Smartphone } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Loader2, Coins, ArrowRight, Smartphone, CheckCircle, Globe } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { QRCodeSVG } from 'qrcode.react';
+import { detectOperator, formatPhoneNumber, FRANCOPHONE_XOF_OPERATORS, type MobileOperator } from '@/utils/phoneDetection';
 
 interface ExchangeRate {
   external_rate: number;
@@ -34,9 +36,11 @@ interface OfframpRequest {
 const OfframpForm = () => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const [loadingRate, setLoadingRate] = useState(true);
   const [exchangeRate, setExchangeRate] = useState<ExchangeRate | null>(null);
   const [calculatedXOF, setCalculatedXOF] = useState<number>(0);
   const [request, setRequest] = useState<OfframpRequest | null>(null);
+  const [detectedOperator, setDetectedOperator] = useState<MobileOperator | null>(null);
   
   const [formData, setFormData] = useState({
     amount: '',
@@ -49,6 +53,20 @@ const OfframpForm = () => {
   useEffect(() => {
     fetchExchangeRate();
   }, []);
+
+  // Auto-detect operator when phone number changes
+  useEffect(() => {
+    if (formData.momoNumber) {
+      const detected = detectOperator(formData.momoNumber);
+      setDetectedOperator(detected);
+      
+      if (detected && !formData.momoProvider) {
+        setFormData(prev => ({ ...prev, momoProvider: detected.name }));
+      }
+    } else {
+      setDetectedOperator(null);
+    }
+  }, [formData.momoNumber]);
 
   // Calculate XOF amount when amount or rate changes
   useEffect(() => {
@@ -65,6 +83,7 @@ const OfframpForm = () => {
   }, [formData.amount, exchangeRate]);
 
   const fetchExchangeRate = async () => {
+    setLoadingRate(true);
     try {
       const { data, error } = await supabase.functions.invoke('get-exchange-rate');
       if (error) throw error;
@@ -81,6 +100,8 @@ const OfframpForm = () => {
         description: "Impossible de récupérer le taux de change",
         variant: "destructive",
       });
+    } finally {
+      setLoadingRate(false);
     }
   };
 
@@ -97,6 +118,10 @@ const OfframpForm = () => {
 
       if (!formData.momoNumber) {
         throw new Error('Le numéro Mobile Money est requis');
+      }
+
+      if (!detectOperator(formData.momoNumber)) {
+        throw new Error('Numéro non supporté. Utilisez un numéro des pays francophones UEMOA.');
       }
 
       const { data, error } = await supabase.functions.invoke('create-offramp-request', {
@@ -143,11 +168,11 @@ const OfframpForm = () => {
 
   if (request) {
     return (
-      <div className="max-w-2xl mx-auto space-y-6">
-        <Card>
+      <div className="max-w-2xl mx-auto space-y-6 animate-fade-in">
+        <Card className="border-green-200 bg-green-50/50 dark:border-green-800 dark:bg-green-950/20">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Coins className="h-5 w-5" />
+            <CardTitle className="flex items-center gap-2 text-green-700 dark:text-green-300">
+              <CheckCircle className="h-5 w-5" />
               Demande créée avec succès
             </CardTitle>
             <CardDescription>
@@ -155,26 +180,28 @@ const OfframpForm = () => {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Montant à envoyer</Label>
-                <div className="flex items-center gap-2">
-                  <Badge variant="secondary" className="text-lg px-3 py-2">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <Badge variant="secondary" className="text-base sm:text-lg px-3 py-2 animate-scale-in">
                     {request.amount} {request.token}
                   </Badge>
-                  <ArrowRight className="h-4 w-4" />
-                  <Badge variant="outline" className="text-lg px-3 py-2">
+                  <ArrowRight className="h-4 w-4 text-muted-foreground" />
+                  <Badge variant="outline" className="text-base sm:text-lg px-3 py-2 animate-scale-in">
                     {Math.round(request.xof_amount).toLocaleString()} XOF
                   </Badge>
                 </div>
               </div>
               <div className="space-y-2">
                 <Label>Numéro Mobile Money</Label>
-                <div className="flex items-center gap-2">
-                  <Smartphone className="h-4 w-4" />
-                  <span className="font-medium">{request.momo_number}</span>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <Smartphone className="h-4 w-4 text-primary" />
+                  <span className="font-medium text-sm sm:text-base">{formatPhoneNumber(request.momo_number)}</span>
                   {request.momo_provider && (
-                    <Badge variant="outline">{request.momo_provider}</Badge>
+                    <Badge variant="outline" className="animate-fade-in">
+                      {request.momo_provider}
+                    </Badge>
                   )}
                 </div>
               </div>
@@ -185,16 +212,16 @@ const OfframpForm = () => {
                 <Label className="text-base font-medium">
                   Adresse BSC ({request.token})
                 </Label>
-                <div className="mt-2 p-4 bg-muted rounded-lg break-all font-mono text-sm">
+                <div className="mt-2 p-3 sm:p-4 bg-muted rounded-lg break-all font-mono text-xs sm:text-sm hover:bg-muted/80 transition-colors">
                   {request.bsc_address}
                 </div>
               </div>
 
               <div className="flex justify-center">
-                <div className="p-4 bg-background border rounded-lg">
+                <div className="p-3 sm:p-4 bg-background border rounded-lg animate-scale-in">
                   <QRCodeSVG 
                     value={request.bsc_address} 
-                    size={200}
+                    size={window.innerWidth < 640 ? 160 : 200}
                     level="M"
                   />
                 </div>
@@ -211,16 +238,21 @@ const OfframpForm = () => {
               </Badge>
             </div>
 
-            <div className="flex gap-4">
-              <Button onClick={resetForm} variant="outline" className="flex-1">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+              <Button onClick={resetForm} variant="outline" className="flex-1 hover-scale">
                 Nouvelle demande
               </Button>
               <Button 
                 onClick={fetchExchangeRate} 
                 variant="secondary"
-                className="flex items-center gap-2"
+                className="flex-1 sm:flex-none flex items-center gap-2 hover-scale"
+                disabled={loadingRate}
               >
-                <Loader2 className="h-4 w-4" />
+                {loadingRate ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Coins className="h-4 w-4" />
+                )}
                 Actualiser le taux
               </Button>
             </div>
@@ -231,20 +263,21 @@ const OfframpForm = () => {
   }
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
-      <Card>
+    <div className="max-w-2xl mx-auto space-y-6 animate-fade-in">
+      <Card className="hover-scale">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Coins className="h-5 w-5" />
+          <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
+            <Coins className="h-5 w-5 text-primary" />
             Conversion Crypto → Mobile Money
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="flex items-center gap-1">
+            <Globe className="h-4 w-4" />
             Convertissez vos USDC/USDT (BSC) en XOF directement sur votre Mobile Money
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="amount">Montant (USD)</Label>
                 <Input
@@ -256,6 +289,7 @@ const OfframpForm = () => {
                   step="0.01"
                   value={formData.amount}
                   onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
+                  className="text-base"
                   required
                 />
                 <p className="text-xs text-muted-foreground">
@@ -269,7 +303,7 @@ const OfframpForm = () => {
                   value={formData.token} 
                   onValueChange={(value) => setFormData({ ...formData, token: value })}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="text-base">
                     <SelectValue placeholder="Sélectionner un token" />
                   </SelectTrigger>
                   <SelectContent>
@@ -280,50 +314,83 @@ const OfframpForm = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="momoNumber">Numéro Mobile Money</Label>
                 <Input
                   id="momoNumber"
                   type="tel"
-                  placeholder="22670123456"
+                  placeholder="Ex: +221 77 123 45 67"
                   value={formData.momoNumber}
                   onChange={(e) => setFormData({ ...formData, momoNumber: e.target.value })}
+                  className="text-base"
                   required
                 />
+                {detectedOperator && (
+                  <div className="flex items-center gap-2 text-sm text-green-600 dark:text-green-400 animate-fade-in">
+                    <CheckCircle className="h-4 w-4" />
+                    <span>{detectedOperator.name} - {detectedOperator.country}</span>
+                  </div>
+                )}
+                {formData.momoNumber && !detectedOperator && (
+                  <p className="text-xs text-orange-600 dark:text-orange-400">
+                    Numéro non reconnu. Vérifiez le format (pays francophones UEMOA uniquement)
+                  </p>
+                )}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="momoProvider">Opérateur (optionnel)</Label>
+                <Label htmlFor="momoProvider">Opérateur</Label>
                 <Select 
                   value={formData.momoProvider} 
                   onValueChange={(value) => setFormData({ ...formData, momoProvider: value })}
                 >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Sélectionner" />
+                  <SelectTrigger className="text-base">
+                    <SelectValue placeholder={detectedOperator ? "Auto-détecté" : "Sélectionner"} />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Moov">Moov</SelectItem>
-                    <SelectItem value="MTN">MTN</SelectItem>
-                    <SelectItem value="Orange">Orange</SelectItem>
-                    <SelectItem value="Wave">Wave</SelectItem>
-                    <SelectItem value="Mixx by Yas">Mixx by Yas</SelectItem>
+                  <SelectContent className="bg-background border shadow-lg z-50">
+                    {FRANCOPHONE_XOF_OPERATORS
+                      .reduce((unique, op) => {
+                        if (!unique.find(u => u.name === op.name)) {
+                          unique.push(op);
+                        }
+                        return unique;
+                      }, [] as MobileOperator[])
+                      .map(operator => (
+                        <SelectItem key={operator.code} value={operator.name}>
+                          {operator.name}
+                        </SelectItem>
+                      ))}
                   </SelectContent>
                 </Select>
+                {detectedOperator && (
+                  <p className="text-xs text-muted-foreground">
+                    ✓ Détecté automatiquement
+                  </p>
+                )}
               </div>
             </div>
 
-            {exchangeRate && calculatedXOF > 0 && (
+            {loadingRate ? (
               <Card className="bg-primary/5 border-primary/20">
                 <CardContent className="pt-6">
-                  <div className="flex items-center justify-between">
+                  <div className="space-y-3">
+                    <Skeleton className="h-4 w-32" />
+                    <Skeleton className="h-8 w-48" />
+                  </div>
+                </CardContent>
+              </Card>
+            ) : exchangeRate && calculatedXOF > 0 && (
+              <Card className="bg-primary/5 border-primary/20 animate-scale-in">
+                <CardContent className="pt-6">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
                       <p className="text-sm text-muted-foreground">Vous recevrez</p>
-                      <p className="text-2xl font-bold text-primary">
+                      <p className="text-xl sm:text-2xl font-bold text-primary">
                         {Math.round(calculatedXOF).toLocaleString()} XOF
                       </p>
                     </div>
-                    <div className="text-right">
+                    <div className="text-left sm:text-right">
                       <p className="text-xs text-muted-foreground">
                         Taux : 1 USD = {Math.round(exchangeRate.final_rate)} XOF
                       </p>
@@ -338,13 +405,18 @@ const OfframpForm = () => {
 
             <Button 
               type="submit" 
-              className="w-full" 
-              disabled={loading || !exchangeRate}
+              className="w-full h-12 text-base hover-scale" 
+              disabled={loading || !exchangeRate || loadingRate}
             >
               {loading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Création en cours...
+                </>
+              ) : loadingRate ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Chargement du taux...
                 </>
               ) : (
                 'Créer la demande'
@@ -354,16 +426,30 @@ const OfframpForm = () => {
         </CardContent>
       </Card>
 
-      {exchangeRate && (
+      {loadingRate ? (
         <Card>
+          <CardContent className="pt-6 space-y-3">
+            <div className="flex items-center justify-between">
+              <Skeleton className="h-4 w-40" />
+              <Skeleton className="h-4 w-24" />
+            </div>
+            <div className="flex items-center justify-between">
+              <Skeleton className="h-4 w-48" />
+              <Skeleton className="h-4 w-28" />
+            </div>
+            <Skeleton className="h-3 w-56" />
+          </CardContent>
+        </Card>
+      ) : exchangeRate && (
+        <Card className="animate-fade-in">
           <CardContent className="pt-6">
-            <div className="flex items-center justify-between text-sm">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-sm">
               <span className="text-muted-foreground">Taux de change USD/XOF</span>
               <span className="font-medium">
                 1 USD = {Math.round(exchangeRate.external_rate)} XOF
               </span>
             </div>
-            <div className="flex items-center justify-between text-sm mt-1">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-sm mt-1">
               <span className="text-muted-foreground">Taux après marge ({(exchangeRate.margin * 100).toFixed(1)}%)</span>
               <span className="font-medium text-primary">
                 1 USD = {Math.round(exchangeRate.final_rate)} XOF
