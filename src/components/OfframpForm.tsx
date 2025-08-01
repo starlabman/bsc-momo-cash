@@ -10,7 +10,7 @@ import { Loader2, Coins, ArrowRight, Smartphone, CheckCircle, Globe } from 'luci
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { QRCodeSVG } from 'qrcode.react';
-import { detectOperator, formatPhoneNumber, FRANCOPHONE_XOF_OPERATORS, type MobileOperator } from '@/utils/phoneDetection';
+import { formatPhoneNumber } from '@/utils/phoneDetection';
 
 interface ExchangeRate {
   external_rate: number;
@@ -40,7 +40,6 @@ const OfframpForm = () => {
   const [exchangeRate, setExchangeRate] = useState<ExchangeRate | null>(null);
   const [calculatedXOF, setCalculatedXOF] = useState<number>(0);
   const [request, setRequest] = useState<OfframpRequest | null>(null);
-  const [detectedOperator, setDetectedOperator] = useState<MobileOperator | null>(null);
   
   const [formData, setFormData] = useState({
     amount: '',
@@ -54,19 +53,6 @@ const OfframpForm = () => {
     fetchExchangeRate();
   }, []);
 
-  // Auto-detect operator when phone number changes
-  useEffect(() => {
-    if (formData.momoNumber) {
-      const detected = detectOperator(formData.momoNumber);
-      setDetectedOperator(detected);
-      
-      if (detected && !formData.momoProvider) {
-        setFormData(prev => ({ ...prev, momoProvider: detected.name }));
-      }
-    } else {
-      setDetectedOperator(null);
-    }
-  }, [formData.momoNumber]);
 
   // Calculate XOF amount when amount or rate changes
   useEffect(() => {
@@ -120,9 +106,6 @@ const OfframpForm = () => {
         throw new Error('Le numéro Mobile Money est requis');
       }
 
-      if (!detectOperator(formData.momoNumber)) {
-        throw new Error('Numéro non supporté. Utilisez un numéro des pays francophones UEMOA.');
-      }
 
       const { data, error } = await supabase.functions.invoke('create-offramp-request', {
         body: {
@@ -326,17 +309,6 @@ const OfframpForm = () => {
                   className="text-base"
                   required
                 />
-                {detectedOperator && (
-                  <div className="flex items-center gap-2 text-sm text-green-600 dark:text-green-400 animate-fade-in">
-                    <CheckCircle className="h-4 w-4" />
-                    <span>{detectedOperator.name} - {detectedOperator.country}</span>
-                  </div>
-                )}
-                {formData.momoNumber && !detectedOperator && (
-                  <p className="text-xs text-orange-600 dark:text-orange-400">
-                    Numéro non reconnu. Vérifiez le format (pays francophones UEMOA uniquement)
-                  </p>
-                )}
               </div>
 
               <div className="space-y-2">
@@ -346,28 +318,18 @@ const OfframpForm = () => {
                   onValueChange={(value) => setFormData({ ...formData, momoProvider: value })}
                 >
                   <SelectTrigger className="text-base">
-                    <SelectValue placeholder={detectedOperator ? "Auto-détecté" : "Sélectionner"} />
+                    <SelectValue placeholder="Sélectionner un opérateur" />
                   </SelectTrigger>
                   <SelectContent className="bg-background border shadow-lg z-50">
-                    {FRANCOPHONE_XOF_OPERATORS
-                      .reduce((unique, op) => {
-                        if (!unique.find(u => u.name === op.name)) {
-                          unique.push(op);
-                        }
-                        return unique;
-                      }, [] as MobileOperator[])
-                      .map(operator => (
-                        <SelectItem key={operator.code} value={operator.name}>
-                          {operator.name}
-                        </SelectItem>
-                      ))}
+                    <SelectItem value="Orange">Orange</SelectItem>
+                    <SelectItem value="MTN">MTN</SelectItem>
+                    <SelectItem value="Moov">Moov</SelectItem>
+                    <SelectItem value="Wave">Wave</SelectItem>
+                    <SelectItem value="Free">Free</SelectItem>
+                    <SelectItem value="Malitel">Malitel</SelectItem>
+                    <SelectItem value="Togocel">Togocel</SelectItem>
                   </SelectContent>
                 </Select>
-                {detectedOperator && (
-                  <p className="text-xs text-muted-foreground">
-                    ✓ Détecté automatiquement
-                  </p>
-                )}
               </div>
             </div>
 
