@@ -181,6 +181,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: Json
       }
+      is_admin_user: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
       verify_admin_credentials: {
         Args: { p_username: string; p_password: string }
         Returns: boolean
