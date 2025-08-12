@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowRightLeft, Shield, Zap, Users } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ArrowRightLeft, Shield, Zap, Users, ArrowDownUp } from 'lucide-react';
 import OfframpForm from '@/components/OfframpForm';
+import OnrampForm from '@/components/OnrampForm';
 
 const Index = () => {
   return (
@@ -18,7 +20,7 @@ const Index = () => {
               </div>
               <div>
                 <h1 className="text-xl font-bold">CryptoMomo</h1>
-                <p className="text-xs text-muted-foreground">Crypto → Mobile Money</p>
+                <p className="text-xs text-muted-foreground">Crypto ↔ Mobile Money</p>
               </div>
             </div>
             <Badge variant="outline" className="text-xs">
@@ -34,10 +36,10 @@ const Index = () => {
           {/* Hero Section */}
           <div className="text-center space-y-4 py-8">
             <h2 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-              Convertissez vos cryptos en XOF
+              Échangez Crypto ↔ Mobile Money
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Solution rapide et sécurisée pour convertir vos USDC/USDT (BSC) directement sur votre Mobile Money
+              Solution bidirectionnelle rapide et sécurisée pour vos conversions USDC/USDT (BSC) ↔ XOF
             </p>
             
             {/* Features */}
@@ -74,8 +76,27 @@ const Index = () => {
             </div>
           </div>
 
-          {/* Conversion Form */}
-          <OfframpForm />
+          {/* Conversion Forms */}
+          <Tabs defaultValue="crypto-to-momo" className="w-full max-w-4xl mx-auto">
+            <TabsList className="grid w-full grid-cols-2 mb-8">
+              <TabsTrigger value="crypto-to-momo" className="flex items-center gap-2">
+                <ArrowRightLeft className="h-4 w-4" />
+                Crypto → Mobile Money
+              </TabsTrigger>
+              <TabsTrigger value="momo-to-crypto" className="flex items-center gap-2">
+                <ArrowDownUp className="h-4 w-4" />
+                Mobile Money → Crypto
+              </TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="crypto-to-momo">
+              <OfframpForm />
+            </TabsContent>
+            
+            <TabsContent value="momo-to-crypto">
+              <OnrampForm />
+            </TabsContent>
+          </Tabs>
         </div>
       </main>
 
@@ -89,7 +110,7 @@ const Index = () => {
             <div className="flex items-center gap-4 text-xs text-muted-foreground">
               <span>BSC Network</span>
               <span>•</span>
-              <span>USDC/USDT → XOF</span>
+              <span>USDC/USDT ↔ XOF</span>
               <span>•</span>
               <span>Sans frais utilisateur</span>
             </div>

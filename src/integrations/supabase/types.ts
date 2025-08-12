@@ -172,6 +172,60 @@ export type Database = {
         }
         Relationships: []
       }
+      onramp_requests: {
+        Row: {
+          created_at: string
+          crypto_amount: number
+          exchange_rate: number
+          id: string
+          momo_number: string
+          momo_provider: string | null
+          notes: string | null
+          recipient_address: string
+          request_ip: string | null
+          status: string
+          token: string
+          transaction_hash: string | null
+          updated_at: string
+          usd_amount: number
+          xof_amount: number
+        }
+        Insert: {
+          created_at?: string
+          crypto_amount: number
+          exchange_rate: number
+          id?: string
+          momo_number: string
+          momo_provider?: string | null
+          notes?: string | null
+          recipient_address: string
+          request_ip?: string | null
+          status?: string
+          token: string
+          transaction_hash?: string | null
+          updated_at?: string
+          usd_amount: number
+          xof_amount: number
+        }
+        Update: {
+          created_at?: string
+          crypto_amount?: number
+          exchange_rate?: number
+          id?: string
+          momo_number?: string
+          momo_provider?: string | null
+          notes?: string | null
+          recipient_address?: string
+          request_ip?: string | null
+          status?: string
+          token?: string
+          transaction_hash?: string | null
+          updated_at?: string
+          usd_amount?: number
+          xof_amount?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
