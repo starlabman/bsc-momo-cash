@@ -23,20 +23,30 @@ serve(async (req) => {
     const action = url.searchParams.get('action');
 
     if (req.method === 'GET' || req.method === 'POST') {
-      // Get all offramp requests with pagination
+      // Get requests with pagination
       const page = parseInt(url.searchParams.get('page') || '1');
       const limit = parseInt(url.searchParams.get('limit') || '20');
       const status = url.searchParams.get('status');
+      const table = url.searchParams.get('table') || 'offramp_requests';
       const offset = (page - 1) * limit;
 
-      let query = supabase
-        .from('offramp_requests')
-        .select(`
-          *,
-          blockchain_events(*)
-        `)
-        .order('created_at', { ascending: false })
-        .range(offset, offset + limit - 1);
+      let query;
+      if (table === 'onramp_requests') {
+        query = supabase
+          .from('onramp_requests')
+          .select('*')
+          .order('created_at', { ascending: false })
+          .range(offset, offset + limit - 1);
+      } else {
+        query = supabase
+          .from('offramp_requests')
+          .select(`
+            *,
+            blockchain_events(*)
+          `)
+          .order('created_at', { ascending: false })
+          .range(offset, offset + limit - 1);
+      }
 
       if (status) {
         query = query.eq('status', status);
@@ -45,7 +55,7 @@ serve(async (req) => {
       const { data: requests, error: requestsError } = await query;
 
       if (requestsError) {
-        throw new Error('Failed to fetch offramp requests');
+        throw new Error(`Failed to fetch ${table}`);
       }
 
       // Get summary stats
@@ -80,7 +90,7 @@ serve(async (req) => {
 
     if (req.method === 'PATCH') {
       // Update request status
-      const { id, status, notes, transaction_hash } = await req.json();
+      const { id, status, notes, transaction_hash, table } = await req.json();
 
       if (!id || !status) {
         return new Response(JSON.stringify({ 
@@ -92,19 +102,20 @@ serve(async (req) => {
         });
       }
 
+      const targetTable = table || 'offramp_requests';
       const updateData: any = { status };
       if (notes) updateData.notes = notes;
       if (transaction_hash) updateData.transaction_hash = transaction_hash;
 
       const { data: updatedRequest, error: updateError } = await supabase
-        .from('offramp_requests')
+        .from(targetTable)
         .update(updateData)
         .eq('id', id)
         .select()
         .single();
 
       if (updateError) {
-        throw new Error('Failed to update offramp request');
+        throw new Error(`Failed to update ${targetTable}`);
       }
 
       return new Response(JSON.stringify({
