@@ -11,6 +11,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { QRCodeSVG } from 'qrcode.react';
 import { formatPhoneNumber } from '@/utils/phoneDetection';
+import NetworkSelector, { SUPPORTED_NETWORKS } from '@/components/NetworkSelector';
 
 interface ExchangeRate {
   external_rate: number;
@@ -43,6 +44,7 @@ const OfframpForm = () => {
   
   const [formData, setFormData] = useState({
     amount: '',
+    network: 'bsc',
     token: 'USDC',
     momoNumber: '',
     momoProvider: ''
@@ -107,10 +109,15 @@ const OfframpForm = () => {
       }
 
 
+      const currentNetwork = SUPPORTED_NETWORKS.find(n => n.id === formData.network);
+      const tokenInfo = currentNetwork?.tokens.find(t => t.symbol === formData.token);
+
       const { data, error } = await supabase.functions.invoke('create-offramp-request', {
         body: {
           amount,
           token: formData.token,
+          network: formData.network,
+          tokenAddress: tokenInfo?.address,
           momoNumber: formData.momoNumber,
           momoProvider: formData.momoProvider || undefined
         }
@@ -143,6 +150,7 @@ const OfframpForm = () => {
     setRequest(null);
     setFormData({
       amount: '',
+      network: 'bsc',
       token: 'USDC',
       momoNumber: '',
       momoProvider: ''
@@ -245,59 +253,54 @@ const OfframpForm = () => {
     );
   }
 
+  const currentNetwork = SUPPORTED_NETWORKS.find(n => n.id === formData.network);
+
   return (
-    <div className="max-w-2xl mx-auto space-y-6 animate-fade-in">
-      <Card className="hover-scale">
+    <div className="max-w-2xl mx-auto space-y-6 animate-slide-in-up">
+      <Card className="hover-scale shadow-card border-primary/10 bg-gradient-card">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
-            <Coins className="h-5 w-5 text-primary" />
+          <CardTitle className="flex items-center gap-2 text-lg sm:text-xl animate-fade-in">
+            <Coins className="h-5 w-5 text-primary animate-float" />
             Conversion Crypto → Mobile Money
           </CardTitle>
-          <CardDescription className="flex items-center gap-1">
+          <CardDescription className="flex items-center gap-1 animate-slide-in-down">
             <Globe className="h-4 w-4" />
-            Convertissez vos USDC/USDT (BSC) en XOF directement sur votre Mobile Money
+            Convertissez vos tokens crypto en XOF directement sur votre Mobile Money
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="amount">Montant (USD)</Label>
-                <Input
-                  id="amount"
-                  type="number"
-                  placeholder="100"
-                  min="1"
-                  max="1000"
-                  step="0.01"
-                  value={formData.amount}
-                  onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
-                  className="text-base"
-                  required
-                />
-                <p className="text-xs text-muted-foreground">
-                  Limite : 1000 USD par transaction
-                </p>
-              </div>
+            <NetworkSelector
+              selectedNetwork={formData.network}
+              onNetworkChange={(network) => {
+                const newNetwork = SUPPORTED_NETWORKS.find(n => n.id === network);
+                const firstToken = newNetwork?.tokens[0]?.symbol || 'USDC';
+                setFormData({ ...formData, network, token: firstToken });
+              }}
+              selectedToken={formData.token}
+              onTokenChange={(token) => setFormData({ ...formData, token })}
+            />
 
-              <div className="space-y-2">
-                <Label htmlFor="token">Token</Label>
-                <Select 
-                  value={formData.token} 
-                  onValueChange={(value) => setFormData({ ...formData, token: value })}
-                >
-                  <SelectTrigger className="text-base">
-                    <SelectValue placeholder="Sélectionner un token" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="USDC">USDC (BSC)</SelectItem>
-                    <SelectItem value="USDT">USDT (BSC)</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+            <div className="space-y-2 animate-slide-in-up">
+              <Label htmlFor="amount">Montant (USD)</Label>
+              <Input
+                id="amount"
+                type="number"
+                placeholder="100"
+                min="1"
+                max="1000"
+                step="0.01"
+                value={formData.amount}
+                onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
+                className="text-base hover:border-primary/50 transition-colors"
+                required
+              />
+              <p className="text-xs text-muted-foreground">
+                Limite : 1000 USD par transaction
+              </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 animate-slide-in-up">
               <div className="space-y-2">
                 <Label htmlFor="momoNumber">Numéro Mobile Money</Label>
                 <Input
@@ -306,7 +309,7 @@ const OfframpForm = () => {
                   placeholder="Ex: +221 77 123 45 67"
                   value={formData.momoNumber}
                   onChange={(e) => setFormData({ ...formData, momoNumber: e.target.value })}
-                  className="text-base"
+                  className="text-base hover:border-primary/50 transition-colors"
                   required
                 />
               </div>
@@ -317,17 +320,17 @@ const OfframpForm = () => {
                   value={formData.momoProvider} 
                   onValueChange={(value) => setFormData({ ...formData, momoProvider: value })}
                 >
-                  <SelectTrigger className="text-base">
+                  <SelectTrigger className="text-base hover:bg-muted/50 transition-colors">
                     <SelectValue placeholder="Sélectionner un opérateur" />
                   </SelectTrigger>
                   <SelectContent className="bg-background border shadow-lg z-50">
-                    <SelectItem value="Orange">Orange</SelectItem>
-                    <SelectItem value="MTN">MTN</SelectItem>
-                    <SelectItem value="Moov">Moov</SelectItem>
-                    <SelectItem value="Wave">Wave</SelectItem>
-                    <SelectItem value="Free">Free</SelectItem>
-                    <SelectItem value="Malitel">Malitel</SelectItem>
-                    <SelectItem value="Togocel">Togocel</SelectItem>
+                    <SelectItem value="Orange" className="hover:bg-muted/50">Orange</SelectItem>
+                    <SelectItem value="MTN" className="hover:bg-muted/50">MTN</SelectItem>
+                    <SelectItem value="Moov" className="hover:bg-muted/50">Moov</SelectItem>
+                    <SelectItem value="Wave" className="hover:bg-muted/50">Wave</SelectItem>
+                    <SelectItem value="Free" className="hover:bg-muted/50">Free</SelectItem>
+                    <SelectItem value="Malitel" className="hover:bg-muted/50">Malitel</SelectItem>
+                    <SelectItem value="Togocel" className="hover:bg-muted/50">Togocel</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -343,16 +346,16 @@ const OfframpForm = () => {
                 </CardContent>
               </Card>
             ) : exchangeRate && calculatedXOF > 0 && (
-              <Card className="bg-primary/5 border-primary/20 animate-scale-in">
+              <Card className="bg-gradient-to-r from-primary/5 to-accent/5 border-primary/20 animate-bounce-in hover:shadow-glow transition-all duration-300">
                 <CardContent className="pt-6">
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <div>
+                    <div className="animate-zoom-in">
                       <p className="text-sm text-muted-foreground">Vous recevrez</p>
-                      <p className="text-xl sm:text-2xl font-bold text-primary">
+                      <p className="text-xl sm:text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">
                         {Math.round(calculatedXOF).toLocaleString()} XOF
                       </p>
                     </div>
-                    <div className="text-left sm:text-right">
+                    <div className="text-left sm:text-right animate-slide-in-right">
                       <p className="text-xs text-muted-foreground">
                         Taux : 1 USD = {Math.round(exchangeRate.final_rate)} XOF
                       </p>
@@ -367,7 +370,7 @@ const OfframpForm = () => {
 
             <Button 
               type="submit" 
-              className="w-full h-12 text-base hover-scale" 
+              className="w-full h-12 text-base bg-gradient-primary hover:shadow-primary transition-all duration-300 animate-pulse-glow" 
               disabled={loading || !exchangeRate || loadingRate}
             >
               {loading ? (
@@ -381,7 +384,10 @@ const OfframpForm = () => {
                   Chargement du taux...
                 </>
               ) : (
-                'Créer la demande'
+                <>
+                  <Coins className="mr-2 h-4 w-4" />
+                  Créer la demande
+                </>
               )}
             </Button>
           </form>

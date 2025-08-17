@@ -10,6 +10,7 @@ import { Loader2, Coins, ArrowRight, Smartphone, CheckCircle, DollarSign } from 
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { formatPhoneNumber } from '@/utils/phoneDetection';
+import NetworkSelector, { SUPPORTED_NETWORKS } from '@/components/NetworkSelector';
 
 interface ExchangeRate {
   external_rate: number;
@@ -42,6 +43,7 @@ const OnrampForm = () => {
   
   const [formData, setFormData] = useState({
     xofAmount: '',
+    network: 'bsc',
     token: 'USDC',
     momoNumber: '',
     momoProvider: '',
@@ -110,15 +112,32 @@ const OnrampForm = () => {
         throw new Error('L\'adresse de réception est requise');
       }
 
-      // Validate BSC address format (basic validation)
-      if (!/^0x[a-fA-F0-9]{40}$/.test(formData.recipientAddress)) {
-        throw new Error('Adresse BSC invalide');
+      const currentNetwork = SUPPORTED_NETWORKS.find(n => n.id === formData.network);
+      const tokenInfo = currentNetwork?.tokens.find(t => t.symbol === formData.token);
+
+      // Validate address based on network
+      let addressValid = false;
+      if (formData.network === 'bsc' || formData.network === 'ethereum' || 
+          formData.network === 'arbitrum' || formData.network === 'optimism') {
+        addressValid = /^0x[a-fA-F0-9]{40}$/.test(formData.recipientAddress);
+      } else if (formData.network === 'tron') {
+        addressValid = /^T[A-Za-z1-9]{33}$/.test(formData.recipientAddress);
+      } else if (formData.network === 'solana') {
+        addressValid = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(formData.recipientAddress);
+      } else if (formData.network === 'lisk') {
+        addressValid = /^0x[a-fA-F0-9]{40}$/.test(formData.recipientAddress);
+      }
+
+      if (!addressValid) {
+        throw new Error(`Adresse ${currentNetwork?.name} invalide`);
       }
 
       const { data, error } = await supabase.functions.invoke('create-onramp-request', {
         body: {
           xofAmount,
           token: formData.token,
+          network: formData.network,
+          tokenAddress: tokenInfo?.address,
           momoNumber: formData.momoNumber,
           momoProvider: formData.momoProvider || undefined,
           recipientAddress: formData.recipientAddress
@@ -152,6 +171,7 @@ const OnrampForm = () => {
     setRequest(null);
     setFormData({
       xofAmount: '',
+      network: 'bsc',
       token: 'USDC',
       momoNumber: '',
       momoProvider: '',
@@ -251,22 +271,35 @@ const OnrampForm = () => {
     );
   }
 
+  const currentNetwork = SUPPORTED_NETWORKS.find(n => n.id === formData.network);
+
   return (
-    <div className="max-w-2xl mx-auto space-y-6 animate-fade-in">
-      <Card className="hover-scale">
+    <div className="max-w-2xl mx-auto space-y-6 animate-slide-in-up">
+      <Card className="hover-scale shadow-card border-primary/10 bg-gradient-card">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
-            <Coins className="h-5 w-5 text-primary" />
+          <CardTitle className="flex items-center gap-2 text-lg sm:text-xl animate-fade-in">
+            <Coins className="h-5 w-5 text-primary animate-float" />
             Conversion Mobile Money → Crypto
           </CardTitle>
-          <CardDescription className="flex items-center gap-1">
+          <CardDescription className="flex items-center gap-1 animate-slide-in-down">
             <DollarSign className="h-4 w-4" />
-            Achetez des USDC/USDT (BSC) avec votre Mobile Money
+            Achetez des tokens crypto avec votre Mobile Money
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <NetworkSelector
+              selectedNetwork={formData.network}
+              onNetworkChange={(network) => {
+                const newNetwork = SUPPORTED_NETWORKS.find(n => n.id === network);
+                const firstToken = newNetwork?.tokens[0]?.symbol || 'USDC';
+                setFormData({ ...formData, network, token: firstToken });
+              }}
+              selectedToken={formData.token}
+              onTokenChange={(token) => setFormData({ ...formData, token })}
+            />
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 animate-slide-in-up">
               <div className="space-y-2">
                 <Label htmlFor="xofAmount">Montant (XOF)</Label>
                 <Input
@@ -278,7 +311,7 @@ const OnrampForm = () => {
                   step="1"
                   value={formData.xofAmount}
                   onChange={(e) => setFormData({ ...formData, xofAmount: e.target.value })}
-                  className="text-base"
+                  className="text-base hover:border-primary/50 transition-colors"
                   required
                 />
                 <p className="text-xs text-muted-foreground">
@@ -287,39 +320,27 @@ const OnrampForm = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="token">Token à recevoir</Label>
-                <Select 
-                  value={formData.token} 
-                  onValueChange={(value) => setFormData({ ...formData, token: value })}
-                >
-                  <SelectTrigger className="text-base">
-                    <SelectValue placeholder="Sélectionner un token" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="USDC">USDC (BSC)</SelectItem>
-                    <SelectItem value="USDT">USDT (BSC)</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Label htmlFor="recipientAddress">Adresse de réception ({currentNetwork?.symbol})</Label>
+                <Input
+                  id="recipientAddress"
+                  type="text"
+                  placeholder={
+                    formData.network === 'tron' ? 'T...' :
+                    formData.network === 'solana' ? 'Base58...' :
+                    '0x...'
+                  }
+                  value={formData.recipientAddress}
+                  onChange={(e) => setFormData({ ...formData, recipientAddress: e.target.value })}
+                  className="text-base font-mono hover:border-primary/50 transition-colors"
+                  required
+                />
+                <p className="text-xs text-muted-foreground">
+                  Votre adresse {currentNetwork?.name} où vous recevrez les tokens
+                </p>
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="recipientAddress">Adresse de réception (BSC)</Label>
-              <Input
-                id="recipientAddress"
-                type="text"
-                placeholder="0x..."
-                value={formData.recipientAddress}
-                onChange={(e) => setFormData({ ...formData, recipientAddress: e.target.value })}
-                className="text-base font-mono"
-                required
-              />
-              <p className="text-xs text-muted-foreground">
-                Votre adresse BSC où vous recevrez les tokens
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 animate-slide-in-up">
               <div className="space-y-2">
                 <Label htmlFor="momoNumber">Votre numéro Mobile Money</Label>
                 <Input
@@ -328,7 +349,7 @@ const OnrampForm = () => {
                   placeholder="Ex: +221 77 123 45 67"
                   value={formData.momoNumber}
                   onChange={(e) => setFormData({ ...formData, momoNumber: e.target.value })}
-                  className="text-base"
+                  className="text-base hover:border-primary/50 transition-colors"
                   required
                 />
               </div>
@@ -339,17 +360,17 @@ const OnrampForm = () => {
                   value={formData.momoProvider} 
                   onValueChange={(value) => setFormData({ ...formData, momoProvider: value })}
                 >
-                  <SelectTrigger className="text-base">
+                  <SelectTrigger className="text-base hover:bg-muted/50 transition-colors">
                     <SelectValue placeholder="Sélectionner un opérateur" />
                   </SelectTrigger>
                   <SelectContent className="bg-background border shadow-lg z-50">
-                    <SelectItem value="Orange">Orange</SelectItem>
-                    <SelectItem value="MTN">MTN</SelectItem>
-                    <SelectItem value="Moov">Moov</SelectItem>
-                    <SelectItem value="Wave">Wave</SelectItem>
-                    <SelectItem value="Free">Free</SelectItem>
-                    <SelectItem value="Malitel">Malitel</SelectItem>
-                    <SelectItem value="Togocel">Togocel</SelectItem>
+                    <SelectItem value="Orange" className="hover:bg-muted/50">Orange</SelectItem>
+                    <SelectItem value="MTN" className="hover:bg-muted/50">MTN</SelectItem>
+                    <SelectItem value="Moov" className="hover:bg-muted/50">Moov</SelectItem>
+                    <SelectItem value="Wave" className="hover:bg-muted/50">Wave</SelectItem>
+                    <SelectItem value="Free" className="hover:bg-muted/50">Free</SelectItem>
+                    <SelectItem value="Malitel" className="hover:bg-muted/50">Malitel</SelectItem>
+                    <SelectItem value="Togocel" className="hover:bg-muted/50">Togocel</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -365,16 +386,16 @@ const OnrampForm = () => {
                 </CardContent>
               </Card>
             ) : exchangeRate && calculatedCrypto > 0 && (
-              <Card className="bg-primary/5 border-primary/20 animate-scale-in">
+              <Card className="bg-gradient-to-r from-primary/5 to-accent/5 border-primary/20 animate-bounce-in hover:shadow-glow transition-all duration-300">
                 <CardContent className="pt-6">
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <div>
+                    <div className="animate-zoom-in">
                       <p className="text-sm text-muted-foreground">Vous recevrez</p>
-                      <p className="text-xl sm:text-2xl font-bold text-primary">
+                      <p className="text-xl sm:text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">
                         {calculatedCrypto.toFixed(6)} {formData.token}
                       </p>
                     </div>
-                    <div className="text-left sm:text-right">
+                    <div className="text-left sm:text-right animate-slide-in-right">
                       <p className="text-xs text-muted-foreground">
                         Taux : 1 USD = {Math.round(exchangeRate.final_rate)} XOF
                       </p>
@@ -389,7 +410,7 @@ const OnrampForm = () => {
 
             <Button 
               type="submit" 
-              className="w-full h-12 text-base hover-scale" 
+              className="w-full h-12 text-base bg-gradient-primary hover:shadow-primary transition-all duration-300 animate-pulse-glow" 
               disabled={loading || !exchangeRate || loadingRate}
             >
               {loading ? (
@@ -403,7 +424,10 @@ const OnrampForm = () => {
                   Chargement du taux...
                 </>
               ) : (
-                'Créer la demande d\'achat'
+                <>
+                  <Coins className="mr-2 h-4 w-4" />
+                  Créer la demande d'achat
+                </>
               )}
             </Button>
           </form>
