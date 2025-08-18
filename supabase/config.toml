@@ -6,5 +6,14 @@ verify_jwt = false
 [functions.create-offramp-request]
 verify_jwt = false
 
+[functions.create-onramp-request]
+verify_jwt = false
+
+[functions.admin-auth]
+verify_jwt = false
+
 [functions.admin-dashboard]
+verify_jwt = false
+
+[functions.validate-admin-token]
 verify_jwt = false

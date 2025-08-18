@@ -135,9 +135,9 @@ const AdminLogin = () => {
           </CardContent>
         </Card>
 
-        {/* Info */}
-        <div className="text-center text-sm text-muted-foreground">
-          <p>Identifiants par défaut: admin / admin123</p>
+        {/* Security Info */}
+        <div className="text-center text-xs text-muted-foreground">
+          <p>Accès sécurisé avec authentification basée sur JWT</p>
         </div>
       </div>
     </div>

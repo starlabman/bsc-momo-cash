@@ -79,6 +79,12 @@ const AdminDashboard = () => {
     transaction_hash: ''
   });
 
+  // Helper function to get admin authorization headers
+  const getAuthHeaders = () => {
+    const token = localStorage.getItem('admin_token');
+    return token ? { 'Authorization': `Bearer ${token}` } : {};
+  };
+
   const statusColors = {
     'pending_payment': 'secondary',
     'received': 'default',
@@ -106,7 +112,9 @@ const AdminDashboard = () => {
   const fetchRequests = async () => {
     setLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke('admin-dashboard');
+      const { data, error } = await supabase.functions.invoke('admin-dashboard', {
+        headers: getAuthHeaders()
+      });
       if (error) throw error;
 
       if (data.success) {
@@ -160,7 +168,8 @@ const AdminDashboard = () => {
           status: updateData.status,
           notes: updateData.notes || undefined,
           transaction_hash: updateData.transaction_hash || undefined
-        }
+        },
+        headers: getAuthHeaders()
       });
 
       if (error) throw error;

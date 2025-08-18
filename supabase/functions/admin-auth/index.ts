@@ -38,15 +38,14 @@ serve(async (req) => {
         });
       }
 
-      // Verify admin credentials using simple text comparison for now
-      const { data: adminUser, error: adminError } = await supabase
-        .from('admin_users')
-        .select('id, username')
-        .eq('username', username)
-        .eq('password_hash', password)
-        .maybeSingle();
+      // Verify admin credentials using secure password hashing
+      const { data: isValid, error: authError } = await supabase
+        .rpc('verify_admin_password', {
+          p_username: username,
+          p_password: password
+        });
 
-      if (adminError || !adminUser) {
+      if (authError || !isValid) {
         console.log('Admin login attempt failed for username:', username);
         return new Response(JSON.stringify({ 
           success: false, 
@@ -57,15 +56,48 @@ serve(async (req) => {
         });
       }
 
+      // Get admin user details
+      const { data: adminUser, error: userError } = await supabase
+        .from('admin_users')
+        .select('id, username')
+        .eq('username', username)
+        .single();
+
+      if (userError || !adminUser) {
+        console.log('Failed to retrieve admin user details for:', username);
+        return new Response(JSON.stringify({ 
+          success: false, 
+          error: 'Authentication failed' 
+        }), {
+          status: 401,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
       console.log('Admin login successful for username:', username);
       
-      // Generate a simple session token (in production, use JWT)
-      const sessionToken = `admin_${adminUser.id}_${Date.now()}`;
+      // Generate secure JWT token with expiration
+      const { data: jwtToken, error: tokenError } = await supabase
+        .rpc('create_admin_jwt', {
+          p_admin_id: adminUser.id,
+          p_username: adminUser.username
+        });
+
+      if (tokenError || !jwtToken) {
+        console.log('Failed to create JWT token for:', username);
+        return new Response(JSON.stringify({ 
+          success: false, 
+          error: 'Token generation failed' 
+        }), {
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
 
       return new Response(JSON.stringify({
         success: true,
         data: {
-          token: sessionToken,
+          token: jwtToken,
           admin: {
             id: adminUser.id,
             username: adminUser.username

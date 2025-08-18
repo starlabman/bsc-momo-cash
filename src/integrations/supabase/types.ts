@@ -231,6 +231,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      create_admin_jwt: {
+        Args: { p_admin_id: string; p_username: string }
+        Returns: string
+      }
       get_request_stats: {
         Args: Record<PropertyKey, never>
         Returns: Json
@@ -239,7 +243,15 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: boolean
       }
+      validate_admin_jwt: {
+        Args: { p_token: string }
+        Returns: boolean
+      }
       verify_admin_credentials: {
+        Args: { p_password: string; p_username: string }
+        Returns: boolean
+      }
+      verify_admin_password: {
         Args: { p_password: string; p_username: string }
         Returns: boolean
       }

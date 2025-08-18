@@ -12,7 +12,7 @@ const Admin = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Check if admin is logged in
+    // Check if admin is logged in and validate token
     const token = localStorage.getItem('admin_token');
     const user = localStorage.getItem('admin_user');
 
@@ -22,21 +22,60 @@ const Admin = () => {
     }
 
     try {
-      setAdminUser(JSON.parse(user));
+      const adminUser = JSON.parse(user);
+      setAdminUser(adminUser);
+      
+      // Validate the JWT token to ensure it's still valid
+      validateAdminToken(token);
     } catch {
+      // Clear invalid data and redirect
+      localStorage.removeItem('admin_token');
+      localStorage.removeItem('admin_user');
       navigate('/admin/login');
     }
   }, [navigate]);
 
-  const handleLogout = () => {
+  const validateAdminToken = async (token: string) => {
+    try {
+      // Parse the JWT token to check expiration client-side first
+      const tokenData = JSON.parse(token);
+      const currentTime = Math.floor(Date.now() / 1000);
+      
+      if (tokenData.expires_at && currentTime > tokenData.expires_at) {
+        // Token expired
+        handleSessionExpired();
+        return;
+      }
+    } catch {
+      // Invalid token format
+      handleSessionExpired();
+    }
+  };
+
+  const handleSessionExpired = () => {
     localStorage.removeItem('admin_token');
     localStorage.removeItem('admin_user');
     
     toast({
-      title: "Déconnexion réussie",
-      description: "Vous avez été déconnecté avec succès",
+      title: "Session expirée",
+      description: "Votre session a expiré. Veuillez vous reconnecter.",
+      variant: "destructive"
     });
     
+    navigate('/admin/login');
+  };
+
+  const handleLogout = () => {
+    // Clear all admin-related data from localStorage
+    localStorage.removeItem('admin_token');
+    localStorage.removeItem('admin_user');
+    // Also clear any cached admin session data
+    localStorage.removeItem('admin_session_expires');
+    
+    toast({
+      title: "Déconnexion réussie",
+      description: "Session sécurisée terminée avec succès",
+    });
     navigate('/');
   };
 
