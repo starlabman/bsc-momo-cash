@@ -9,8 +9,38 @@ const corsHeaders = {
 
 const supabase = createClient(
   Deno.env.get('SUPABASE_URL') ?? '',
-  Deno.env.get('SUPABASE_ANON_KEY') ?? ''
+  Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+  {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false
+    }
+  }
 );
+
+// Helper function to validate admin JWT token from Authorization header
+async function validateAdminToken(authHeader: string | null): Promise<boolean> {
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return false;
+  }
+
+  const token = authHeader.substring(7); // Remove 'Bearer ' prefix
+  
+  try {
+    const { data: isValid, error } = await supabase
+      .rpc('validate_admin_jwt', { p_token: token });
+    
+    if (error) {
+      console.error('Token validation error:', error);
+      return false;
+    }
+    
+    return isValid || false;
+  } catch (error) {
+    console.error('Token validation exception:', error);
+    return false;
+  }
+}
 
 serve(async (req) => {
   // Handle CORS preflight requests
@@ -19,6 +49,22 @@ serve(async (req) => {
   }
 
   try {
+    // Validate admin authentication for all requests
+    const authHeader = req.headers.get('authorization');
+    const isValidAdmin = await validateAdminToken(authHeader);
+    
+    if (!isValidAdmin) {
+      return new Response(JSON.stringify({ 
+        success: false, 
+        error: 'Unauthorized: Invalid or expired admin token' 
+      }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    console.log('Admin access granted for dashboard request');
+    
     const url = new URL(req.url);
     const action = url.searchParams.get('action');
 
