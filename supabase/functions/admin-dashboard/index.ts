@@ -67,6 +67,15 @@ serve(async (req) => {
     
     const url = new URL(req.url);
     const action = url.searchParams.get('action');
+    
+    // Add security headers
+    const securityHeaders = {
+      ...corsHeaders,
+      'Content-Security-Policy': "default-src 'self'",
+      'X-Frame-Options': 'DENY',
+      'X-Content-Type-Options': 'nosniff',
+      'Referrer-Policy': 'strict-origin-when-cross-origin'
+    };
 
     if (req.method === 'GET' || req.method === 'POST') {
       // Get requests with pagination
@@ -172,22 +181,22 @@ serve(async (req) => {
       });
     }
 
-    return new Response(JSON.stringify({ 
-      success: false, 
-      error: 'Method not allowed' 
+    return new Response(JSON.stringify({
+      success: false,
+      error: 'Method not allowed'
     }), {
       status: 405,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { ...securityHeaders, 'Content-Type': 'application/json' },
     });
 
   } catch (error) {
     console.error('Error in admin-dashboard function:', error);
-    return new Response(JSON.stringify({ 
-      success: false, 
-      error: error.message 
+    return new Response(JSON.stringify({
+      success: false,
+      error: 'Internal server error'
     }), {
       status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { ...securityHeaders, 'Content-Type': 'application/json' },
     });
   }
 });

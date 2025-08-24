@@ -23,7 +23,7 @@ const AdminLogin = () => {
     setError('');
 
     try {
-      const { data, error } = await supabase.functions.invoke('admin-auth', {
+      const { data, error } = await supabase.functions.invoke('admin-auth-rate-limit', {
         body: { username, password }
       });
 

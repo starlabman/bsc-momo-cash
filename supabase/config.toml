@@ -12,8 +12,14 @@ verify_jwt = false
 [functions.admin-auth]
 verify_jwt = false
 
+[functions.admin-auth-rate-limit]
+verify_jwt = false
+
 [functions.admin-dashboard]
 verify_jwt = false
 
 [functions.validate-admin-token]
+verify_jwt = false
+
+[functions.admin-audit-log]
 verify_jwt = false

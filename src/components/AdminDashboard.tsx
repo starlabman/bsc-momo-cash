@@ -138,13 +138,18 @@ const AdminDashboard = () => {
   const fetchOnrampRequests = async () => {
     setLoading(true);
     try {
-      const { data, error } = await supabase
-        .from('onramp_requests')
-        .select('*')
-        .order('created_at', { ascending: false });
+      const { data, error } = await supabase.functions.invoke('admin-dashboard', {
+        body: { table: 'onramp_requests' },
+        headers: getAuthHeaders()
+      });
 
       if (error) throw error;
-      setOnrampRequests(data || []);
+
+      if (data.success) {
+        setOnrampRequests(data.data.requests || []);
+      } else {
+        throw new Error(data.error);
+      }
     } catch (error) {
       console.error('Error fetching onramp requests:', error);
       toast({
@@ -202,24 +207,30 @@ const AdminDashboard = () => {
     
     setLoading(true);
     try {
-      const { data, error } = await supabase
-        .from('onramp_requests')
-        .update({
+      const { data, error } = await supabase.functions.invoke('admin-dashboard', {
+        body: {
+          table: 'onramp_requests',
+          id: selectedOnrampRequest.id,
           status: onrampUpdateData.status,
-          notes: onrampUpdateData.notes || null,
-          transaction_hash: onrampUpdateData.transaction_hash || null,
-        })
-        .eq('id', selectedOnrampRequest.id);
+          notes: onrampUpdateData.notes || undefined,
+          transaction_hash: onrampUpdateData.transaction_hash || undefined
+        },
+        headers: getAuthHeaders()
+      });
 
       if (error) throw error;
 
-      toast({
-        title: "Succès",
-        description: "Demande onramp mise à jour",
-      });
-      setSelectedOnrampRequest(null);
-      setOnrampUpdateData({ status: '', notes: '', transaction_hash: '' });
-      fetchOnrampRequests();
+      if (data.success) {
+        toast({
+          title: "Succès",
+          description: "Demande onramp mise à jour",
+        });
+        setSelectedOnrampRequest(null);
+        setOnrampUpdateData({ status: '', notes: '', transaction_hash: '' });
+        fetchOnrampRequests();
+      } else {
+        throw new Error(data.error);
+      }
     } catch (error) {
       console.error('Error updating onramp request:', error);
       toast({
