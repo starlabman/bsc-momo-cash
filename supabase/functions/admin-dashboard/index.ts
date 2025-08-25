@@ -77,69 +77,141 @@ serve(async (req) => {
       'Referrer-Policy': 'strict-origin-when-cross-origin'
     };
 
-    if (req.method === 'GET' || req.method === 'POST') {
-      // Get requests with pagination
-      const page = parseInt(url.searchParams.get('page') || '1');
-      const limit = parseInt(url.searchParams.get('limit') || '20');
+    if (req.method === 'GET') {
       const status = url.searchParams.get('status');
-      const table = url.searchParams.get('table') || 'offramp_requests';
+      const page = parseInt(url.searchParams.get('page') || '1');
+      const limit = parseInt(url.searchParams.get('limit') || '50');
       const offset = (page - 1) * limit;
 
-      let query;
-      if (table === 'onramp_requests') {
-        query = supabase
-          .from('onramp_requests')
-          .select('*')
-          .order('created_at', { ascending: false })
-          .range(offset, offset + limit - 1);
-      } else {
-        query = supabase
-          .from('offramp_requests')
-          .select(`
-            *,
-            blockchain_events(*)
-          `)
-          .order('created_at', { ascending: false })
-          .range(offset, offset + limit - 1);
-      }
+      let query = supabase
+        .from('offramp_requests')
+        .select('*', { count: 'exact' })
+        .order('created_at', { ascending: false })
+        .range(offset, offset + limit - 1);
 
       if (status) {
         query = query.eq('status', status);
       }
 
-      const { data: requests, error: requestsError } = await query;
-
+      const { data: requests, error: requestsError, count } = await query;
+      
       if (requestsError) {
-        throw new Error(`Failed to fetch ${table}`);
+        console.error('Error fetching requests:', requestsError);
+        return new Response(JSON.stringify({
+          success: false,
+          error: 'Failed to fetch requests'
+        }), {
+          status: 500,
+          headers: { ...securityHeaders, 'Content-Type': 'application/json' },
+        });
       }
 
-      // Get summary stats
+      // Fetch statistics
       const { data: stats, error: statsError } = await supabase
         .rpc('get_request_stats');
 
-      const result = {
+      if (statsError) {
+        console.error('Error fetching stats:', statsError);
+        return new Response(JSON.stringify({
+          success: false,
+          error: 'Failed to fetch statistics'
+        }), {
+          status: 500,
+          headers: { ...securityHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
+      return new Response(JSON.stringify({
         success: true,
         data: {
           requests: requests || [],
+          stats: stats || {},
           pagination: {
             page,
             limit,
-            total: requests?.length || 0
-          },
-          stats: stats || {
-            pending_payment: 0,
-            received: 0,
-            processing: 0,
-            paid: 0,
-            failed: 0,
-            total_volume_usd: 0,
-            total_volume_xof: 0
+            total: count || 0,
+            hasMore: (count || 0) > offset + limit
           }
         }
-      };
+      }), {
+        headers: { ...securityHeaders, 'Content-Type': 'application/json' },
+      });
+    }
 
-      return new Response(JSON.stringify(result), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    if (req.method === 'POST') {
+      const { table, id, status, notes, transaction_hash } = await req.json();
+      
+      // Input sanitization
+      const sanitizedNotes = notes ? notes.trim().substring(0, 1000) : notes;
+      const sanitizedTxHash = transaction_hash ? transaction_hash.trim().substring(0, 100) : transaction_hash;
+      
+      // Handle GET requests for onramp data
+      if (table === 'onramp_requests' && !id) {
+        const { data: requests, error } = await supabase
+          .from('onramp_requests')
+          .select('*')
+          .order('created_at', { ascending: false });
+          
+        if (error) {
+          console.error('Error fetching onramp requests:', error);
+          return new Response(JSON.stringify({
+            success: false,
+            error: 'Failed to fetch onramp requests'
+          }), {
+            status: 500,
+            headers: { ...securityHeaders, 'Content-Type': 'application/json' },
+          });
+        }
+        
+        return new Response(JSON.stringify({
+          success: true,
+          data: { requests: requests || [] }
+        }), {
+          headers: { ...securityHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      
+      // Handle updates
+      if (!id) {
+        return new Response(JSON.stringify({
+          success: false,
+          error: 'Request ID is required for updates'
+        }), {
+          status: 400,
+          headers: { ...securityHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
+      const updateData: any = {};
+      if (status) updateData.status = status;
+      if (sanitizedNotes !== undefined) updateData.notes = sanitizedNotes;
+      if (sanitizedTxHash !== undefined) updateData.transaction_hash = sanitizedTxHash;
+
+      const tableName = table === 'onramp_requests' ? 'onramp_requests' : 'offramp_requests';
+      
+      const { data, error } = await supabase
+        .from(tableName)
+        .update(updateData)
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) {
+        console.error(`Error updating ${tableName}:`, error);
+        return new Response(JSON.stringify({
+          success: false,
+          error: `Failed to update ${tableName.replace('_', ' ')}`
+        }), {
+          status: 500,
+          headers: { ...securityHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
+      return new Response(JSON.stringify({
+        success: true,
+        data: data
+      }), {
+        headers: { ...securityHeaders, 'Content-Type': 'application/json' },
       });
     }
 
