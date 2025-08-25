@@ -64,6 +64,10 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				}
 			},
+			fontFamily: {
+				'sans': ['Inter', 'system-ui', 'sans-serif'],
+				'mono': ['JetBrains Mono', 'Fira Code', 'monospace'],
+			},
 			borderRadius: {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
@@ -147,9 +151,10 @@ export default {
 				'fade-in': 'fade-in 0.3s ease-out',
 				'scale-in': 'scale-in 0.2s ease-out',
 				
-				// Enhanced animations
+				// Enhanced fintech animations
 				'float': 'float 3s ease-in-out infinite',
 				'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
+				'glow-pulse': 'glow-pulse 3s ease-in-out infinite',
 				'slide-in-up': 'slide-in-up 0.4s ease-out',
 				'slide-in-down': 'slide-in-down 0.4s ease-out',
 				'zoom-in': 'zoom-in 0.3s ease-out',
@@ -158,19 +163,22 @@ export default {
 				'slide-in-right': 'slide-in-right 0.3s ease-out',
 				'slide-out-right': 'slide-out-right 0.3s ease-out',
 				
-				// Combined animations
+				// Combined premium animations
 				'enter': 'fade-in 0.3s ease-out, scale-in 0.2s ease-out',
-				'exit': 'fade-out 0.3s ease-out, scale-out 0.2s ease-out'
+				'exit': 'fade-out 0.3s ease-out, scale-out 0.2s ease-out',
+				'premium-hover': 'float 2s ease-in-out infinite, glow-pulse 3s ease-in-out infinite'
 			},
 			backgroundImage: {
 				'gradient-primary': 'var(--gradient-primary)',
 				'gradient-card': 'var(--gradient-card)',
 				'gradient-hero': 'var(--gradient-hero)',
+				'gradient-glass': 'var(--gradient-glass)',
 			},
 			boxShadow: {
 				'primary': 'var(--shadow-primary)',
 				'glow': 'var(--shadow-glow)',
 				'card': 'var(--shadow-card)',
+				'glass': 'var(--shadow-glass)',
 			},
 			transitionTimingFunction: {
 				'smooth': 'var(--transition-smooth)',
