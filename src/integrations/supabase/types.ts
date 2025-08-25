@@ -279,6 +279,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: boolean
       }
+      reminder_configure_otp_expiry: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       validate_admin_jwt: {
         Args: { p_token: string }
         Returns: boolean
