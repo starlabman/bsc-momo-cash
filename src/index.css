@@ -225,3 +225,4 @@ All colors MUST be HSL.
   ::-webkit-scrollbar-thumb:hover {
     background: hsl(var(--primary) / 0.7);
   }
+}
