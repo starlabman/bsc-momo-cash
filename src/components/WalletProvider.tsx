@@ -24,15 +24,23 @@ interface WalletProviderProps {
 }
 
 export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
+  // OnchainKit API key is optional for basic functionality
+  const apiKey = import.meta.env.VITE_ONCHAINKIT_API_KEY;
+  
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        <OnchainKitProvider
-          apiKey={process.env.NEXT_PUBLIC_ONCHAINKIT_API_KEY}
-          chain={base}
-        >
-          {children}
-        </OnchainKitProvider>
+        {apiKey ? (
+          <OnchainKitProvider
+            apiKey={apiKey}
+            chain={base}
+          >
+            {children}
+          </OnchainKitProvider>
+        ) : (
+          // Fallback without OnchainKit if no API key
+          children
+        )}
       </QueryClientProvider>
     </WagmiProvider>
   );
