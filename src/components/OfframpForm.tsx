@@ -11,7 +11,9 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { QRCodeSVG } from 'qrcode.react';
 import { formatPhoneNumber } from '@/utils/phoneDetection';
-import NetworkSelector, { SUPPORTED_NETWORKS } from '@/components/NetworkSelector';
+import EnhancedNetworkSelector from '@/components/EnhancedNetworkSelector';
+import { SUPPORTED_NETWORKS } from '@/components/NetworkSelector';
+import WalletConnector from '@/components/WalletConnector';
 
 interface ExchangeRate {
   external_rate: number;
@@ -44,7 +46,7 @@ const OfframpForm = () => {
   
   const [formData, setFormData] = useState({
     amount: '',
-    network: 'bsc',
+    network: 'base', // Default to Base
     token: 'USDC',
     momoNumber: '',
     momoProvider: ''
@@ -150,7 +152,7 @@ const OfframpForm = () => {
     setRequest(null);
     setFormData({
       amount: '',
-      network: 'bsc',
+      network: 'base', // Reset to Base
       token: 'USDC',
       momoNumber: '',
       momoProvider: ''
@@ -270,7 +272,13 @@ const OfframpForm = () => {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
-            <NetworkSelector
+            {/* Wallet Connector for Base network */}
+            {formData.network === 'base' && (
+              <div className="animate-slide-in-up">
+                <WalletConnector />
+              </div>
+            )}
+            <EnhancedNetworkSelector
               selectedNetwork={formData.network}
               onNetworkChange={(network) => {
                 const newNetwork = SUPPORTED_NETWORKS.find(n => n.id === network);

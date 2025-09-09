@@ -21,6 +21,27 @@ export interface BlockchainNetwork {
 
 export const SUPPORTED_NETWORKS: BlockchainNetwork[] = [
   {
+    id: 'base',
+    name: 'Base',
+    symbol: 'BASE',
+    icon: '🔵',
+    rpcUrl: 'https://mainnet.base.org',
+    chainId: 8453,
+    blockExplorer: 'https://basescan.org',
+    tokens: [
+      {
+        symbol: 'USDC',
+        address: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913',
+        decimals: 6
+      },
+      {
+        symbol: 'USDbC',
+        address: '0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA',
+        decimals: 6
+      }
+    ]
+  },
+  {
     id: 'bsc',
     name: 'Binance Smart Chain',
     symbol: 'BSC',
@@ -58,48 +79,6 @@ export const SUPPORTED_NETWORKS: BlockchainNetwork[] = [
       {
         symbol: 'USDT',
         address: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
-        decimals: 6
-      }
-    ]
-  },
-  {
-    id: 'tron',
-    name: 'Tron',
-    symbol: 'TRON',
-    icon: '🔴',
-    rpcUrl: 'https://api.trongrid.io',
-    chainId: 728126428,
-    blockExplorer: 'https://tronscan.org',
-    tokens: [
-      {
-        symbol: 'USDC',
-        address: 'TEkxiTehnzSmSe2XqrBj4w32RUN966rdz8',
-        decimals: 6
-      },
-      {
-        symbol: 'USDT',
-        address: 'TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t',
-        decimals: 6
-      }
-    ]
-  },
-  {
-    id: 'solana',
-    name: 'Solana',
-    symbol: 'SOL',
-    icon: '🟣',
-    rpcUrl: 'https://api.mainnet-beta.solana.com',
-    chainId: 101,
-    blockExplorer: 'https://solscan.io',
-    tokens: [
-      {
-        symbol: 'USDC',
-        address: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
-        decimals: 6
-      },
-      {
-        symbol: 'USDT',
-        address: 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB',
         decimals: 6
       }
     ]
@@ -147,22 +126,43 @@ export const SUPPORTED_NETWORKS: BlockchainNetwork[] = [
     ]
   },
   {
-    id: 'lisk',
-    name: 'Lisk',
-    symbol: 'LSK',
-    icon: '🟢',
-    rpcUrl: 'https://rpc.api.lisk.com',
-    chainId: 1135,
-    blockExplorer: 'https://blockscout.lisk.com',
+    id: 'polygon',
+    name: 'Polygon',
+    symbol: 'MATIC',
+    icon: '🟣',
+    rpcUrl: 'https://polygon-rpc.com',
+    chainId: 137,
+    blockExplorer: 'https://polygonscan.com',
     tokens: [
       {
         symbol: 'USDC',
-        address: '0x05D032ac25d322df992303dCa074EE7392C117b9',
+        address: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
         decimals: 6
       },
       {
         symbol: 'USDT',
-        address: '0x05D032ac25d322df992303dCa074EE7392C117b9',
+        address: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
+        decimals: 6
+      }
+    ]
+  },
+  {
+    id: 'solana',
+    name: 'Solana',
+    symbol: 'SOL',
+    icon: '🟢',
+    rpcUrl: 'https://api.mainnet-beta.solana.com',
+    chainId: 101,
+    blockExplorer: 'https://solscan.io',
+    tokens: [
+      {
+        symbol: 'USDC',
+        address: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
+        decimals: 6
+      },
+      {
+        symbol: 'USDT',
+        address: 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB',
         decimals: 6
       }
     ]

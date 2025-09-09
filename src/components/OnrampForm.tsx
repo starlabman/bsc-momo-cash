@@ -10,7 +10,9 @@ import { Loader2, Coins, ArrowRight, Smartphone, CheckCircle, DollarSign } from 
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { formatPhoneNumber } from '@/utils/phoneDetection';
-import NetworkSelector, { SUPPORTED_NETWORKS } from '@/components/NetworkSelector';
+import EnhancedNetworkSelector from '@/components/EnhancedNetworkSelector';
+import { SUPPORTED_NETWORKS } from '@/components/NetworkSelector';
+import WalletConnector from '@/components/WalletConnector';
 
 interface ExchangeRate {
   external_rate: number;
@@ -43,7 +45,7 @@ const OnrampForm = () => {
   
   const [formData, setFormData] = useState({
     xofAmount: '',
-    network: 'bsc',
+    network: 'base', // Default to Base for better UX
     token: 'USDC',
     momoNumber: '',
     momoProvider: '',
@@ -117,15 +119,12 @@ const OnrampForm = () => {
 
       // Validate address based on network
       let addressValid = false;
-      if (formData.network === 'bsc' || formData.network === 'ethereum' || 
-          formData.network === 'arbitrum' || formData.network === 'optimism') {
+      if (formData.network === 'base' || formData.network === 'bsc' || 
+          formData.network === 'ethereum' || formData.network === 'arbitrum' || 
+          formData.network === 'optimism' || formData.network === 'polygon') {
         addressValid = /^0x[a-fA-F0-9]{40}$/.test(formData.recipientAddress);
-      } else if (formData.network === 'tron') {
-        addressValid = /^T[A-Za-z1-9]{33}$/.test(formData.recipientAddress);
       } else if (formData.network === 'solana') {
         addressValid = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(formData.recipientAddress);
-      } else if (formData.network === 'lisk') {
-        addressValid = /^0x[a-fA-F0-9]{40}$/.test(formData.recipientAddress);
       }
 
       if (!addressValid) {
@@ -171,7 +170,7 @@ const OnrampForm = () => {
     setRequest(null);
     setFormData({
       xofAmount: '',
-      network: 'bsc',
+      network: 'base', // Reset to Base
       token: 'USDC',
       momoNumber: '',
       momoProvider: '',
@@ -288,7 +287,13 @@ const OnrampForm = () => {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
-            <NetworkSelector
+            {/* Wallet Connector for Base network */}
+            {formData.network === 'base' && (
+              <div className="animate-slide-in-up">
+                <WalletConnector />
+              </div>
+            )}
+            <EnhancedNetworkSelector
               selectedNetwork={formData.network}
               onNetworkChange={(network) => {
                 const newNetwork = SUPPORTED_NETWORKS.find(n => n.id === network);
@@ -325,9 +330,7 @@ const OnrampForm = () => {
                   id="recipientAddress"
                   type="text"
                   placeholder={
-                    formData.network === 'tron' ? 'T...' :
-                    formData.network === 'solana' ? 'Base58...' :
-                    '0x...'
+                    formData.network === 'solana' ? 'Base58...' : '0x...'
                   }
                   value={formData.recipientAddress}
                   onChange={(e) => setFormData({ ...formData, recipientAddress: e.target.value })}
