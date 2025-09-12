@@ -25,9 +25,9 @@ serve(async (req) => {
   }
 
   try {
-    const { amount, token, momoNumber, momoProvider } = await req.json();
+    const { amount, token, momoNumber, momoProvider, countryId } = await req.json();
 
-    console.log('Creating offramp request:', { amount, token, momoNumber, momoProvider });
+    console.log('Creating offramp request:', { amount, token, momoNumber, momoProvider, countryId });
 
     // Validation
     if (!amount || !token || !momoNumber) {
@@ -90,6 +90,7 @@ serve(async (req) => {
         usd_amount: amount,
         xof_amount: xofAmount,
         exchange_rate: finalRate,
+        country_id: countryId,
         request_ip: req.headers.get('x-forwarded-for') || 'unknown'
       })
       .select()

@@ -19,7 +19,7 @@ serve(async (req) => {
   }
 
   try {
-    const { xofAmount, token, momoNumber, momoProvider, recipientAddress } = await req.json();
+    const { xofAmount, token, momoNumber, momoProvider, recipientAddress, countryId } = await req.json();
 
     console.log('Creating onramp request:', { xofAmount, token, momoNumber, momoProvider, recipientAddress });
 
@@ -96,6 +96,7 @@ serve(async (req) => {
         momo_number: momoNumber,
         momo_provider: momoProvider,
         recipient_address: recipientAddress,
+        country_id: countryId,
         exchange_rate: finalRate,
         request_ip: req.headers.get('x-forwarded-for') || 'unknown'
       })

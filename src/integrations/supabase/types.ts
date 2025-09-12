@@ -124,6 +124,36 @@ export type Database = {
           },
         ]
       }
+      countries: {
+        Row: {
+          code: string
+          created_at: string
+          flag_emoji: string | null
+          id: string
+          name: string
+          phone_prefix: string
+          updated_at: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          flag_emoji?: string | null
+          id?: string
+          name: string
+          phone_prefix: string
+          updated_at?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          flag_emoji?: string | null
+          id?: string
+          name?: string
+          phone_prefix?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       exchange_rates: {
         Row: {
           base_currency: string
@@ -154,10 +184,46 @@ export type Database = {
         }
         Relationships: []
       }
+      mobile_operators: {
+        Row: {
+          country_id: string
+          created_at: string
+          id: string
+          name: string
+          number_patterns: string[]
+          updated_at: string
+        }
+        Insert: {
+          country_id: string
+          created_at?: string
+          id?: string
+          name: string
+          number_patterns: string[]
+          updated_at?: string
+        }
+        Update: {
+          country_id?: string
+          created_at?: string
+          id?: string
+          name?: string
+          number_patterns?: string[]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mobile_operators_country_id_fkey"
+            columns: ["country_id"]
+            isOneToOne: false
+            referencedRelation: "countries"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       offramp_requests: {
         Row: {
           amount: number
           bsc_address: string
+          country_id: string | null
           created_at: string
           exchange_rate: number
           id: string
@@ -175,6 +241,7 @@ export type Database = {
         Insert: {
           amount: number
           bsc_address?: string
+          country_id?: string | null
           created_at?: string
           exchange_rate: number
           id?: string
@@ -192,6 +259,7 @@ export type Database = {
         Update: {
           amount?: number
           bsc_address?: string
+          country_id?: string | null
           created_at?: string
           exchange_rate?: number
           id?: string
@@ -206,10 +274,19 @@ export type Database = {
           usd_amount?: number
           xof_amount?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "offramp_requests_country_id_fkey"
+            columns: ["country_id"]
+            isOneToOne: false
+            referencedRelation: "countries"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       onramp_requests: {
         Row: {
+          country_id: string | null
           created_at: string
           crypto_amount: number
           exchange_rate: number
@@ -227,6 +304,7 @@ export type Database = {
           xof_amount: number
         }
         Insert: {
+          country_id?: string | null
           created_at?: string
           crypto_amount: number
           exchange_rate: number
@@ -244,6 +322,7 @@ export type Database = {
           xof_amount: number
         }
         Update: {
+          country_id?: string | null
           created_at?: string
           crypto_amount?: number
           exchange_rate?: number
@@ -260,7 +339,15 @@ export type Database = {
           usd_amount?: number
           xof_amount?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "onramp_requests_country_id_fkey"
+            columns: ["country_id"]
+            isOneToOne: false
+            referencedRelation: "countries"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

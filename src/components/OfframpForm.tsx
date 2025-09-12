@@ -14,6 +14,7 @@ import { formatPhoneNumber } from '@/utils/phoneDetection';
 import EnhancedNetworkSelector from '@/components/EnhancedNetworkSelector';
 import { SUPPORTED_NETWORKS } from '@/components/NetworkSelector';
 import WalletConnector from '@/components/WalletConnector';
+import { CountryOperatorSelector } from './CountryOperatorSelector';
 
 interface ExchangeRate {
   external_rate: number;
@@ -51,6 +52,10 @@ const OfframpForm = () => {
     momoNumber: '',
     momoProvider: ''
   });
+  
+  const [selectedCountry, setSelectedCountry] = useState('');
+  const [selectedCountryData, setSelectedCountryData] = useState<any>(null);
+  const [isPhoneNumberValid, setIsPhoneNumberValid] = useState(false);
 
   // Fetch exchange rate on component mount
   useEffect(() => {
@@ -106,8 +111,8 @@ const OfframpForm = () => {
         throw new Error('Le montant doit être entre 0 et 1000 USD');
       }
 
-      if (!formData.momoNumber) {
-        throw new Error('Le numéro Mobile Money est requis');
+      if (!formData.momoNumber || !selectedCountry || !isPhoneNumberValid) {
+        throw new Error('Veuillez remplir tous les champs requis et vérifier le numéro de téléphone');
       }
 
 
@@ -120,8 +125,9 @@ const OfframpForm = () => {
           token: formData.token,
           network: formData.network,
           tokenAddress: tokenInfo?.address,
-          momoNumber: formData.momoNumber,
-          momoProvider: formData.momoProvider || undefined
+          momoNumber: selectedCountryData?.phone_prefix + formData.momoNumber,
+          momoProvider: formData.momoProvider || undefined,
+          countryId: selectedCountry
         }
       });
 
@@ -157,6 +163,9 @@ const OfframpForm = () => {
       momoNumber: '',
       momoProvider: ''
     });
+    setSelectedCountry('');
+    setSelectedCountryData(null);
+    setIsPhoneNumberValid(false);
   };
 
   if (request) {
@@ -308,40 +317,19 @@ const OfframpForm = () => {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 animate-slide-in-up">
-              <div className="space-y-2">
-                <Label htmlFor="momoNumber">Numéro Mobile Money</Label>
-                <Input
-                  id="momoNumber"
-                  type="tel"
-                  placeholder="Ex: +221 77 123 45 67"
-                  value={formData.momoNumber}
-                  onChange={(e) => setFormData({ ...formData, momoNumber: e.target.value })}
-                  className="text-base hover:border-primary/50 transition-colors"
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="momoProvider">Opérateur</Label>
-                <Select 
-                  value={formData.momoProvider} 
-                  onValueChange={(value) => setFormData({ ...formData, momoProvider: value })}
-                >
-                  <SelectTrigger className="text-base hover:bg-muted/50 transition-colors">
-                    <SelectValue placeholder="Sélectionner un opérateur" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-background border shadow-lg z-50">
-                    <SelectItem value="Orange" className="hover:bg-muted/50">Orange</SelectItem>
-                    <SelectItem value="MTN" className="hover:bg-muted/50">MTN</SelectItem>
-                    <SelectItem value="Moov" className="hover:bg-muted/50">Moov</SelectItem>
-                    <SelectItem value="Wave" className="hover:bg-muted/50">Wave</SelectItem>
-                    <SelectItem value="Free" className="hover:bg-muted/50">Free</SelectItem>
-                    <SelectItem value="Malitel" className="hover:bg-muted/50">Malitel</SelectItem>
-                    <SelectItem value="Togocel" className="hover:bg-muted/50">Togocel</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+            <div className="animate-slide-in-up">
+              <CountryOperatorSelector
+                selectedCountry={selectedCountry}
+                selectedOperator={formData.momoProvider}
+                phoneNumber={formData.momoNumber}
+                onCountryChange={(countryId, countryData) => {
+                  setSelectedCountry(countryId);
+                  setSelectedCountryData(countryData);
+                }}
+                onOperatorChange={(operator) => setFormData({ ...formData, momoProvider: operator })}
+                onPhoneNumberChange={(phoneNumber) => setFormData({ ...formData, momoNumber: phoneNumber })}
+                onValidationChange={setIsPhoneNumberValid}
+              />
             </div>
 
             {loadingRate ? (
@@ -379,7 +367,7 @@ const OfframpForm = () => {
             <Button 
               type="submit" 
               className="w-full h-12 text-base bg-gradient-primary hover:shadow-primary transition-all duration-300 animate-pulse-glow" 
-              disabled={loading || !exchangeRate || loadingRate}
+              disabled={loading || !exchangeRate || loadingRate || !isPhoneNumberValid || !selectedCountry}
             >
               {loading ? (
                 <>
