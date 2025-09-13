@@ -24,7 +24,7 @@ export const SUPPORTED_NETWORKS: BlockchainNetwork[] = [
     id: 'base',
     name: 'Base',
     symbol: 'BASE',
-    icon: '🔵',
+    icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTYiIGN5PSIxNiIgcj0iMTYiIGZpbGw9IiMwMDUyRkYiLz4KPHBhdGggZD0iTTEyIDEyaDhWMjBIMTJWMTJ6IiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K',
     rpcUrl: 'https://mainnet.base.org',
     chainId: 8453,
     blockExplorer: 'https://basescan.org',
@@ -45,7 +45,7 @@ export const SUPPORTED_NETWORKS: BlockchainNetwork[] = [
     id: 'bsc',
     name: 'Binance Smart Chain',
     symbol: 'BSC',
-    icon: '🟡',
+    icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTYiIGN5PSIxNiIgcj0iMTYiIGZpbGw9IiNGM0JBMkYiLz4KPHBhdGggZD0iTTEwIDEyTDE2IDZMMjIgMTJMMjAgMTRMMTYgMTBMMTIgMTRMMTAgMTJ6TTYgMTZMMTAgMTJMOCAxMEw0IDE0VjE4TDggMjJMMTAgMjBMNiAxNnoiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPgo=',
     rpcUrl: 'https://bsc-dataseed.binance.org/',
     chainId: 56,
     blockExplorer: 'https://bscscan.com',
@@ -66,7 +66,7 @@ export const SUPPORTED_NETWORKS: BlockchainNetwork[] = [
     id: 'ethereum',
     name: 'Ethereum',
     symbol: 'ETH',
-    icon: '⟠',
+    icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTYiIGN5PSIxNiIgcj0iMTYiIGZpbGw9IiM2MjdFRUEiLz4KPHBhdGggZD0iTTE1Ljk5IDRMMTUuODQgNC41M1YyMS4xOEwxNS45OSAyMS4zM0wyNCAxNy4wM0wxNS45OSA0WiIgZmlsbD0id2hpdGUiLz4KPHBhdGggZD0iTTE1Ljk5IDRMOCAxNy4wM0wxNS45OSAyMS4zM1Y0WiIgZmlsbD0iI0Y3RjdGNyIvPgo8L3N2Zz4K',
     rpcUrl: 'https://mainnet.infura.io/v3/',
     chainId: 1,
     blockExplorer: 'https://etherscan.io',
@@ -87,7 +87,7 @@ export const SUPPORTED_NETWORKS: BlockchainNetwork[] = [
     id: 'arbitrum',
     name: 'Arbitrum One',
     symbol: 'ARB',
-    icon: '🔵',
+    icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTYiIGN5PSIxNiIgcj0iMTYiIGZpbGw9IiMzMzY5NEQiLz4KPHBhdGggZD0iTTEwIDEySDIyVjIwSDEwVjEyWiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+Cg==',
     rpcUrl: 'https://arb1.arbitrum.io/rpc',
     chainId: 42161,
     blockExplorer: 'https://arbiscan.io',
@@ -108,7 +108,7 @@ export const SUPPORTED_NETWORKS: BlockchainNetwork[] = [
     id: 'optimism',
     name: 'Optimism',
     symbol: 'OP',
-    icon: '🔴',
+    icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTYiIGN5PSIxNiIgcj0iMTYiIGZpbGw9IiNGRjA0MjAiLz4KPHBhdGggZD0iTTEwIDEySDIyVjIwSDEwVjEyWiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+Cg==',
     rpcUrl: 'https://mainnet.optimism.io',
     chainId: 10,
     blockExplorer: 'https://optimistic.etherscan.io',
@@ -129,7 +129,7 @@ export const SUPPORTED_NETWORKS: BlockchainNetwork[] = [
     id: 'polygon',
     name: 'Polygon',
     symbol: 'MATIC',
-    icon: '🟣',
+    icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTYiIGN5PSIxNiIgcj0iMTYiIGZpbGw9IiM4MjQ3RTUiLz4KPHBhdGggZD0iTTEwIDEySDIyVjIwSDEwVjEyWiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+Cg==',
     rpcUrl: 'https://polygon-rpc.com',
     chainId: 137,
     blockExplorer: 'https://polygonscan.com',
@@ -150,7 +150,7 @@ export const SUPPORTED_NETWORKS: BlockchainNetwork[] = [
     id: 'solana',
     name: 'Solana',
     symbol: 'SOL',
-    icon: '🟢',
+    icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTYiIGN5PSIxNiIgcj0iMTYiIGZpbGw9IiMxNEY0OTUiLz4KPHBhdGggZD0iTTEwIDEySDIyVjIwSDEwVjEyWiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+Cg==',
     rpcUrl: 'https://api.mainnet-beta.solana.com',
     chainId: 101,
     blockExplorer: 'https://solscan.io',
@@ -203,14 +203,25 @@ const NetworkSelector: React.FC<NetworkSelectorProps> = ({
               <SelectItem 
                 key={network.id} 
                 value={network.id}
-                className="hover:bg-muted/50 transition-colors"
+                className="hover:bg-muted/50 transition-colors cursor-pointer"
               >
                 <div className="flex items-center gap-3">
-                  <span className="text-lg">{network.icon}</span>
+                  <img 
+                    src={network.icon} 
+                    alt={network.name} 
+                    className="w-6 h-6 rounded-full"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.style.display = 'none';
+                    }}
+                  />
                   <div className="flex flex-col">
                     <span className="font-medium">{network.name}</span>
                     <span className="text-xs text-muted-foreground">{network.symbol}</span>
                   </div>
+                  <Badge variant="outline" className="ml-auto text-xs">
+                    #{network.chainId}
+                  </Badge>
                 </div>
               </SelectItem>
             ))}
@@ -248,17 +259,45 @@ const NetworkSelector: React.FC<NetworkSelectorProps> = ({
       </div>
 
       {currentNetwork && (
-        <div className="p-3 bg-muted/30 rounded-lg animate-fade-in">
-          <div className="flex items-center gap-2 mb-2">
-            <span className="text-base">{currentNetwork.icon}</span>
-            <span className="font-medium text-sm">{currentNetwork.name}</span>
-            <Badge variant="secondary" className="text-xs">
-              Chain ID: {currentNetwork.chainId}
-            </Badge>
+        <div className="p-4 bg-gradient-to-r from-primary/5 to-accent/5 border border-primary/20 rounded-lg animate-fade-in">
+          <div className="flex items-center gap-3 mb-3">
+            <img 
+              src={currentNetwork.icon} 
+              alt={currentNetwork.name} 
+              className="w-8 h-8 rounded-full"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.style.display = 'none';
+              }}
+            />
+            <div className="flex-1">
+              <div className="flex items-center gap-2">
+                <span className="font-semibold text-base">{currentNetwork.name}</span>
+                <Badge variant="secondary" className="text-xs">
+                  {currentNetwork.symbol}
+                </Badge>
+              </div>
+              <div className="flex items-center gap-3 mt-1">
+                <Badge variant="outline" className="text-xs">
+                  Chain ID: {currentNetwork.chainId}
+                </Badge>
+                <span className="text-xs text-muted-foreground">
+                  {availableTokens.length} token{availableTokens.length > 1 ? 's' : ''} disponible{availableTokens.length > 1 ? 's' : ''}
+                </span>
+              </div>
+            </div>
           </div>
-          <p className="text-xs text-muted-foreground">
-            Explorer: {currentNetwork.blockExplorer}
-          </p>
+          <div className="text-xs text-muted-foreground">
+            <span className="font-medium">Explorer:</span>{' '}
+            <a 
+              href={currentNetwork.blockExplorer} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-primary hover:underline"
+            >
+              {currentNetwork.blockExplorer}
+            </a>
+          </div>
         </div>
       )}
     </div>
