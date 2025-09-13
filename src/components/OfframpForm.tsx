@@ -11,8 +11,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { QRCodeSVG } from 'qrcode.react';
 import { formatPhoneNumber } from '@/utils/phoneDetection';
-import EnhancedNetworkSelector from '@/components/EnhancedNetworkSelector';
-import { SUPPORTED_NETWORKS } from '@/components/NetworkSelector';
+import NetworkSelector, { SUPPORTED_NETWORKS } from '@/components/NetworkSelector';
 import WalletConnector from '@/components/WalletConnector';
 import { CountryOperatorSelector } from './CountryOperatorSelector';
 
@@ -287,7 +286,7 @@ const OfframpForm = () => {
                 <WalletConnector />
               </div>
             )}
-            <EnhancedNetworkSelector
+            <NetworkSelector
               selectedNetwork={formData.network}
               onNetworkChange={(network) => {
                 const newNetwork = SUPPORTED_NETWORKS.find(n => n.id === network);

@@ -1,96 +1,193 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Network, ExternalLink, Zap, Shield, Coins, Clock } from 'lucide-react';
-import { SUPPORTED_NETWORKS, BlockchainNetwork } from './NetworkSelector';
+import { Badge } from '@/components/ui/badge';
+import { AlertCircle, CheckCircle } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
-interface EnhancedNetworkSelectorProps {
-  selectedNetwork: string;
-  onNetworkChange: (networkId: string) => void;
-  selectedToken: string;
-  onTokenChange: (token: string) => void;
-  className?: string;
+interface Country {
+  id: string;
+  name: string;
+  code: string;
+  phone_prefix: string;
+  flag_emoji: string;
 }
 
-const NetworkFeatures = {
-  base: { speed: 'Ultra rapide', fees: 'Très faibles', security: 'Sécurisé' },
-  ethereum: { speed: 'Moyenne', fees: 'Élevées', security: 'Très sécurisé' },
-  bsc: { speed: 'Rapide', fees: 'Faibles', security: 'Sécurisé' },
-  arbitrum: { speed: 'Rapide', fees: 'Faibles', security: 'Très sécurisé' },
-  optimism: { speed: 'Rapide', fees: 'Faibles', security: 'Très sécurisé' },
-  polygon: { speed: 'Très rapide', fees: 'Très faibles', security: 'Sécurisé' },
-  solana: { speed: 'Ultra rapide', fees: 'Très faibles', security: 'Sécurisé' }
-};
+interface MobileOperator {
+  id: string;
+  name: string;
+  number_patterns: string[];
+}
+
+interface EnhancedNetworkSelectorProps {
+  selectedCountry: string;
+  onCountryChange: (countryId: string, countryData: Country) => void;
+  selectedOperator: string;
+  onOperatorChange: (operatorId: string) => void;
+  phoneNumber: string;
+  onPhoneNumberChange: (phone: string) => void;
+  onValidationChange: (isValid: boolean) => void;
+}
 
 const EnhancedNetworkSelector: React.FC<EnhancedNetworkSelectorProps> = ({
-  selectedNetwork,
-  onNetworkChange,
-  selectedToken,
-  onTokenChange,
-  className = ''
+  selectedCountry,
+  onCountryChange,
+  selectedOperator,
+  onOperatorChange,
+  phoneNumber,
+  onPhoneNumberChange,
+  onValidationChange
 }) => {
-  const [showDetails, setShowDetails] = useState(false);
-  const currentNetwork = SUPPORTED_NETWORKS.find(n => n.id === selectedNetwork);
-  const availableTokens = currentNetwork?.tokens || [];
-  const features = NetworkFeatures[selectedNetwork as keyof typeof NetworkFeatures];
+  const [countries, setCountries] = useState<Country[]>([]);
+  const [operators, setOperators] = useState<MobileOperator[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [validation, setValidation] = useState<{
+    isValid: boolean;
+    message: string;
+    detectedOperator?: string;
+  }>({ isValid: false, message: '' });
 
-  const getFeatureColor = (type: string, value: string) => {
-    const colors = {
-      speed: {
-        'Ultra rapide': 'text-green-600',
-        'Très rapide': 'text-green-500',
-        'Rapide': 'text-blue-500',
-        'Moyenne': 'text-yellow-500'
-      },
-      fees: {
-        'Très faibles': 'text-green-600',
-        'Faibles': 'text-green-500',
-        'Élevées': 'text-red-500'
-      },
-      security: {
-        'Très sécurisé': 'text-green-600',
-        'Sécurisé': 'text-green-500'
+  // Charger les pays
+  useEffect(() => {
+    const fetchCountries = async () => {
+      setLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from('countries')
+          .select('*')
+          .order('name');
+        
+        if (error) throw error;
+        setCountries(data || []);
+      } catch (error) {
+        console.error('Erreur lors du chargement des pays:', error);
+      } finally {
+        setLoading(false);
       }
     };
-    return colors[type as keyof typeof colors]?.[value as keyof any] || 'text-muted-foreground';
+    
+    fetchCountries();
+  }, []);
+
+  // Charger les opérateurs quand un pays est sélectionné
+  useEffect(() => {
+    const fetchOperators = async () => {
+      if (!selectedCountry) {
+        setOperators([]);
+        return;
+      }
+
+      setLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from('mobile_operators')
+          .select('*')
+          .eq('country_id', selectedCountry)
+          .order('name');
+        
+        if (error) throw error;
+        setOperators(data || []);
+      } catch (error) {
+        console.error('Erreur lors du chargement des opérateurs:', error);
+        setOperators([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchOperators();
+  }, [selectedCountry]);
+
+  // Valider le numéro de téléphone
+  useEffect(() => {
+    const validatePhoneNumber = () => {
+      if (!phoneNumber || !selectedCountry) {
+        setValidation({ isValid: false, message: '' });
+        onValidationChange(false);
+        return;
+      }
+
+      const selectedCountryData = countries.find(c => c.id === selectedCountry);
+      if (!selectedCountryData) {
+        setValidation({ isValid: false, message: 'Pays non trouvé' });
+        onValidationChange(false);
+        return;
+      }
+
+      // Nettoyer le numéro
+      const cleanNumber = phoneNumber.replace(/[\s\-\(\)]/g, '');
+      
+      // Vérifier le format avec l'indicatif du pays
+      const fullNumber = cleanNumber.startsWith(selectedCountryData.phone_prefix) 
+        ? cleanNumber 
+        : selectedCountryData.phone_prefix + cleanNumber;
+
+      // Chercher l'opérateur correspondant
+      const matchingOperator = operators.find(op => 
+        op.number_patterns.some(pattern => {
+          const regex = new RegExp(`^${pattern.replace(/x/g, '\\d')}`);
+          return regex.test(fullNumber);
+        })
+      );
+
+      if (matchingOperator) {
+        setValidation({
+          isValid: true,
+          message: `Numéro valide pour ${matchingOperator.name}`,
+          detectedOperator: matchingOperator.id
+        });
+        onValidationChange(true);
+        
+        // Auto-sélectionner l'opérateur si pas encore sélectionné
+        if (!selectedOperator) {
+          onOperatorChange(matchingOperator.id);
+        }
+      } else {
+        setValidation({
+          isValid: false,
+          message: `Numéro non valide pour ${selectedCountryData.name}`
+        });
+        onValidationChange(false);
+      }
+    };
+
+    validatePhoneNumber();
+  }, [phoneNumber, selectedCountry, operators, countries, selectedOperator, onValidationChange, onOperatorChange]);
+
+  const handleCountryChange = (countryId: string) => {
+    const countryData = countries.find(c => c.id === countryId);
+    if (countryData) {
+      onCountryChange(countryId, countryData);
+      // Reset operator when country changes
+      onOperatorChange('');
+    }
+  };
+
+  const formatPhoneNumber = (phone: string) => {
+    const clean = phone.replace(/[\s\-\(\)]/g, '');
+    if (clean.length >= 8) {
+      return clean.replace(/(\d{2})(\d{2})(\d{2})(\d{2})/, '$1 $2 $3 $4');
+    }
+    return phone;
   };
 
   return (
-    <div className={`space-y-6 animate-slide-in-up ${className}`}>
-      {/* Network Selection */}
-      <div className="space-y-3">
-        <Label htmlFor="network" className="flex items-center gap-2 text-base font-medium">
-          <Network className="h-5 w-5 text-primary" />
-          Réseau blockchain
-        </Label>
-        
-        <Select value={selectedNetwork} onValueChange={onNetworkChange}>
-          <SelectTrigger className="text-base h-12 hover:bg-muted/50 transition-all duration-300 border-2 hover:border-primary/30">
-            <SelectValue placeholder="Sélectionner un réseau" />
+    <div className="space-y-4">
+      {/* Sélection du pays */}
+      <div className="space-y-2">
+        <Label>Pays</Label>
+        <Select value={selectedCountry} onValueChange={handleCountryChange}>
+          <SelectTrigger>
+            <SelectValue placeholder="Sélectionnez un pays" />
           </SelectTrigger>
-          <SelectContent className="bg-background border-2 shadow-xl z-50 max-w-sm">
-            {SUPPORTED_NETWORKS.map((network) => (
-              <SelectItem 
-                key={network.id} 
-                value={network.id}
-                className="hover:bg-muted/50 transition-colors p-3 cursor-pointer"
-              >
-                <div className="flex items-center gap-3 w-full">
-                  <span className="text-xl">{network.icon}</span>
-                  <div className="flex flex-col flex-1">
-                    <span className="font-medium text-sm">{network.name}</span>
-                    <div className="flex items-center gap-2 mt-1">
-                      <Badge variant="outline" className="text-xs px-2 py-0.5">
-                        {network.symbol}
-                      </Badge>
-                      <span className="text-xs text-muted-foreground">
-                        Chain {network.chainId}
-                      </span>
-                    </div>
-                  </div>
+          <SelectContent>
+            {countries.map((country) => (
+              <SelectItem key={country.id} value={country.id}>
+                <div className="flex items-center gap-2">
+                  <span>{country.flag_emoji}</span>
+                  <span>{country.name}</span>
+                  <Badge variant="outline">{country.phone_prefix}</Badge>
                 </div>
               </SelectItem>
             ))}
@@ -98,142 +195,60 @@ const EnhancedNetworkSelector: React.FC<EnhancedNetworkSelectorProps> = ({
         </Select>
       </div>
 
-      {/* Token Selection */}
-      <div className="space-y-3">
-        <Label htmlFor="token" className="flex items-center gap-2 text-base font-medium">
-          <Coins className="h-5 w-5 text-primary" />
-          Token
-        </Label>
-        
-        <Select 
-          value={selectedToken} 
-          onValueChange={onTokenChange}
-          disabled={!currentNetwork}
-        >
-          <SelectTrigger className="text-base h-12 hover:bg-muted/50 transition-all duration-300 border-2 hover:border-primary/30">
-            <SelectValue placeholder="Sélectionner un token" />
-          </SelectTrigger>
-          <SelectContent className="bg-background border-2 shadow-xl z-50">
-            {availableTokens.map((token) => (
-              <SelectItem 
-                key={token.symbol} 
-                value={token.symbol}
-                className="hover:bg-muted/50 transition-colors p-3"
-              >
-                <div className="flex items-center justify-between w-full">
-                  <div className="flex items-center gap-2">
-                    <span className="font-medium">{token.symbol}</span>
-                    <Badge variant="secondary" className="text-xs">
-                      {token.decimals} dec
-                    </Badge>
-                  </div>
-                  <Badge variant="outline" className="text-xs">
-                    {currentNetwork?.symbol}
-                  </Badge>
-                </div>
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-
-      {/* Network Details Card */}
-      {currentNetwork && (
-        <Card className="bg-gradient-to-br from-primary/5 via-transparent to-accent/5 border-primary/20 animate-fade-in">
-          <CardContent className="p-4">
-            <div className="flex items-start justify-between mb-4">
-              <div className="flex items-center gap-3">
-                <span className="text-2xl">{currentNetwork.icon}</span>
-                <div>
-                  <h3 className="font-semibold text-lg">{currentNetwork.name}</h3>
-                  <div className="flex items-center gap-2 mt-1">
-                    <Badge variant="secondary" className="text-xs">
-                      Chain ID: {currentNetwork.chainId}
-                    </Badge>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => window.open(currentNetwork.blockExplorer, '_blank')}
-                      className="h-6 px-2 text-xs hover:bg-primary/10"
-                    >
-                      <ExternalLink className="h-3 w-3 mr-1" />
-                      Explorer
-                    </Button>
-                  </div>
-                </div>
-              </div>
-              
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setShowDetails(!showDetails)}
-                className="hover:bg-primary/10"
-              >
-                {showDetails ? 'Masquer' : 'Détails'}
-              </Button>
+      {/* Numéro de téléphone */}
+      <div className="space-y-2">
+        <Label>Numéro Mobile Money</Label>
+        <div className="relative">
+          <Input
+            type="tel"
+            placeholder="Ex: 70 12 34 56"
+            value={formatPhoneNumber(phoneNumber)}
+            onChange={(e) => onPhoneNumberChange(e.target.value.replace(/\s/g, ''))}
+            className={validation.isValid ? 'border-green-500' : validation.message && !validation.isValid ? 'border-red-500' : ''}
+          />
+          {validation.message && (
+            <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+              {validation.isValid ? (
+                <CheckCircle className="h-4 w-4 text-green-500" />
+              ) : (
+                <AlertCircle className="h-4 w-4 text-red-500" />
+              )}
             </div>
+          )}
+        </div>
+        {validation.message && (
+          <p className={`text-xs ${validation.isValid ? 'text-green-600' : 'text-red-600'}`}>
+            {validation.message}
+          </p>
+        )}
+      </div>
 
-            {/* Network Features */}
-            {features && (
-              <div className="grid grid-cols-3 gap-3 mb-4">
-                <div className="flex items-center gap-2 p-2 bg-background/50 rounded-lg">
-                  <Zap className="h-4 w-4 text-yellow-500" />
-                  <div className="text-center">
-                    <p className="text-xs text-muted-foreground">Vitesse</p>
-                    <p className={`text-xs font-medium ${getFeatureColor('speed', features.speed)}`}>
-                      {features.speed}
-                    </p>
-                  </div>
-                </div>
-                
-                <div className="flex items-center gap-2 p-2 bg-background/50 rounded-lg">
-                  <Coins className="h-4 w-4 text-blue-500" />
-                  <div className="text-center">
-                    <p className="text-xs text-muted-foreground">Frais</p>
-                    <p className={`text-xs font-medium ${getFeatureColor('fees', features.fees)}`}>
-                      {features.fees}
-                    </p>
-                  </div>
-                </div>
-                
-                <div className="flex items-center gap-2 p-2 bg-background/50 rounded-lg">
-                  <Shield className="h-4 w-4 text-green-500" />
-                  <div className="text-center">
-                    <p className="text-xs text-muted-foreground">Sécurité</p>
-                    <p className={`text-xs font-medium ${getFeatureColor('security', features.security)}`}>
-                      {features.security}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
+      {/* Sélection de l'opérateur */}
+      {operators.length > 0 && (
+        <div className="space-y-2">
+          <Label>Opérateur Mobile Money</Label>
+          <Select value={selectedOperator} onValueChange={onOperatorChange}>
+            <SelectTrigger>
+              <SelectValue placeholder="Sélectionnez un opérateur" />
+            </SelectTrigger>
+            <SelectContent>
+              {operators.map((operator) => (
+                <SelectItem key={operator.id} value={operator.id}>
+                  {operator.name}
+                  {validation.detectedOperator === operator.id && (
+                    <Badge variant="secondary" className="ml-2">Détecté</Badge>
+                  )}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      )}
 
-            {/* Available Tokens */}
-            {showDetails && (
-              <div className="animate-slide-in-down">
-                <div className="border-t pt-4">
-                  <h4 className="text-sm font-medium mb-3 flex items-center gap-2">
-                    <Coins className="h-4 w-4" />
-                    Tokens disponibles
-                  </h4>
-                  <div className="grid grid-cols-2 gap-2">
-                    {availableTokens.map((token) => (
-                      <div
-                        key={token.symbol}
-                        className="flex items-center justify-between p-2 bg-background/50 rounded-lg"
-                      >
-                        <span className="text-sm font-medium">{token.symbol}</span>
-                        <Badge variant="outline" className="text-xs">
-                          {token.decimals} dec
-                        </Badge>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+      {loading && (
+        <div className="text-sm text-muted-foreground">
+          Chargement...
+        </div>
       )}
     </div>
   );
