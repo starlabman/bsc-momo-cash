@@ -165,6 +165,7 @@ const EnhancedNetworkSelector: React.FC<EnhancedNetworkSelectorProps> = ({
   };
 
   const formatPhoneNumber = (phone: string) => {
+    if (!phone) return '';
     const clean = phone.replace(/[\s\-\(\)]/g, '');
     if (clean.length >= 8) {
       return clean.replace(/(\d{2})(\d{2})(\d{2})(\d{2})/, '$1 $2 $3 $4');
