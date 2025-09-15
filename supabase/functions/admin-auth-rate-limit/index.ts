@@ -96,12 +96,16 @@ serve(async (req) => {
         });
       }
 
+      console.log(`Attempting login for username: ${sanitizedUsername}`);
+      
       // Verify admin credentials using the database function
       const { data: isValid, error: verifyError } = await supabase
         .rpc('verify_admin_password', {
           p_username: sanitizedUsername,
           p_password: sanitizedPassword
         });
+
+      console.log(`Password verification result: valid=${isValid}, error=${verifyError?.message}`);
 
       if (verifyError || !isValid) {
         recordFailedAttempt(clientIP);
