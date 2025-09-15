@@ -201,7 +201,16 @@ serve(async (req) => {
     }
 
     if (req.method === 'POST') {
-      const { table, id, status, notes, transaction_hash } = await req.json();
+      let requestBody;
+      try {
+        const text = await req.text();
+        requestBody = text ? JSON.parse(text) : {};
+      } catch (error) {
+        console.error('Error parsing request body:', error);
+        requestBody = {};
+      }
+      
+      const { table, id, status, notes, transaction_hash } = requestBody;
       
       // Input sanitization
       const sanitizedNotes = notes ? notes.trim().substring(0, 1000) : notes;
@@ -279,7 +288,16 @@ serve(async (req) => {
 
     if (req.method === 'PATCH') {
       // Update request status
-      const { id, status, notes, transaction_hash, table } = await req.json();
+      let requestBody;
+      try {
+        const text = await req.text();
+        requestBody = text ? JSON.parse(text) : {};
+      } catch (error) {
+        console.error('Error parsing request body:', error);
+        requestBody = {};
+      }
+      
+      const { id, status, notes, transaction_hash, table } = requestBody;
 
       if (!id || !status) {
         return new Response(JSON.stringify({ 
@@ -287,7 +305,7 @@ serve(async (req) => {
           error: 'Missing required fields: id, status' 
         }), {
           status: 400,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          headers: { ...securityHeaders, 'Content-Type': 'application/json' },
         });
       }
 
@@ -311,7 +329,7 @@ serve(async (req) => {
         success: true,
         data: updatedRequest
       }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...securityHeaders, 'Content-Type': 'application/json' },
       });
     }
 
@@ -330,7 +348,7 @@ serve(async (req) => {
       error: 'Internal server error'
     }), {
       status: 500,
-      headers: { ...securityHeaders, 'Content-Type': 'application/json' },
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
 });
