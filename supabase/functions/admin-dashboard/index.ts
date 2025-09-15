@@ -25,17 +25,67 @@ async function validateAdminToken(authHeader: string | null): Promise<boolean> {
   }
 
   const token = authHeader.substring(7); // Remove 'Bearer ' prefix
+  console.log('Received token for validation:', token);
   
   try {
-    const { data: isValid, error } = await supabase
-      .rpc('validate_admin_jwt', { p_token: token });
-    
-    if (error) {
-      console.error('Token validation error:', error);
-      return false;
+    // Parse the token if it's a JSON string
+    let tokenData;
+    try {
+      tokenData = JSON.parse(token);
+    } catch {
+      // If it's not JSON, try to validate as-is
+      const { data: isValid, error } = await supabase
+        .rpc('validate_admin_jwt', { p_token: token });
+      
+      if (error) {
+        console.error('Token validation error:', error);
+        return false;
+      }
+      
+      return isValid || false;
     }
     
-    return isValid || false;
+    // If it's a JSON object, validate using the parsed data
+    if (tokenData && typeof tokenData === 'object') {
+      console.log('Validating JSON token:', tokenData);
+      
+      // Check if token has required fields
+      if (!tokenData.admin_id || !tokenData.expires_at || !tokenData.token_type) {
+        console.log('Token missing required fields');
+        return false;
+      }
+      
+      // Check token type
+      if (tokenData.token_type !== 'admin_access') {
+        console.log('Invalid token type:', tokenData.token_type);
+        return false;
+      }
+      
+      // Check expiration
+      const now = Math.floor(Date.now() / 1000);
+      if (now > tokenData.expires_at) {
+        console.log('Token expired:', { now, expires_at: tokenData.expires_at });
+        return false;
+      }
+      
+      // Verify admin exists
+      const { data: adminExists, error: adminError } = await supabase
+        .from('admin_users')
+        .select('id')
+        .eq('id', tokenData.admin_id)
+        .eq('username', tokenData.username)
+        .single();
+      
+      if (adminError || !adminExists) {
+        console.log('Admin user not found or error:', adminError);
+        return false;
+      }
+      
+      console.log('Token validation successful');
+      return true;
+    }
+    
+    return false;
   } catch (error) {
     console.error('Token validation exception:', error);
     return false;
