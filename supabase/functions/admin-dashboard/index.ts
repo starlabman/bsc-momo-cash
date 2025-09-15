@@ -99,11 +99,23 @@ serve(async (req) => {
   }
 
   try {
+    console.log('=== ADMIN DASHBOARD REQUEST START ===');
+    console.log('Request method:', req.method);
+    console.log('Request URL:', req.url);
+    
     // Validate admin authentication for all requests
     const authHeader = req.headers.get('authorization');
+    console.log('Auth header received:', authHeader ? 'YES' : 'NO');
+    
+    if (authHeader) {
+      console.log('Auth header value:', authHeader.substring(0, 50) + '...');
+    }
+    
     const isValidAdmin = await validateAdminToken(authHeader);
+    console.log('Token validation result:', isValidAdmin);
     
     if (!isValidAdmin) {
+      console.log('ACCESS DENIED: Invalid token');
       return new Response(JSON.stringify({ 
         success: false, 
         error: 'Unauthorized: Invalid or expired admin token' 
@@ -113,7 +125,7 @@ serve(async (req) => {
       });
     }
 
-    console.log('Admin access granted for dashboard request');
+    console.log('ACCESS GRANTED: Valid admin token');
     
     const url = new URL(req.url);
     const action = url.searchParams.get('action');
