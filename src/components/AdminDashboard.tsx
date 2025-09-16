@@ -112,22 +112,33 @@ const AdminDashboard = () => {
   const fetchRequests = async () => {
     setLoading(true);
     try {
+      console.log('=== FETCH REQUESTS DEBUG ===');
+      const authHeaders = getAuthHeaders();
+      console.log('Auth headers:', authHeaders);
+      
       const { data, error } = await supabase.functions.invoke('admin-dashboard', {
-        headers: getAuthHeaders()
+        headers: authHeaders
       });
+      
+      console.log('Function response data:', data);
+      console.log('Function response error:', error);
+      
       if (error) throw error;
 
-      if (data.success) {
+      if (data?.success) {
+        console.log('Setting requests:', data.data.requests);
+        console.log('Setting stats:', data.data.stats);
         setRequests(data.data.requests);
         setStats(data.data.stats);
       } else {
-        throw new Error(data.error);
+        console.error('Function returned error:', data?.error);
+        throw new Error(data?.error || 'Unknown error');
       }
     } catch (error) {
       console.error('Error fetching requests:', error);
       toast({
         title: "Erreur",
-        description: "Impossible de charger les demandes",
+        description: `Impossible de charger les demandes: ${error instanceof Error ? error.message : 'Erreur inconnue'}`,
         variant: "destructive",
       });
     } finally {
@@ -138,23 +149,32 @@ const AdminDashboard = () => {
   const fetchOnrampRequests = async () => {
     setLoading(true);
     try {
+      console.log('=== FETCH ONRAMP REQUESTS DEBUG ===');
+      const authHeaders = getAuthHeaders();
+      console.log('Auth headers:', authHeaders);
+      
       const { data, error } = await supabase.functions.invoke('admin-dashboard', {
         body: { table: 'onramp_requests' },
-        headers: getAuthHeaders()
+        headers: authHeaders
       });
+
+      console.log('Onramp function response data:', data);
+      console.log('Onramp function response error:', error);
 
       if (error) throw error;
 
-      if (data.success) {
+      if (data?.success) {
+        console.log('Setting onramp requests:', data.data.requests || []);
         setOnrampRequests(data.data.requests || []);
       } else {
-        throw new Error(data.error);
+        console.error('Onramp function returned error:', data?.error);
+        throw new Error(data?.error || 'Unknown error');
       }
     } catch (error) {
       console.error('Error fetching onramp requests:', error);
       toast({
         title: "Erreur",
-        description: "Impossible de charger les demandes onramp",
+        description: `Impossible de charger les demandes onramp: ${error instanceof Error ? error.message : 'Erreur inconnue'}`,
         variant: "destructive",
       });
     } finally {
