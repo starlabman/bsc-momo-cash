@@ -14,6 +14,9 @@ const supabase = createClient(
     auth: {
       autoRefreshToken: false,
       persistSession: false
+    },
+    db: {
+      schema: 'public'
     }
   }
 );
@@ -103,6 +106,18 @@ serve(async (req) => {
     console.log('Request method:', req.method);
     console.log('Request URL:', req.url);
     
+    // Create admin supabase client for database operations
+    const adminSupabase = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+      {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false
+        }
+      }
+    );
+    
     // Validate admin authentication for all requests
     const authHeader = req.headers.get('authorization');
     console.log('Auth header received:', authHeader ? 'YES' : 'NO');
@@ -145,7 +160,9 @@ serve(async (req) => {
       const limit = parseInt(url.searchParams.get('limit') || '50');
       const offset = (page - 1) * limit;
 
-      let query = supabase
+      console.log('Attempting to fetch offramp requests...');
+
+      let query = adminSupabase
         .from('offramp_requests')
         .select('*', { count: 'exact' })
         .order('created_at', { ascending: false })
@@ -155,6 +172,7 @@ serve(async (req) => {
         query = query.eq('status', status);
       }
 
+      console.log('Executing query for offramp requests...');
       const { data: requests, error: requestsError, count } = await query;
       
       if (requestsError) {
@@ -169,7 +187,8 @@ serve(async (req) => {
       }
 
       // Fetch statistics
-      const { data: stats, error: statsError } = await supabase
+      console.log('Attempting to fetch stats...');
+      const { data: stats, error: statsError } = await adminSupabase
         .rpc('get_request_stats');
 
       if (statsError) {
@@ -218,7 +237,8 @@ serve(async (req) => {
       
       // Handle GET requests for onramp data
       if (table === 'onramp_requests' && !id) {
-        const { data: requests, error } = await supabase
+        console.log('Attempting to fetch onramp requests...');
+        const { data: requests, error } = await adminSupabase
           .from('onramp_requests')
           .select('*')
           .order('created_at', { ascending: false });
@@ -260,7 +280,7 @@ serve(async (req) => {
 
       const tableName = table === 'onramp_requests' ? 'onramp_requests' : 'offramp_requests';
       
-      const { data, error } = await supabase
+      const { data, error } = await adminSupabase
         .from(tableName)
         .update(updateData)
         .eq('id', id)
@@ -314,7 +334,7 @@ serve(async (req) => {
       if (notes) updateData.notes = notes;
       if (transaction_hash) updateData.transaction_hash = transaction_hash;
 
-      const { data: updatedRequest, error: updateError } = await supabase
+      const { data: updatedRequest, error: updateError } = await adminSupabase
         .from(targetTable)
         .update(updateData)
         .eq('id', id)
