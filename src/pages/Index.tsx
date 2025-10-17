@@ -134,7 +134,7 @@ const Index = () => {
       {/* Footer */}
       <footer className="border-t bg-gradient-to-r from-muted/10 via-muted/20 to-muted/10 backdrop-blur-sm mt-20">
         <div className="container mx-auto px-4 py-12">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
             <div className="space-y-4">
               <div className="flex items-center gap-3">
                 <div className="h-8 w-8 bg-gradient-primary rounded-lg flex items-center justify-center">
@@ -162,16 +162,26 @@ const Index = () => {
             
             <div className="space-y-4">
               <h3 className="font-semibold text-foreground">Pays supportés</h3>
-              <div className="flex flex-wrap gap-2">
-                <Badge variant="outline" className="text-xs">🇧🇯 Bénin</Badge>
-                <Badge variant="outline" className="text-xs">🇧🇫 Burkina Faso</Badge>
-                <Badge variant="outline" className="text-xs">🇨🇮 Côte d'Ivoire</Badge>
-                <Badge variant="outline" className="text-xs">🇬🇳 Guinée</Badge>
-                <Badge variant="outline" className="text-xs">🇲🇱 Mali</Badge>
-                <Badge variant="outline" className="text-xs">🇳🇪 Niger</Badge>
-                <Badge variant="outline" className="text-xs">🇸🇳 Sénégal</Badge>
-                <Badge variant="outline" className="text-xs">🇹🇬 Togo</Badge>
+              <div className="flex flex-wrap gap-3 text-3xl">
+                <span className="hover:scale-125 transition-transform cursor-pointer" title="Bénin">🇧🇯</span>
+                <span className="hover:scale-125 transition-transform cursor-pointer" title="Burkina Faso">🇧🇫</span>
+                <span className="hover:scale-125 transition-transform cursor-pointer" title="Côte d'Ivoire">🇨🇮</span>
+                <span className="hover:scale-125 transition-transform cursor-pointer" title="Guinée">🇬🇳</span>
+                <span className="hover:scale-125 transition-transform cursor-pointer" title="Mali">🇲🇱</span>
+                <span className="hover:scale-125 transition-transform cursor-pointer" title="Niger">🇳🇪</span>
+                <span className="hover:scale-125 transition-transform cursor-pointer" title="Sénégal">🇸🇳</span>
+                <span className="hover:scale-125 transition-transform cursor-pointer" title="Togo">🇹🇬</span>
               </div>
+            </div>
+            
+            <div className="space-y-4">
+              <h3 className="font-semibold text-foreground">Avantages</h3>
+              <ul className="text-sm text-muted-foreground space-y-2">
+                <li>• Sans frais utilisateur</li>
+                <li>• Conversion instantanée</li>
+                <li>• Sans vérification KYC</li>
+                <li>• Support 24/7</li>
+              </ul>
             </div>
           </div>
           
