@@ -136,18 +136,6 @@ const Index = () => {
         <div className="container mx-auto px-4 py-12">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
             <div className="space-y-4">
-              <div className="flex items-center gap-3">
-                <div className="h-8 w-8 bg-gradient-primary rounded-lg flex items-center justify-center">
-                  <ArrowRightLeft className="h-5 w-5 text-white" />
-                </div>
-                <span className="text-lg font-bold bg-gradient-hero bg-clip-text text-transparent">CryptoMomo</span>
-              </div>
-              <p className="text-sm text-muted-foreground">
-                Solution off-ramp crypto vers Mobile Money multi-blockchain.
-              </p>
-            </div>
-            
-            <div className="space-y-4">
               <h3 className="font-semibold text-foreground">Réseaux supportés</h3>
               <div className="flex flex-wrap gap-2">
                 <Badge variant="outline" className="text-xs">BSC</Badge>
@@ -158,6 +146,18 @@ const Index = () => {
                 <Badge variant="outline" className="text-xs">Optimism</Badge>
                 <Badge variant="outline" className="text-xs">Lisk</Badge>
               </div>
+            </div>
+            
+            <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="h-8 w-8 bg-gradient-primary rounded-lg flex items-center justify-center">
+                  <ArrowRightLeft className="h-5 w-5 text-white" />
+                </div>
+                <span className="text-lg font-bold bg-gradient-hero bg-clip-text text-transparent">CryptoMomo</span>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Solution off-ramp crypto vers Mobile Money multi-blockchain.
+              </p>
             </div>
             
             <div className="space-y-4">
