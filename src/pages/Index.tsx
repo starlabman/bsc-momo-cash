@@ -154,17 +154,24 @@ const Index = () => {
                 <Badge variant="outline" className="text-xs">Ethereum</Badge>
                 <Badge variant="outline" className="text-xs">Tron</Badge>
                 <Badge variant="outline" className="text-xs">Solana</Badge>
+                <Badge variant="outline" className="text-xs">Arbitrum</Badge>
+                <Badge variant="outline" className="text-xs">Optimism</Badge>
+                <Badge variant="outline" className="text-xs">Lisk</Badge>
               </div>
             </div>
             
             <div className="space-y-4">
-              <h3 className="font-semibold text-foreground">Avantages</h3>
-              <ul className="text-sm text-muted-foreground space-y-2">
-                <li>• Sans frais utilisateur</li>
-                <li>• Conversion instantanée</li>
-                <li>• Sans vérification KYC</li>
-                <li>• Support 24/7</li>
-              </ul>
+              <h3 className="font-semibold text-foreground">Pays supportés</h3>
+              <div className="flex flex-wrap gap-2">
+                <Badge variant="outline" className="text-xs">🇧🇯 Bénin</Badge>
+                <Badge variant="outline" className="text-xs">🇧🇫 Burkina Faso</Badge>
+                <Badge variant="outline" className="text-xs">🇨🇮 Côte d'Ivoire</Badge>
+                <Badge variant="outline" className="text-xs">🇬🇳 Guinée</Badge>
+                <Badge variant="outline" className="text-xs">🇲🇱 Mali</Badge>
+                <Badge variant="outline" className="text-xs">🇳🇪 Niger</Badge>
+                <Badge variant="outline" className="text-xs">🇸🇳 Sénégal</Badge>
+                <Badge variant="outline" className="text-xs">🇹🇬 Togo</Badge>
+              </div>
             </div>
           </div>
           
