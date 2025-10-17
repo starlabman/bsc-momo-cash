@@ -140,7 +140,18 @@ serve(async (req) => {
       });
     }
 
-    console.log('ACCESS GRANTED: Valid admin token');
+      console.log('ACCESS GRANTED: Valid admin token');
+    
+    // Extract admin info from token for audit logging
+    let adminId = null;
+    let adminUsername = null;
+    try {
+      const tokenData = JSON.parse(authHeader.substring(7));
+      adminId = tokenData.admin_id;
+      adminUsername = tokenData.username;
+    } catch (error) {
+      console.error('Error extracting admin info from token:', error);
+    }
     
     const url = new URL(req.url);
     const action = url.searchParams.get('action');
@@ -185,6 +196,18 @@ serve(async (req) => {
           headers: { ...securityHeaders, 'Content-Type': 'application/json' },
         });
       }
+
+      // Log admin access for audit trail
+      if (adminId && adminUsername) {
+        await adminSupabase.from('admin_audit_logs').insert({
+          admin_id: adminId,
+          admin_username: adminUsername,
+          action: 'VIEW_OFFRAMP_REQUESTS',
+          entity_type: 'offramp_requests',
+          entity_id: 'bulk',
+          ip_address: req.headers.get('x-forwarded-for') || 'unknown',
+          details: { count: requests?.length || 0, status_filter: status }
+        });
 
       // Fetch statistics
       console.log('Attempting to fetch stats...');
@@ -251,6 +274,19 @@ serve(async (req) => {
           }), {
             status: 500,
             headers: { ...securityHeaders, 'Content-Type': 'application/json' },
+          });
+        }
+
+        // Log admin access for audit trail
+        if (adminId && adminUsername) {
+          await adminSupabase.from('admin_audit_logs').insert({
+            admin_id: adminId,
+            admin_username: adminUsername,
+            action: 'VIEW_ONRAMP_REQUESTS',
+            entity_type: 'onramp_requests',
+            entity_id: 'bulk',
+            ip_address: req.headers.get('x-forwarded-for') || 'unknown',
+            details: { count: requests?.length || 0 }
           });
         }
         

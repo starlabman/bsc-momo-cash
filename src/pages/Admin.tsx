@@ -5,14 +5,19 @@ import { ArrowRightLeft, LogOut, User } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import AdminDashboard from '@/components/AdminDashboard';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 const Admin = () => {
   const [adminUser, setAdminUser] = useState<any>(null);
+  const [isValidating, setIsValidating] = useState(true);
   const navigate = useNavigate();
   const { toast } = useToast();
 
   useEffect(() => {
-    // Check if admin is logged in and validate token
+    validateSession();
+  }, [navigate]);
+
+  const validateSession = async () => {
     const token = localStorage.getItem('admin_token');
     const user = localStorage.getItem('admin_user');
 
@@ -23,31 +28,23 @@ const Admin = () => {
 
     try {
       const adminUser = JSON.parse(user);
-      setAdminUser(adminUser);
       
-      // Validate the JWT token to ensure it's still valid
-      validateAdminToken(token);
-    } catch {
-      // Clear invalid data and redirect
-      localStorage.removeItem('admin_token');
-      localStorage.removeItem('admin_user');
-      navigate('/admin/login');
-    }
-  }, [navigate]);
+      // CRITICAL: Validate token server-side using the validate-admin-token edge function
+      const { data, error } = await supabase.functions.invoke('validate-admin-token', {
+        body: { token }
+      });
 
-  const validateAdminToken = async (token: string) => {
-    try {
-      // Parse the JWT token to check expiration client-side first
-      const tokenData = JSON.parse(token);
-      const currentTime = Math.floor(Date.now() / 1000);
-      
-      if (tokenData.expires_at && currentTime > tokenData.expires_at) {
-        // Token expired
+      if (error || !data?.valid) {
+        console.error('Server-side token validation failed:', error);
         handleSessionExpired();
         return;
       }
-    } catch {
-      // Invalid token format
+
+      // Token is valid, set admin user
+      setAdminUser(adminUser);
+      setIsValidating(false);
+    } catch (error) {
+      console.error('Session validation error:', error);
       handleSessionExpired();
     }
   };
@@ -79,8 +76,15 @@ const Admin = () => {
     navigate('/');
   };
 
-  if (!adminUser) {
-    return null; // Will redirect in useEffect
+  if (isValidating || !adminUser) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-4 text-muted-foreground">Validation de la session...</p>
+        </div>
+      </div>
+    );
   }
 
   return (

@@ -1,6 +1,7 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.52.1';
+import { z } from 'https://deno.land/x/zod@v3.22.4/mod.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -12,6 +13,28 @@ const supabase = createClient(
   Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
 );
 
+// Allowed mobile operators for validation
+const ALLOWED_MOMO_PROVIDERS = ['MTN', 'Moov', 'Orange', 'Wave', 'Free'];
+
+// Validation schema using zod
+const onrampRequestSchema = z.object({
+  xofAmount: z.number().min(100).max(600000),
+  token: z.enum(['USDC', 'USDT']),
+  momoNumber: z.string()
+    .min(8)
+    .max(20)
+    .regex(/^[\d+\s()-]+$/, 'Mobile number must contain only digits, +, spaces, (), or -'),
+  momoProvider: z.string()
+    .max(50)
+    .optional()
+    .refine((val) => !val || ALLOWED_MOMO_PROVIDERS.includes(val), {
+      message: 'Invalid mobile operator'
+    }),
+  recipientAddress: z.string()
+    .regex(/^0x[a-fA-F0-9]{40}$/, 'Invalid BSC address format'),
+  countryId: z.string().uuid().optional()
+});
+
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -19,51 +42,29 @@ serve(async (req) => {
   }
 
   try {
-    const { xofAmount, token, momoNumber, momoProvider, recipientAddress, countryId } = await req.json();
+    const rawBody = await req.json();
 
-    console.log('Creating onramp request:', { xofAmount, token, momoNumber, momoProvider, recipientAddress });
-
-    // Validation
-    if (!xofAmount || !token || !momoNumber || !recipientAddress) {
+    // Validate and sanitize input using zod schema
+    const validationResult = onrampRequestSchema.safeParse(rawBody);
+    
+    if (!validationResult.success) {
+      console.error('Validation error:', validationResult.error.errors);
       return new Response(JSON.stringify({ 
         success: false, 
-        error: 'Missing required fields: xofAmount, token, momoNumber, recipientAddress' 
+        error: 'Invalid input data',
+        details: validationResult.error.errors[0]?.message || 'Validation failed'
       }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    if (xofAmount <= 0 || xofAmount > 600000) {
-      return new Response(JSON.stringify({ 
-        success: false, 
-        error: 'Amount must be between 0 and 600,000 XOF' 
-      }), {
-        status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
+    const { xofAmount, token, momoNumber, momoProvider, recipientAddress, countryId } = validationResult.data;
 
-    if (!['USDC', 'USDT'].includes(token)) {
-      return new Response(JSON.stringify({ 
-        success: false, 
-        error: 'Token must be USDC or USDT' 
-      }), {
-        status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
-
-    // Basic BSC address validation
-    if (!/^0x[a-fA-F0-9]{40}$/.test(recipientAddress)) {
-      return new Response(JSON.stringify({ 
-        success: false, 
-        error: 'Invalid BSC address format' 
-      }), {
-        status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
+    // Sanitize mobile number - remove all non-digit/+ characters
+    const sanitizedMomoNumber = momoNumber.replace(/[^\d+]/g, '');
+    
+    console.log('Creating onramp request with validated data');
 
     // Get current exchange rate
     const { data: rateConfig, error: rateError } = await supabase
@@ -85,7 +86,7 @@ serve(async (req) => {
     const usdAmount = xofAmount / finalRate;
     const cryptoAmount = usdAmount; // 1:1 for stablecoins
 
-    // Create onramp request
+    // Create onramp request with sanitized data
     const { data: request, error: insertError } = await supabase
       .from('onramp_requests')
       .insert({
@@ -93,7 +94,7 @@ serve(async (req) => {
         usd_amount: usdAmount,
         crypto_amount: cryptoAmount,
         token: token,
-        momo_number: momoNumber,
+        momo_number: sanitizedMomoNumber,
         momo_provider: momoProvider,
         recipient_address: recipientAddress,
         country_id: countryId,
@@ -116,7 +117,7 @@ serve(async (req) => {
         usd_amount: usdAmount,
         crypto_amount: cryptoAmount,
         token: token,
-        momo_number: momoNumber,
+        momo_number: sanitizedMomoNumber,
         momo_provider: momoProvider,
         recipient_address: recipientAddress,
         exchange_rate: finalRate,
@@ -125,7 +126,7 @@ serve(async (req) => {
       }
     };
 
-    console.log('Onramp request created:', result);
+    console.log('Onramp request created successfully');
 
     return new Response(JSON.stringify(result), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
