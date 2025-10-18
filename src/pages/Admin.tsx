@@ -21,6 +21,10 @@ const Admin = () => {
     const token = localStorage.getItem('admin_token');
     const user = localStorage.getItem('admin_user');
 
+    console.log('=== ADMIN SESSION VALIDATION ===');
+    console.log('Token exists:', !!token);
+    console.log('User exists:', !!user);
+
     if (!token || !user) {
       navigate('/admin/login');
       return;
@@ -28,11 +32,14 @@ const Admin = () => {
 
     try {
       const adminUser = JSON.parse(user);
+      console.log('Admin user parsed:', adminUser);
       
       // CRITICAL: Validate token server-side using the validate-admin-token edge function
       const { data, error } = await supabase.functions.invoke('validate-admin-token', {
         body: { token }
       });
+
+      console.log('Token validation response:', { data, error });
 
       if (error || !data?.valid) {
         console.error('Server-side token validation failed:', error);
@@ -41,6 +48,7 @@ const Admin = () => {
       }
 
       // Token is valid, set admin user
+      console.log('Session validated successfully');
       setAdminUser(adminUser);
       setIsValidating(false);
     } catch (error) {
