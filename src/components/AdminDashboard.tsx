@@ -58,6 +58,10 @@ interface DashboardStats {
   failed: number;
   total_volume_usd: number;
   total_volume_xof: number;
+  total_offramp: number;
+  total_onramp: number;
+  pending_onramp: number;
+  completed_onramp: number;
 }
 
 const AdminDashboard = () => {
@@ -302,80 +306,177 @@ const AdminDashboard = () => {
         </Button>
       </div>
 
-      {/* Stats Cards */}
+      {/* Statistiques générales */}
       {stats && (
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        <div className="space-y-4">
+          {/* Volumes totaux */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Card className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900">
+              <CardHeader>
+                <CardTitle className="text-xl flex items-center gap-2">
+                  <TrendingUp className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                  Volume Total USD
+                </CardTitle>
+                <CardDescription>Total des transactions en USD</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-4xl font-bold text-blue-600 dark:text-blue-400">
+                  ${stats.total_volume_usd.toLocaleString('fr-FR', { maximumFractionDigits: 2 })}
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950 dark:to-green-900">
+              <CardHeader>
+                <CardTitle className="text-xl flex items-center gap-2">
+                  <TrendingUp className="h-5 w-5 text-green-600 dark:text-green-400" />
+                  Volume Total XOF
+                </CardTitle>
+                <CardDescription>Total des transactions en XOF</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-4xl font-bold text-green-600 dark:text-green-400">
+                  {stats.total_volume_xof.toLocaleString('fr-FR', { maximumFractionDigits: 0 })} XOF
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Statistiques Offramp */}
           <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-2">
-                <Clock className="h-4 w-4 text-yellow-500" />
-                <div>
-                  <p className="text-xs text-muted-foreground">En attente</p>
-                  <p className="text-xl font-bold">{stats.pending_payment}</p>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <ArrowRightLeft className="h-5 w-5" />
+                Statistiques Offramp (Crypto → Mobile Money)
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
+                <div className="text-center p-3 bg-yellow-50 dark:bg-yellow-950 rounded-lg">
+                  <Clock className="h-5 w-5 text-yellow-600 dark:text-yellow-400 mx-auto mb-2" />
+                  <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{stats.pending_payment}</p>
+                  <p className="text-xs text-muted-foreground mt-1">En attente</p>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-2">
-                <TrendingUp className="h-4 w-4 text-blue-500" />
-                <div>
-                  <p className="text-xs text-muted-foreground">Reçu</p>
-                  <p className="text-xl font-bold">{stats.received}</p>
+                
+                <div className="text-center p-3 bg-blue-50 dark:bg-blue-950 rounded-lg">
+                  <TrendingUp className="h-5 w-5 text-blue-600 dark:text-blue-400 mx-auto mb-2" />
+                  <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{stats.received}</p>
+                  <p className="text-xs text-muted-foreground mt-1">Reçu</p>
+                </div>
+
+                <div className="text-center p-3 bg-orange-50 dark:bg-orange-950 rounded-lg">
+                  <Settings className="h-5 w-5 text-orange-600 dark:text-orange-400 mx-auto mb-2" />
+                  <p className="text-2xl font-bold text-orange-600 dark:text-orange-400">{stats.processing}</p>
+                  <p className="text-xs text-muted-foreground mt-1">En cours</p>
+                </div>
+
+                <div className="text-center p-3 bg-green-50 dark:bg-green-950 rounded-lg">
+                  <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400 mx-auto mb-2" />
+                  <p className="text-2xl font-bold text-green-600 dark:text-green-400">{stats.paid}</p>
+                  <p className="text-xs text-muted-foreground mt-1">Payé</p>
+                </div>
+
+                <div className="text-center p-3 bg-red-50 dark:bg-red-950 rounded-lg">
+                  <XCircle className="h-5 w-5 text-red-600 dark:text-red-400 mx-auto mb-2" />
+                  <p className="text-2xl font-bold text-red-600 dark:text-red-400">{stats.failed}</p>
+                  <p className="text-xs text-muted-foreground mt-1">Échoué</p>
+                </div>
+
+                <div className="text-center p-3 bg-purple-50 dark:bg-purple-950 rounded-lg">
+                  <Users className="h-5 w-5 text-purple-600 dark:text-purple-400 mx-auto mb-2" />
+                  <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">{stats.total_offramp || 0}</p>
+                  <p className="text-xs text-muted-foreground mt-1">Total</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
+          {/* Statistiques Onramp */}
           <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-2">
-                <Settings className="h-4 w-4 text-orange-500" />
-                <div>
-                  <p className="text-xs text-muted-foreground">En cours</p>
-                  <p className="text-xl font-bold">{stats.processing}</p>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <ArrowDownUp className="h-5 w-5" />
+                Statistiques Onramp (Mobile Money → Crypto)
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="text-center p-3 bg-amber-50 dark:bg-amber-950 rounded-lg">
+                  <Clock className="h-5 w-5 text-amber-600 dark:text-amber-400 mx-auto mb-2" />
+                  <p className="text-2xl font-bold text-amber-600 dark:text-amber-400">{stats.pending_onramp || 0}</p>
+                  <p className="text-xs text-muted-foreground mt-1">En attente paiement</p>
+                </div>
+
+                <div className="text-center p-3 bg-emerald-50 dark:bg-emerald-950 rounded-lg">
+                  <CheckCircle className="h-5 w-5 text-emerald-600 dark:text-emerald-400 mx-auto mb-2" />
+                  <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{stats.completed_onramp || 0}</p>
+                  <p className="text-xs text-muted-foreground mt-1">Complété</p>
+                </div>
+
+                <div className="text-center p-3 bg-indigo-50 dark:bg-indigo-950 rounded-lg">
+                  <Users className="h-5 w-5 text-indigo-600 dark:text-indigo-400 mx-auto mb-2" />
+                  <p className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">{stats.total_onramp || 0}</p>
+                  <p className="text-xs text-muted-foreground mt-1">Total</p>
+                </div>
+
+                <div className="text-center p-3 bg-cyan-50 dark:bg-cyan-950 rounded-lg">
+                  <TrendingUp className="h-5 w-5 text-cyan-600 dark:text-cyan-400 mx-auto mb-2" />
+                  <p className="text-2xl font-bold text-cyan-600 dark:text-cyan-400">
+                    {stats.total_onramp && stats.completed_onramp ? 
+                      Math.round((stats.completed_onramp / stats.total_onramp) * 100) : 0}%
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">Taux réussite</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-2">
-                <CheckCircle className="h-4 w-4 text-green-500" />
-                <div>
-                  <p className="text-xs text-muted-foreground">Payé</p>
-                  <p className="text-xl font-bold">{stats.paid}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          {/* Métriques de performance */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-sm">Total Transactions</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-3xl font-bold">
+                  {(stats.total_offramp || 0) + (stats.total_onramp || 0)}
+                </p>
+                <p className="text-xs text-muted-foreground mt-2">
+                  {stats.total_offramp || 0} offramp + {stats.total_onramp || 0} onramp
+                </p>
+              </CardContent>
+            </Card>
 
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-2">
-                <XCircle className="h-4 w-4 text-red-500" />
-                <div>
-                  <p className="text-xs text-muted-foreground">Échoué</p>
-                  <p className="text-xl font-bold">{stats.failed}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-sm">Taux de réussite Offramp</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-3xl font-bold text-green-600 dark:text-green-400">
+                  {stats.total_offramp ? 
+                    Math.round((stats.paid / stats.total_offramp) * 100) : 0}%
+                </p>
+                <p className="text-xs text-muted-foreground mt-2">
+                  {stats.paid} payés sur {stats.total_offramp || 0} total
+                </p>
+              </CardContent>
+            </Card>
 
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-2">
-                <Users className="h-4 w-4 text-purple-500" />
-                <div>
-                  <p className="text-xs text-muted-foreground">Volume USD</p>
-                  <p className="text-lg font-bold">${stats.total_volume_usd.toFixed(0)}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-sm">Montant moyen par transaction</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">
+                  ${stats.total_offramp ? 
+                    (stats.total_volume_usd / stats.total_offramp).toFixed(2) : 0}
+                </p>
+                <p className="text-xs text-muted-foreground mt-2">
+                  Basé sur {stats.total_offramp || 0} transactions offramp
+                </p>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       )}
 
