@@ -208,6 +208,7 @@ serve(async (req) => {
           ip_address: req.headers.get('x-forwarded-for') || 'unknown',
           details: { count: requests?.length || 0, status_filter: status }
         });
+      }
 
       // Fetch statistics
       console.log('Attempting to fetch stats...');
