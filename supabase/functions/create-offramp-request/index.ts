@@ -19,8 +19,6 @@ const TOKEN_ADDRESSES = {
   'USDT': '0x55d398326f99059fF775485246999027B3197955'
 };
 
-// Allowed mobile operators for validation
-const ALLOWED_MOMO_PROVIDERS = ['MTN', 'Moov', 'Orange', 'Wave', 'Free'];
 
 // Validation schema using zod
 const offrampRequestSchema = z.object({
@@ -32,10 +30,7 @@ const offrampRequestSchema = z.object({
     .regex(/^[\d+\s()-]+$/, 'Mobile number must contain only digits, +, spaces, (), or -'),
   momoProvider: z.string()
     .max(50)
-    .optional()
-    .refine((val) => !val || ALLOWED_MOMO_PROVIDERS.includes(val), {
-      message: 'Invalid mobile operator'
-    }),
+    .optional(),
   countryId: z.string().uuid().optional()
 });
 

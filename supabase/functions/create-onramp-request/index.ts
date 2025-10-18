@@ -13,8 +13,6 @@ const supabase = createClient(
   Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
 );
 
-// Allowed mobile operators for validation
-const ALLOWED_MOMO_PROVIDERS = ['MTN', 'Moov', 'Orange', 'Wave', 'Free'];
 
 // Validation schema using zod
 const onrampRequestSchema = z.object({
@@ -26,10 +24,7 @@ const onrampRequestSchema = z.object({
     .regex(/^[\d+\s()-]+$/, 'Mobile number must contain only digits, +, spaces, (), or -'),
   momoProvider: z.string()
     .max(50)
-    .optional()
-    .refine((val) => !val || ALLOWED_MOMO_PROVIDERS.includes(val), {
-      message: 'Invalid mobile operator'
-    }),
+    .optional(),
   recipientAddress: z.string()
     .regex(/^0x[a-fA-F0-9]{40}$/, 'Invalid BSC address format'),
   countryId: z.string().uuid().optional()
