@@ -112,26 +112,26 @@ const AdminDashboard = () => {
   const fetchRequests = async () => {
     setLoading(true);
     try {
-      console.log('=== FETCH REQUESTS DEBUG ===');
       const authHeaders = getAuthHeaders();
-      console.log('Auth headers:', authHeaders);
       
-      const { data, error } = await supabase.functions.invoke('admin-dashboard', {
-        headers: authHeaders
+      const response = await fetch(`https://xusensadnrsodukuzndm.supabase.co/functions/v1/admin-dashboard`, {
+        method: 'GET',
+        headers: {
+          ...authHeaders,
+          'Content-Type': 'application/json'
+        }
       });
       
-      console.log('Function response data:', data);
-      console.log('Function response error:', error);
+      const data = await response.json();
       
-      if (error) throw error;
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
       if (data?.success) {
-        console.log('Setting requests:', data.data.requests);
-        console.log('Setting stats:', data.data.stats);
         setRequests(data.data.requests);
         setStats(data.data.stats);
       } else {
-        console.error('Function returned error:', data?.error);
         throw new Error(data?.error || 'Unknown error');
       }
     } catch (error) {
