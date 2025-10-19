@@ -226,11 +226,34 @@ serve(async (req) => {
         });
       }
 
+      // Fetch blockchain events statistics
+      console.log('Attempting to fetch blockchain stats...');
+      const { data: blockchainEvents, error: blockchainError } = await adminSupabase
+        .from('blockchain_events')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(100);
+
+      if (blockchainError) {
+        console.error('Error fetching blockchain events:', blockchainError);
+      }
+
+      // Calculate blockchain stats
+      const blockchainStats = {
+        total_events: blockchainEvents?.length || 0,
+        processed_events: blockchainEvents?.filter(e => e.processed).length || 0,
+        pending_events: blockchainEvents?.filter(e => !e.processed).length || 0,
+        total_volume: blockchainEvents?.reduce((sum, e) => sum + parseFloat(e.amount || 0), 0) || 0,
+        unique_tokens: [...new Set(blockchainEvents?.map(e => e.token_symbol) || [])].length,
+        recent_events: blockchainEvents?.slice(0, 10) || []
+      };
+
       return new Response(JSON.stringify({
         success: true,
         data: {
           requests: requests || [],
           stats: stats || {},
+          blockchainStats,
           pagination: {
             page,
             limit,

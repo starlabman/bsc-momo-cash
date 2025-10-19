@@ -64,12 +64,22 @@ interface DashboardStats {
   completed_onramp: number;
 }
 
+interface BlockchainStats {
+  total_events: number;
+  processed_events: number;
+  pending_events: number;
+  total_volume: number;
+  unique_tokens: number;
+  recent_events: any[];
+}
+
 const AdminDashboard = () => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [requests, setRequests] = useState<OfframpRequest[]>([]);
   const [onrampRequests, setOnrampRequests] = useState<OnrampRequest[]>([]);
   const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [blockchainStats, setBlockchainStats] = useState<BlockchainStats | null>(null);
   const [selectedRequest, setSelectedRequest] = useState<OfframpRequest | null>(null);
   const [selectedOnrampRequest, setSelectedOnrampRequest] = useState<OnrampRequest | null>(null);
   const [updateData, setUpdateData] = useState({
@@ -135,6 +145,7 @@ const AdminDashboard = () => {
       if (data?.success) {
         setRequests(data.data.requests);
         setStats(data.data.stats);
+        setBlockchainStats(data.data.blockchainStats);
       } else {
         throw new Error(data?.error || 'Unknown error');
       }
@@ -478,6 +489,101 @@ const AdminDashboard = () => {
             </Card>
           </div>
         </div>
+      )}
+
+      {/* Statistiques Blockchain */}
+      {blockchainStats && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <rect x="3" y="3" width="7" height="7" />
+                <rect x="14" y="3" width="7" height="7" />
+                <rect x="14" y="14" width="7" height="7" />
+                <rect x="3" y="14" width="7" height="7" />
+              </svg>
+              Statistiques Blockchain
+            </CardTitle>
+            <CardDescription>Événements et transactions on-chain</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+              <div className="text-center p-3 bg-violet-50 dark:bg-violet-950 rounded-lg">
+                <svg className="h-5 w-5 text-violet-600 dark:text-violet-400 mx-auto mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <rect x="3" y="3" width="7" height="7" />
+                  <rect x="14" y="3" width="7" height="7" />
+                  <rect x="14" y="14" width="7" height="7" />
+                  <rect x="3" y="14" width="7" height="7" />
+                </svg>
+                <p className="text-2xl font-bold text-violet-600 dark:text-violet-400">{blockchainStats.total_events}</p>
+                <p className="text-xs text-muted-foreground mt-1">Total événements</p>
+              </div>
+
+              <div className="text-center p-3 bg-green-50 dark:bg-green-950 rounded-lg">
+                <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400 mx-auto mb-2" />
+                <p className="text-2xl font-bold text-green-600 dark:text-green-400">{blockchainStats.processed_events}</p>
+                <p className="text-xs text-muted-foreground mt-1">Traités</p>
+              </div>
+
+              <div className="text-center p-3 bg-yellow-50 dark:bg-yellow-950 rounded-lg">
+                <Clock className="h-5 w-5 text-yellow-600 dark:text-yellow-400 mx-auto mb-2" />
+                <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{blockchainStats.pending_events}</p>
+                <p className="text-xs text-muted-foreground mt-1">En attente</p>
+              </div>
+
+              <div className="text-center p-3 bg-blue-50 dark:bg-blue-950 rounded-lg">
+                <TrendingUp className="h-5 w-5 text-blue-600 dark:text-blue-400 mx-auto mb-2" />
+                <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                  {blockchainStats.total_volume.toLocaleString('fr-FR', { maximumFractionDigits: 2 })}
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">Volume total</p>
+              </div>
+
+              <div className="text-center p-3 bg-purple-50 dark:bg-purple-950 rounded-lg">
+                <svg className="h-5 w-5 text-purple-600 dark:text-purple-400 mx-auto mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M12 6v6l4 2" />
+                </svg>
+                <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">{blockchainStats.unique_tokens}</p>
+                <p className="text-xs text-muted-foreground mt-1">Tokens uniques</p>
+              </div>
+            </div>
+
+            {/* Recent blockchain events */}
+            {blockchainStats.recent_events.length > 0 && (
+              <div className="mt-4">
+                <h4 className="text-sm font-semibold mb-3">Événements récents</h4>
+                <div className="space-y-2">
+                  {blockchainStats.recent_events.map((event: any) => (
+                    <div key={event.id} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg text-sm">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          <Badge variant={event.processed ? "default" : "secondary"}>
+                            {event.token_symbol}
+                          </Badge>
+                          <span className="font-mono text-xs">{event.amount}</span>
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-1 truncate">
+                          TX: {event.transaction_hash?.substring(0, 20)}...
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <Badge variant={event.processed ? "default" : "outline"}>
+                          {event.processed ? 'Traité' : 'En attente'}
+                        </Badge>
+                        {event.block_number && (
+                          <p className="text-xs text-muted-foreground mt-1">
+                            Bloc #{event.block_number}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
       )}
 
       {/* Requests Tabs */}
