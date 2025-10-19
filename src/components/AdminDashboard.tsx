@@ -71,6 +71,9 @@ interface BlockchainStats {
   total_volume: number;
   unique_tokens: number;
   recent_events: any[];
+  volume_by_blockchain: Array<{ token: string; volume: number; count: number }>;
+  highest_volume_blockchain: { token: string; volume: number; count: number } | null;
+  lowest_volume_blockchain: { token: string; volume: number; count: number } | null;
 }
 
 const AdminDashboard = () => {
@@ -536,7 +539,7 @@ const AdminDashboard = () => {
                 <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
                   {blockchainStats.total_volume.toLocaleString('fr-FR', { maximumFractionDigits: 2 })}
                 </p>
-                <p className="text-xs text-muted-foreground mt-1">Volume total</p>
+                <p className="text-xs text-muted-foreground mt-1">Volume blockchain</p>
               </div>
 
               <div className="text-center p-3 bg-purple-50 dark:bg-purple-950 rounded-lg">
@@ -547,6 +550,80 @@ const AdminDashboard = () => {
                 <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">{blockchainStats.unique_tokens}</p>
                 <p className="text-xs text-muted-foreground mt-1">Tokens uniques</p>
               </div>
+            </div>
+
+            {/* Volume comparison */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              <div className="p-4 bg-gradient-to-br from-indigo-50 to-indigo-100 dark:from-indigo-950 dark:to-indigo-900 rounded-lg">
+                <p className="text-sm text-muted-foreground mb-2">Volume Offramp (XOF)</p>
+                <p className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
+                  {stats?.total_volume_xof?.toLocaleString('fr-FR', { maximumFractionDigits: 0 }) || '0'} XOF
+                </p>
+              </div>
+              <div className="p-4 bg-gradient-to-br from-cyan-50 to-cyan-100 dark:from-cyan-950 dark:to-cyan-900 rounded-lg">
+                <p className="text-sm text-muted-foreground mb-2">Volume Offramp (USD)</p>
+                <p className="text-2xl font-bold text-cyan-600 dark:text-cyan-400">
+                  ${stats?.total_volume_usd?.toLocaleString('fr-FR', { maximumFractionDigits: 2 }) || '0'}
+                </p>
+              </div>
+              <div className="p-4 bg-gradient-to-br from-teal-50 to-teal-100 dark:from-teal-950 dark:to-teal-900 rounded-lg">
+                <p className="text-sm text-muted-foreground mb-2">Total Onramp</p>
+                <p className="text-2xl font-bold text-teal-600 dark:text-teal-400">
+                  {stats?.total_onramp || 0} transactions
+                </p>
+              </div>
+            </div>
+
+            {/* Volume by blockchain */}
+            {blockchainStats.volume_by_blockchain && blockchainStats.volume_by_blockchain.length > 0 && (
+              <div className="mb-6">
+                <h4 className="text-sm font-semibold mb-3">Volume par blockchain</h4>
+                <div className="space-y-2">
+                  {blockchainStats.volume_by_blockchain.map((item: any) => (
+                    <div key={item.token} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                      <div className="flex items-center gap-3">
+                        <Badge variant="outline">{item.token}</Badge>
+                        <span className="text-sm text-muted-foreground">{item.count} transactions</span>
+                      </div>
+                      <p className="text-lg font-bold">{item.volume.toLocaleString('fr-FR', { maximumFractionDigits: 2 })}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Highest and lowest volume blockchains */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              {blockchainStats.highest_volume_blockchain && (
+                <div className="p-4 bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950 dark:to-green-900 rounded-lg">
+                  <div className="flex items-center gap-2 mb-2">
+                    <TrendingUp className="h-5 w-5 text-green-600 dark:text-green-400" />
+                    <p className="text-sm font-semibold">Blockchain max volume</p>
+                  </div>
+                  <p className="text-2xl font-bold text-green-600 dark:text-green-400">
+                    {blockchainStats.highest_volume_blockchain.token}
+                  </p>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    {blockchainStats.highest_volume_blockchain.volume.toLocaleString('fr-FR', { maximumFractionDigits: 2 })} 
+                    ({blockchainStats.highest_volume_blockchain.count} tx)
+                  </p>
+                </div>
+              )}
+              {blockchainStats.lowest_volume_blockchain && (
+                <div className="p-4 bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-950 dark:to-orange-900 rounded-lg">
+                  <div className="flex items-center gap-2 mb-2">
+                    <TrendingUp className="h-5 w-5 text-orange-600 dark:text-orange-400 rotate-180" />
+                    <p className="text-sm font-semibold">Blockchain min volume</p>
+                  </div>
+                  <p className="text-2xl font-bold text-orange-600 dark:text-orange-400">
+                    {blockchainStats.lowest_volume_blockchain.token}
+                  </p>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    {blockchainStats.lowest_volume_blockchain.volume.toLocaleString('fr-FR', { maximumFractionDigits: 2 })} 
+                    ({blockchainStats.lowest_volume_blockchain.count} tx)
+                  </p>
+                </div>
+              )}
             </div>
 
             {/* Recent blockchain events */}

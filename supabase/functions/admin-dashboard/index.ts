@@ -239,13 +239,32 @@ serve(async (req) => {
       }
 
       // Calculate blockchain stats
+      const volumeByToken = blockchainEvents?.reduce((acc, e) => {
+        const token = e.token_symbol;
+        if (!acc[token]) {
+          acc[token] = { volume: 0, count: 0 };
+        }
+        acc[token].volume += parseFloat(e.amount || 0);
+        acc[token].count += 1;
+        return acc;
+      }, {} as Record<string, { volume: number; count: number }>) || {};
+
+      const tokenVolumes = Object.entries(volumeByToken).map(([token, data]) => ({
+        token,
+        volume: data.volume,
+        count: data.count
+      })).sort((a, b) => b.volume - a.volume);
+
       const blockchainStats = {
         total_events: blockchainEvents?.length || 0,
         processed_events: blockchainEvents?.filter(e => e.processed).length || 0,
         pending_events: blockchainEvents?.filter(e => !e.processed).length || 0,
         total_volume: blockchainEvents?.reduce((sum, e) => sum + parseFloat(e.amount || 0), 0) || 0,
         unique_tokens: [...new Set(blockchainEvents?.map(e => e.token_symbol) || [])].length,
-        recent_events: blockchainEvents?.slice(0, 10) || []
+        recent_events: blockchainEvents?.slice(0, 10) || [],
+        volume_by_blockchain: tokenVolumes,
+        highest_volume_blockchain: tokenVolumes[0] || null,
+        lowest_volume_blockchain: tokenVolumes[tokenVolumes.length - 1] || null
       };
 
       return new Response(JSON.stringify({
