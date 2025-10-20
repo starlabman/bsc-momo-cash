@@ -494,7 +494,7 @@ const AdminDashboard = () => {
         </div>
       )}
 
-      {/* Statistiques Blockchain */}
+      {/* Statistiques Blockchain par Réseau */}
       {blockchainStats && (
         <Card>
           <CardHeader>
@@ -505,9 +505,9 @@ const AdminDashboard = () => {
                 <rect x="14" y="14" width="7" height="7" />
                 <rect x="3" y="14" width="7" height="7" />
               </svg>
-              Statistiques Blockchain
+              Statistiques par Réseau Blockchain
             </CardTitle>
-            <CardDescription>Événements et transactions on-chain</CardDescription>
+            <CardDescription>Utilisation et volume des différents réseaux blockchain</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
@@ -539,7 +539,7 @@ const AdminDashboard = () => {
                 <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
                   {blockchainStats.total_volume.toLocaleString('fr-FR', { maximumFractionDigits: 2 })}
                 </p>
-                <p className="text-xs text-muted-foreground mt-1">Volume blockchain</p>
+                <p className="text-xs text-muted-foreground mt-1">Volume total</p>
               </div>
 
               <div className="text-center p-3 bg-purple-50 dark:bg-purple-950 rounded-lg">
@@ -548,8 +548,148 @@ const AdminDashboard = () => {
                   <path d="M12 6v6l4 2" />
                 </svg>
                 <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">{blockchainStats.unique_tokens}</p>
-                <p className="text-xs text-muted-foreground mt-1">Tokens uniques</p>
+                <p className="text-xs text-muted-foreground mt-1">Réseaux actifs</p>
               </div>
+            </div>
+
+            {/* Network Usage Details */}
+            {blockchainStats.volume_by_blockchain && blockchainStats.volume_by_blockchain.length > 0 && (
+              <div className="mb-6">
+                <h4 className="text-lg font-semibold mb-4">📊 Utilisation par Réseau Blockchain</h4>
+                <div className="space-y-3">
+                  {blockchainStats.volume_by_blockchain.map((item: any, index: number) => {
+                    const percentage = ((item.count / blockchainStats.total_events) * 100).toFixed(1);
+                    const isHighest = blockchainStats.highest_volume_blockchain?.token === item.token;
+                    const isLowest = blockchainStats.lowest_volume_blockchain?.token === item.token;
+                    
+                    return (
+                      <div 
+                        key={item.token} 
+                        className={`p-4 rounded-lg border-2 transition-all ${
+                          isHighest ? 'border-green-500 bg-green-50 dark:bg-green-950/50' : 
+                          isLowest ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/50' : 
+                          'border-muted bg-muted/30'
+                        }`}
+                      >
+                        <div className="flex justify-between items-start mb-3">
+                          <div className="flex items-center gap-2">
+                            <span className="font-bold text-xl">{item.token}</span>
+                            {isHighest && (
+                              <Badge className="bg-green-600 hover:bg-green-700 text-white">
+                                🏆 Plus utilisé
+                              </Badge>
+                            )}
+                            {isLowest && (
+                              <Badge className="bg-orange-600 hover:bg-orange-700 text-white">
+                                Moins utilisé
+                              </Badge>
+                            )}
+                          </div>
+                          <div className="text-right">
+                            <span className="text-3xl font-bold text-primary">{percentage}%</span>
+                            <p className="text-xs text-muted-foreground">du total</p>
+                          </div>
+                        </div>
+                        
+                        <div className="grid grid-cols-2 gap-4 mb-3">
+                          <div className="p-2 bg-background/50 rounded">
+                            <p className="text-xs text-muted-foreground">Nombre de transactions</p>
+                            <p className="text-xl font-bold text-blue-600 dark:text-blue-400">{item.count}</p>
+                          </div>
+                          <div className="p-2 bg-background/50 rounded">
+                            <p className="text-xs text-muted-foreground">Volume total</p>
+                            <p className="text-xl font-bold text-green-600 dark:text-green-400">
+                              {item.volume.toLocaleString('fr-FR', { maximumFractionDigits: 2 })}
+                            </p>
+                          </div>
+                        </div>
+                        
+                        {/* Progress bar */}
+                        <div className="relative w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 overflow-hidden">
+                          <div 
+                            className={`h-3 rounded-full transition-all duration-500 ${
+                              isHighest ? 'bg-gradient-to-r from-green-500 to-green-600' : 
+                              isLowest ? 'bg-gradient-to-r from-orange-500 to-orange-600' : 
+                              'bg-gradient-to-r from-blue-500 to-blue-600'
+                            }`}
+                            style={{ width: `${percentage}%` }}
+                          ></div>
+                          <span className="absolute inset-0 flex items-center justify-center text-xs font-semibold text-white">
+                            {percentage}%
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Highest and lowest volume blockchains - Summary */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              {blockchainStats.highest_volume_blockchain && (
+                <div className="p-5 bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950 dark:to-green-900 rounded-lg border-2 border-green-500">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="text-2xl">🏆</span>
+                    <p className="text-sm font-bold text-green-700 dark:text-green-300">
+                      RÉSEAU LE PLUS UTILISÉ
+                    </p>
+                  </div>
+                  <p className="text-3xl font-bold text-green-600 dark:text-green-400 mb-2">
+                    {blockchainStats.highest_volume_blockchain.token}
+                  </p>
+                  <div className="space-y-1 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Volume:</span>
+                      <span className="font-bold">
+                        {blockchainStats.highest_volume_blockchain.volume.toLocaleString('fr-FR', { maximumFractionDigits: 2 })}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Transactions:</span>
+                      <span className="font-bold">{blockchainStats.highest_volume_blockchain.count}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Part de marché:</span>
+                      <span className="font-bold text-green-600 dark:text-green-400">
+                        {((blockchainStats.highest_volume_blockchain.count / blockchainStats.total_events) * 100).toFixed(1)}%
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {blockchainStats.lowest_volume_blockchain && (
+                <div className="p-5 bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-950 dark:to-orange-900 rounded-lg border-2 border-orange-500">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="text-2xl">📉</span>
+                    <p className="text-sm font-bold text-orange-700 dark:text-orange-300">
+                      RÉSEAU MOINS UTILISÉ
+                    </p>
+                  </div>
+                  <p className="text-3xl font-bold text-orange-600 dark:text-orange-400 mb-2">
+                    {blockchainStats.lowest_volume_blockchain.token}
+                  </p>
+                  <div className="space-y-1 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Volume:</span>
+                      <span className="font-bold">
+                        {blockchainStats.lowest_volume_blockchain.volume.toLocaleString('fr-FR', { maximumFractionDigits: 2 })}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Transactions:</span>
+                      <span className="font-bold">{blockchainStats.lowest_volume_blockchain.count}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Part de marché:</span>
+                      <span className="font-bold text-orange-600 dark:text-orange-400">
+                        {((blockchainStats.lowest_volume_blockchain.count / blockchainStats.total_events) * 100).toFixed(1)}%
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Volume comparison */}
@@ -567,78 +707,29 @@ const AdminDashboard = () => {
                 </p>
               </div>
               <div className="p-4 bg-gradient-to-br from-teal-50 to-teal-100 dark:from-teal-950 dark:to-teal-900 rounded-lg">
-                <p className="text-sm text-muted-foreground mb-2">Total Onramp</p>
+                <p className="text-sm text-muted-foreground mb-2">Total Volume Blockchain</p>
                 <p className="text-2xl font-bold text-teal-600 dark:text-teal-400">
-                  {stats?.total_onramp || 0} transactions
+                  {blockchainStats.total_volume.toLocaleString('fr-FR', { maximumFractionDigits: 2 })}
                 </p>
               </div>
             </div>
 
-            {/* Volume by blockchain */}
-            {blockchainStats.volume_by_blockchain && blockchainStats.volume_by_blockchain.length > 0 && (
-              <div className="mb-6">
-                <h4 className="text-sm font-semibold mb-3">Volume par blockchain</h4>
-                <div className="space-y-2">
-                  {blockchainStats.volume_by_blockchain.map((item: any) => (
-                    <div key={item.token} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
-                      <div className="flex items-center gap-3">
-                        <Badge variant="outline">{item.token}</Badge>
-                        <span className="text-sm text-muted-foreground">{item.count} transactions</span>
-                      </div>
-                      <p className="text-lg font-bold">{item.volume.toLocaleString('fr-FR', { maximumFractionDigits: 2 })}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Highest and lowest volume blockchains */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-              {blockchainStats.highest_volume_blockchain && (
-                <div className="p-4 bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950 dark:to-green-900 rounded-lg">
-                  <div className="flex items-center gap-2 mb-2">
-                    <TrendingUp className="h-5 w-5 text-green-600 dark:text-green-400" />
-                    <p className="text-sm font-semibold">Blockchain max volume</p>
-                  </div>
-                  <p className="text-2xl font-bold text-green-600 dark:text-green-400">
-                    {blockchainStats.highest_volume_blockchain.token}
-                  </p>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    {blockchainStats.highest_volume_blockchain.volume.toLocaleString('fr-FR', { maximumFractionDigits: 2 })} 
-                    ({blockchainStats.highest_volume_blockchain.count} tx)
-                  </p>
-                </div>
-              )}
-              {blockchainStats.lowest_volume_blockchain && (
-                <div className="p-4 bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-950 dark:to-orange-900 rounded-lg">
-                  <div className="flex items-center gap-2 mb-2">
-                    <TrendingUp className="h-5 w-5 text-orange-600 dark:text-orange-400 rotate-180" />
-                    <p className="text-sm font-semibold">Blockchain min volume</p>
-                  </div>
-                  <p className="text-2xl font-bold text-orange-600 dark:text-orange-400">
-                    {blockchainStats.lowest_volume_blockchain.token}
-                  </p>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    {blockchainStats.lowest_volume_blockchain.volume.toLocaleString('fr-FR', { maximumFractionDigits: 2 })} 
-                    ({blockchainStats.lowest_volume_blockchain.count} tx)
-                  </p>
-                </div>
-              )}
-            </div>
-
             {/* Recent blockchain events */}
             {blockchainStats.recent_events.length > 0 && (
-              <div className="mt-4">
-                <h4 className="text-sm font-semibold mb-3">Événements récents</h4>
+              <div className="mt-6">
+                <h4 className="text-sm font-semibold mb-3">🔄 Événements Récents par Réseau</h4>
                 <div className="space-y-2">
                   {blockchainStats.recent_events.map((event: any) => (
-                    <div key={event.id} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg text-sm">
+                    <div key={event.id} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg text-sm hover:bg-muted/70 transition-colors">
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
-                          <Badge variant={event.processed ? "default" : "secondary"}>
+                          <Badge 
+                            variant={event.processed ? "default" : "secondary"}
+                            className="font-bold"
+                          >
                             {event.token_symbol}
                           </Badge>
-                          <span className="font-mono text-xs">{event.amount}</span>
+                          <span className="font-mono text-sm font-semibold">{event.amount}</span>
                         </div>
                         <p className="text-xs text-muted-foreground mt-1 truncate">
                           TX: {event.transaction_hash?.substring(0, 20)}...
@@ -646,7 +737,7 @@ const AdminDashboard = () => {
                       </div>
                       <div className="text-right">
                         <Badge variant={event.processed ? "default" : "outline"}>
-                          {event.processed ? 'Traité' : 'En attente'}
+                          {event.processed ? '✓ Traité' : '⏳ En attente'}
                         </Badge>
                         {event.block_number && (
                           <p className="text-xs text-muted-foreground mt-1">
