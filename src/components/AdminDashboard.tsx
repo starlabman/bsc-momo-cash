@@ -69,11 +69,11 @@ interface BlockchainStats {
   processed_events: number;
   pending_events: number;
   total_volume: number;
-  unique_tokens: number;
+  unique_networks: number;
   recent_events: any[];
-  volume_by_blockchain: Array<{ token: string; volume: number; count: number }>;
-  highest_volume_blockchain: { token: string; volume: number; count: number } | null;
-  lowest_volume_blockchain: { token: string; volume: number; count: number } | null;
+  volume_by_network: Array<{ network: string; volume: number; count: number; unique_tokens: number; percentage: number }>;
+  highest_volume_network: { network: string; volume: number; count: number; unique_tokens: number; percentage: number } | null;
+  lowest_volume_network: { network: string; volume: number; count: number; unique_tokens: number; percentage: number } | null;
 }
 
 const AdminDashboard = () => {
@@ -547,24 +547,23 @@ const AdminDashboard = () => {
                   <circle cx="12" cy="12" r="10" />
                   <path d="M12 6v6l4 2" />
                 </svg>
-                <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">{blockchainStats.unique_tokens}</p>
+                <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">{blockchainStats.unique_networks}</p>
                 <p className="text-xs text-muted-foreground mt-1">Réseaux actifs</p>
               </div>
             </div>
 
             {/* Network Usage Details */}
-            {blockchainStats.volume_by_blockchain && blockchainStats.volume_by_blockchain.length > 0 && (
+            {blockchainStats.volume_by_network && blockchainStats.volume_by_network.length > 0 && (
               <div className="mb-6">
                 <h4 className="text-lg font-semibold mb-4">📊 Utilisation par Réseau Blockchain</h4>
                 <div className="space-y-3">
-                  {blockchainStats.volume_by_blockchain.map((item: any, index: number) => {
-                    const percentage = ((item.count / blockchainStats.total_events) * 100).toFixed(1);
-                    const isHighest = blockchainStats.highest_volume_blockchain?.token === item.token;
-                    const isLowest = blockchainStats.lowest_volume_blockchain?.token === item.token;
+                  {blockchainStats.volume_by_network.map((item: any, index: number) => {
+                    const isHighest = blockchainStats.highest_volume_network?.network === item.network;
+                    const isLowest = blockchainStats.lowest_volume_network?.network === item.network;
                     
                     return (
                       <div 
-                        key={item.token} 
+                        key={item.network} 
                         className={`p-4 rounded-lg border-2 transition-all ${
                           isHighest ? 'border-green-500 bg-green-50 dark:bg-green-950/50' : 
                           isLowest ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/50' : 
@@ -573,7 +572,7 @@ const AdminDashboard = () => {
                       >
                         <div className="flex justify-between items-start mb-3">
                           <div className="flex items-center gap-2">
-                            <span className="font-bold text-xl">{item.token}</span>
+                            <span className="font-bold text-xl">{item.network}</span>
                             {isHighest && (
                               <Badge className="bg-green-600 hover:bg-green-700 text-white">
                                 🏆 Plus utilisé
@@ -586,21 +585,25 @@ const AdminDashboard = () => {
                             )}
                           </div>
                           <div className="text-right">
-                            <span className="text-3xl font-bold text-primary">{percentage}%</span>
+                            <span className="text-3xl font-bold text-primary">{item.percentage.toFixed(1)}%</span>
                             <p className="text-xs text-muted-foreground">du total</p>
                           </div>
                         </div>
                         
-                        <div className="grid grid-cols-2 gap-4 mb-3">
+                        <div className="grid grid-cols-3 gap-4 mb-3">
                           <div className="p-2 bg-background/50 rounded">
-                            <p className="text-xs text-muted-foreground">Nombre de transactions</p>
+                            <p className="text-xs text-muted-foreground">Transactions</p>
                             <p className="text-xl font-bold text-blue-600 dark:text-blue-400">{item.count}</p>
                           </div>
                           <div className="p-2 bg-background/50 rounded">
-                            <p className="text-xs text-muted-foreground">Volume total</p>
+                            <p className="text-xs text-muted-foreground">Volume</p>
                             <p className="text-xl font-bold text-green-600 dark:text-green-400">
                               {item.volume.toLocaleString('fr-FR', { maximumFractionDigits: 2 })}
                             </p>
+                          </div>
+                          <div className="p-2 bg-background/50 rounded">
+                            <p className="text-xs text-muted-foreground">Tokens</p>
+                            <p className="text-xl font-bold text-purple-600 dark:text-purple-400">{item.unique_tokens}</p>
                           </div>
                         </div>
                         
@@ -612,10 +615,10 @@ const AdminDashboard = () => {
                               isLowest ? 'bg-gradient-to-r from-orange-500 to-orange-600' : 
                               'bg-gradient-to-r from-blue-500 to-blue-600'
                             }`}
-                            style={{ width: `${percentage}%` }}
+                            style={{ width: `${item.percentage}%` }}
                           ></div>
                           <span className="absolute inset-0 flex items-center justify-center text-xs font-semibold text-white">
-                            {percentage}%
+                            {item.percentage.toFixed(1)}%
                           </span>
                         </div>
                       </div>
@@ -625,9 +628,9 @@ const AdminDashboard = () => {
               </div>
             )}
 
-            {/* Highest and lowest volume blockchains - Summary */}
+            {/* Highest and lowest volume networks - Summary */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-              {blockchainStats.highest_volume_blockchain && (
+              {blockchainStats.highest_volume_network && (
                 <div className="p-5 bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950 dark:to-green-900 rounded-lg border-2 border-green-500">
                   <div className="flex items-center gap-2 mb-3">
                     <span className="text-2xl">🏆</span>
@@ -636,30 +639,30 @@ const AdminDashboard = () => {
                     </p>
                   </div>
                   <p className="text-3xl font-bold text-green-600 dark:text-green-400 mb-2">
-                    {blockchainStats.highest_volume_blockchain.token}
+                    {blockchainStats.highest_volume_network.network}
                   </p>
                   <div className="space-y-1 text-sm">
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Volume:</span>
                       <span className="font-bold">
-                        {blockchainStats.highest_volume_blockchain.volume.toLocaleString('fr-FR', { maximumFractionDigits: 2 })}
+                        {blockchainStats.highest_volume_network.volume.toLocaleString('fr-FR', { maximumFractionDigits: 2 })}
                       </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Transactions:</span>
-                      <span className="font-bold">{blockchainStats.highest_volume_blockchain.count}</span>
+                      <span className="font-bold">{blockchainStats.highest_volume_network.count}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Part de marché:</span>
                       <span className="font-bold text-green-600 dark:text-green-400">
-                        {((blockchainStats.highest_volume_blockchain.count / blockchainStats.total_events) * 100).toFixed(1)}%
+                        {blockchainStats.highest_volume_network.percentage.toFixed(1)}%
                       </span>
                     </div>
                   </div>
                 </div>
               )}
               
-              {blockchainStats.lowest_volume_blockchain && (
+              {blockchainStats.lowest_volume_network && (
                 <div className="p-5 bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-950 dark:to-orange-900 rounded-lg border-2 border-orange-500">
                   <div className="flex items-center gap-2 mb-3">
                     <span className="text-2xl">📉</span>
@@ -668,23 +671,23 @@ const AdminDashboard = () => {
                     </p>
                   </div>
                   <p className="text-3xl font-bold text-orange-600 dark:text-orange-400 mb-2">
-                    {blockchainStats.lowest_volume_blockchain.token}
+                    {blockchainStats.lowest_volume_network.network}
                   </p>
                   <div className="space-y-1 text-sm">
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Volume:</span>
                       <span className="font-bold">
-                        {blockchainStats.lowest_volume_blockchain.volume.toLocaleString('fr-FR', { maximumFractionDigits: 2 })}
+                        {blockchainStats.lowest_volume_network.volume.toLocaleString('fr-FR', { maximumFractionDigits: 2 })}
                       </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Transactions:</span>
-                      <span className="font-bold">{blockchainStats.lowest_volume_blockchain.count}</span>
+                      <span className="font-bold">{blockchainStats.lowest_volume_network.count}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Part de marché:</span>
                       <span className="font-bold text-orange-600 dark:text-orange-400">
-                        {((blockchainStats.lowest_volume_blockchain.count / blockchainStats.total_events) * 100).toFixed(1)}%
+                        {blockchainStats.lowest_volume_network.percentage.toFixed(1)}%
                       </span>
                     </div>
                   </div>

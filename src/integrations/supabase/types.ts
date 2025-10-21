@@ -81,6 +81,7 @@ export type Database = {
           created_at: string
           from_address: string
           id: string
+          network: string
           offramp_request_id: string | null
           processed: boolean
           to_address: string
@@ -94,6 +95,7 @@ export type Database = {
           created_at?: string
           from_address: string
           id?: string
+          network?: string
           offramp_request_id?: string | null
           processed?: boolean
           to_address: string
@@ -107,6 +109,7 @@ export type Database = {
           created_at?: string
           from_address?: string
           id?: string
+          network?: string
           offramp_request_id?: string | null
           processed?: boolean
           to_address?: string

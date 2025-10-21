@@ -18,6 +18,8 @@ const supabase = createClient(
 const onrampRequestSchema = z.object({
   xofAmount: z.number().min(100).max(600000),
   token: z.enum(['USDC', 'USDT']),
+  network: z.string().optional(),
+  tokenAddress: z.string().optional(),
   momoNumber: z.string()
     .min(8)
     .max(20)
@@ -25,8 +27,7 @@ const onrampRequestSchema = z.object({
   momoProvider: z.string()
     .max(50)
     .optional(),
-  recipientAddress: z.string()
-    .regex(/^0x[a-fA-F0-9]{40}$/, 'Invalid BSC address format'),
+  recipientAddress: z.string().min(1),
   countryId: z.string().uuid().optional()
 });
 
@@ -54,7 +55,7 @@ serve(async (req) => {
       });
     }
 
-    const { xofAmount, token, momoNumber, momoProvider, recipientAddress, countryId } = validationResult.data;
+    const { xofAmount, token, network, tokenAddress, momoNumber, momoProvider, recipientAddress, countryId } = validationResult.data;
 
     // Sanitize mobile number - remove all non-digit/+ characters
     const sanitizedMomoNumber = momoNumber.replace(/[^\d+]/g, '');

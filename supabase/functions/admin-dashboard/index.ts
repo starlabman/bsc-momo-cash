@@ -238,33 +238,46 @@ serve(async (req) => {
         console.error('Error fetching blockchain events:', blockchainError);
       }
 
-      // Calculate blockchain stats
-      const volumeByToken = blockchainEvents?.reduce((acc, e) => {
-        const token = e.token_symbol;
-        if (!acc[token]) {
-          acc[token] = { volume: 0, count: 0 };
+      // Calculate blockchain stats by network
+      const networkStats = blockchainEvents?.reduce((acc, e) => {
+        const network = e.network || 'bsc';
+        if (!acc[network]) {
+          acc[network] = { 
+            volume: 0, 
+            count: 0,
+            tokens: new Set()
+          };
         }
-        acc[token].volume += parseFloat(e.amount || 0);
-        acc[token].count += 1;
+        acc[network].volume += parseFloat(e.amount || 0);
+        acc[network].count += 1;
+        acc[network].tokens.add(e.token_symbol);
         return acc;
-      }, {} as Record<string, { volume: number; count: number }>) || {};
+      }, {} as Record<string, { volume: number; count: number; tokens: Set<string> }>) || {};
 
-      const tokenVolumes = Object.entries(volumeByToken).map(([token, data]) => ({
-        token,
+      const networkVolumes = Object.entries(networkStats).map(([network, data]) => ({
+        network: network.toUpperCase(),
         volume: data.volume,
-        count: data.count
+        count: data.count,
+        unique_tokens: data.tokens.size,
+        percentage: 0 // Will calculate after sorting
       })).sort((a, b) => b.volume - a.volume);
+
+      // Calculate percentages
+      const totalNetworkVolume = networkVolumes.reduce((sum, n) => sum + n.volume, 0);
+      networkVolumes.forEach(n => {
+        n.percentage = totalNetworkVolume > 0 ? (n.volume / totalNetworkVolume) * 100 : 0;
+      });
 
       const blockchainStats = {
         total_events: blockchainEvents?.length || 0,
         processed_events: blockchainEvents?.filter(e => e.processed).length || 0,
         pending_events: blockchainEvents?.filter(e => !e.processed).length || 0,
         total_volume: blockchainEvents?.reduce((sum, e) => sum + parseFloat(e.amount || 0), 0) || 0,
-        unique_tokens: [...new Set(blockchainEvents?.map(e => e.token_symbol) || [])].length,
+        unique_networks: Object.keys(networkStats).length,
         recent_events: blockchainEvents?.slice(0, 10) || [],
-        volume_by_blockchain: tokenVolumes,
-        highest_volume_blockchain: tokenVolumes[0] || null,
-        lowest_volume_blockchain: tokenVolumes[tokenVolumes.length - 1] || null
+        volume_by_network: networkVolumes,
+        highest_volume_network: networkVolumes[0] || null,
+        lowest_volume_network: networkVolumes[networkVolumes.length - 1] || null
       };
 
       return new Response(JSON.stringify({

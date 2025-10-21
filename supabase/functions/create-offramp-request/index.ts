@@ -24,6 +24,8 @@ const TOKEN_ADDRESSES = {
 const offrampRequestSchema = z.object({
   amount: z.number().min(0.01).max(1000),
   token: z.enum(['USDC', 'USDT']),
+  network: z.string().optional(),
+  tokenAddress: z.string().optional(),
   momoNumber: z.string()
     .min(8)
     .max(20)
@@ -58,7 +60,7 @@ serve(async (req) => {
       });
     }
 
-    const { amount, token, momoNumber, momoProvider, countryId } = validationResult.data;
+    const { amount, token, network, tokenAddress, momoNumber, momoProvider, countryId } = validationResult.data;
 
     // Sanitize mobile number - remove all non-digit/+ characters
     const sanitizedMomoNumber = momoNumber.replace(/[^\d+]/g, '');
