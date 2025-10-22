@@ -125,22 +125,48 @@ const AdminDashboard = () => {
     return token ? { 'Authorization': `Bearer ${token}` } : {};
   };
 
+  // Statuts pour OFFRAMP (Crypto → Mobile Money)
+  const offrampStatuses = [
+    { value: 'pending_payment', label: 'En attente paiement crypto', color: 'secondary', description: 'Client doit envoyer la crypto' },
+    { value: 'received', label: 'Crypto reçue', color: 'default', description: 'Paiement crypto confirmé' },
+    { value: 'processing', label: 'En cours de traitement', color: 'outline', description: 'Transfert mobile money en cours' },
+    { value: 'paid', label: 'Mobile Money envoyé', color: 'default', description: 'Client a reçu le mobile money' },
+    { value: 'failed', label: 'Échoué', color: 'destructive', description: 'Transaction échouée' }
+  ];
+
+  // Statuts pour ONRAMP (Mobile Money → Crypto)
+  const onrampStatuses = [
+    { value: 'pending_momo_payment', label: 'En attente paiement Mobile Money', color: 'secondary', description: 'Client doit envoyer le mobile money' },
+    { value: 'momo_payment_received', label: 'Mobile Money reçu', color: 'default', description: 'Paiement mobile money confirmé' },
+    { value: 'processing', label: 'En cours de traitement', color: 'outline', description: 'Transfert crypto en cours' },
+    { value: 'completed', label: 'Crypto envoyée', color: 'default', description: 'Client a reçu la crypto' },
+    { value: 'failed', label: 'Échoué', color: 'destructive', description: 'Transaction échouée' }
+  ];
+
+  const getStatusInfo = (status: string, isOnramp: boolean = false) => {
+    const statuses = isOnramp ? onrampStatuses : offrampStatuses;
+    return statuses.find(s => s.value === status) || statuses[0];
+  };
+
   const statusColors = {
     'pending_payment': 'secondary',
+    'pending_momo_payment': 'secondary',
     'received': 'default',
+    'momo_payment_received': 'default',
     'processing': 'outline',
     'paid': 'default',
+    'completed': 'default',
     'failed': 'destructive'
   } as const;
 
   const statusLabels = {
-    'pending_payment': 'En attente',
+    'pending_payment': 'En attente paiement crypto',
     'pending_momo_payment': 'En attente paiement Mobile Money',
-    'momo_payment_received': 'Paiement Mobile Money reçu',
-    'crypto_sent': 'Crypto envoyé',
-    'received': 'Reçu',
-    'processing': 'En cours',
-    'paid': 'Payé',
+    'momo_payment_received': 'Mobile Money reçu',
+    'received': 'Crypto reçue',
+    'processing': 'En cours de traitement',
+    'paid': 'Mobile Money envoyé',
+    'completed': 'Crypto envoyée',
     'failed': 'Échoué'
   };
 
@@ -1077,21 +1103,35 @@ const AdminDashboard = () => {
                               
                               {selectedRequest?.id === request.id && (
                                 <div className="space-y-4">
+                                  {/* Status flow explanation */}
+                                  <div className="bg-muted/50 p-3 rounded-lg mb-4">
+                                    <p className="text-xs font-semibold mb-2">📋 Flux Offramp (Crypto → Mobile Money):</p>
+                                    <div className="space-y-1 text-xs text-muted-foreground">
+                                      <div>1️⃣ En attente paiement crypto → Client envoie crypto</div>
+                                      <div>2️⃣ Crypto reçue → Paiement confirmé on-chain</div>
+                                      <div>3️⃣ En cours de traitement → Transfert Mobile Money en cours</div>
+                                      <div>4️⃣ Mobile Money envoyé → Transaction terminée ✓</div>
+                                    </div>
+                                  </div>
+
                                   <div className="space-y-2">
-                                    <Label>Statut</Label>
+                                    <Label>Statut actuel: {getStatusInfo(request.status, false).label}</Label>
                                     <Select 
                                       value={updateData.status} 
                                       onValueChange={(value) => setUpdateData({ ...updateData, status: value })}
                                     >
                                       <SelectTrigger>
-                                        <SelectValue />
+                                        <SelectValue placeholder="Choisir un statut" />
                                       </SelectTrigger>
                                       <SelectContent>
-                                        <SelectItem value="pending_payment">En attente</SelectItem>
-                                        <SelectItem value="received">Reçu</SelectItem>
-                                        <SelectItem value="processing">En cours</SelectItem>
-                                        <SelectItem value="paid">Payé</SelectItem>
-                                        <SelectItem value="failed">Échoué</SelectItem>
+                                        {offrampStatuses.map((status) => (
+                                          <SelectItem key={status.value} value={status.value}>
+                                            <div className="flex flex-col">
+                                              <span className="font-medium">{status.label}</span>
+                                              <span className="text-xs text-muted-foreground">{status.description}</span>
+                                            </div>
+                                          </SelectItem>
+                                        ))}
                                       </SelectContent>
                                     </Select>
                                   </div>
@@ -1225,20 +1265,35 @@ const AdminDashboard = () => {
                               
                               {selectedOnrampRequest?.id === request.id && (
                                 <div className="space-y-4">
+                                  {/* Status flow explanation */}
+                                  <div className="bg-muted/50 p-3 rounded-lg mb-4">
+                                    <p className="text-xs font-semibold mb-2">📋 Flux Onramp (Mobile Money → Crypto):</p>
+                                    <div className="space-y-1 text-xs text-muted-foreground">
+                                      <div>1️⃣ En attente paiement Mobile Money → Client envoie Mobile Money</div>
+                                      <div>2️⃣ Mobile Money reçu → Paiement confirmé</div>
+                                      <div>3️⃣ En cours de traitement → Transfert crypto en cours</div>
+                                      <div>4️⃣ Crypto envoyée → Transaction terminée ✓</div>
+                                    </div>
+                                  </div>
+
                                   <div className="space-y-2">
-                                    <Label>Statut</Label>
+                                    <Label>Statut actuel: {getStatusInfo(request.status, true).label}</Label>
                                     <Select 
                                       value={onrampUpdateData.status} 
                                       onValueChange={(value) => setOnrampUpdateData({ ...onrampUpdateData, status: value })}
                                     >
                                       <SelectTrigger>
-                                        <SelectValue />
+                                        <SelectValue placeholder="Choisir un statut" />
                                       </SelectTrigger>
                                       <SelectContent>
-                                        <SelectItem value="pending_momo_payment">En attente paiement Mobile Money</SelectItem>
-                                        <SelectItem value="momo_payment_received">Paiement Mobile Money reçu</SelectItem>
-                                        <SelectItem value="crypto_sent">Crypto envoyé</SelectItem>
-                                        <SelectItem value="failed">Échoué</SelectItem>
+                                        {onrampStatuses.map((status) => (
+                                          <SelectItem key={status.value} value={status.value}>
+                                            <div className="flex flex-col">
+                                              <span className="font-medium">{status.label}</span>
+                                              <span className="text-xs text-muted-foreground">{status.description}</span>
+                                            </div>
+                                          </SelectItem>
+                                        ))}
                                       </SelectContent>
                                     </Select>
                                   </div>
