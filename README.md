@@ -1,8 +1,105 @@
-# Welcome to your Lovable project
+# Crypto Offramp/Onramp Platform
+
+A comprehensive blockchain-to-mobile-money platform enabling seamless conversion between cryptocurrencies and fiat currencies (XOF) via mobile money operators.
 
 ## Project info
 
 **URL**: https://lovable.dev/projects/db5817c4-2500-4a73-9883-f2962444934c
+
+## Features
+
+### Core Functionality
+
+#### 🔄 Offramp (Crypto to Fiat)
+- Convert cryptocurrency to mobile money (XOF)
+- Support for multiple tokens (USDT, USDC, BUSD, DAI, etc.)
+- Multi-network support (BSC, Ethereum, Polygon, Avalanche, Arbitrum, Optimism)
+- Real-time exchange rate calculations with configurable margins
+- Automatic blockchain event tracking and processing
+- Direct transfer to mobile money operators (MTN, Moov, Orange, Wave, Free)
+
+#### 💰 Onramp (Fiat to Crypto)
+- Convert mobile money to cryptocurrency
+- Support for multiple blockchain networks
+- Secure recipient wallet address validation
+- Country-specific mobile operator integration
+- Real-time crypto amount calculations
+
+### Blockchain Integration
+
+- **Multi-Network Support**: BSC, Ethereum, Polygon, Avalanche, Arbitrum, Optimism
+- **Wallet Connection**: Integration with multiple wallet providers via WagmiConfig
+- **Token Support**: USDT, USDC, BUSD, DAI, and other stablecoins
+- **Transaction Tracking**: Comprehensive blockchain event monitoring
+- **Network Statistics**: Real-time analytics on network usage and volumes
+
+### Admin Dashboard
+
+#### 📊 Request Management
+- View and manage all offramp/onramp requests
+- Filter by status (pending, processing, paid, failed, completed)
+- Update request status and add notes
+- Transaction hash tracking
+- Pagination for large datasets
+
+#### 📈 Analytics & Statistics
+- Total request counts (offramp/onramp)
+- Status breakdown (pending, processing, paid, failed)
+- Volume tracking (USD and XOF)
+- Blockchain event statistics
+- Network usage analytics:
+  - Volume by network
+  - Transaction counts per network
+  - Most/least used networks
+  - Unique token tracking per network
+
+#### 🔐 Security Features
+- Admin authentication with JWT tokens
+- Rate limiting on authentication endpoints
+- Audit logging for all admin actions
+- IP address tracking
+- Session management with token expiration
+- Row-Level Security (RLS) policies
+
+### Country & Operator Support
+
+- **Multi-Country Support**: Configurable country list with phone prefixes
+- **Mobile Operators**: MTN, Moov, Orange, Wave, Free
+- **Smart Detection**: Automatic operator detection from phone numbers
+- **Number Validation**: Pattern-based validation for mobile numbers
+
+### Exchange Rate Management
+
+- Real-time exchange rate updates
+- Configurable profit margins
+- Support for multiple currency pairs (USD/XOF)
+- Transparent rate display to users
+
+### Database & Backend
+
+- **Supabase Backend**: Full-stack integration
+- **Edge Functions**: Serverless functions for:
+  - Offramp request creation
+  - Onramp request creation
+  - Exchange rate fetching
+  - Admin authentication
+  - Admin dashboard data
+  - Audit logging
+- **Database Tables**:
+  - Countries and mobile operators
+  - Offramp/onramp requests
+  - Blockchain events
+  - Exchange rates
+  - Admin users and audit logs
+
+### User Interface
+
+- Responsive design with Tailwind CSS
+- Dark/light mode support
+- Real-time form validation
+- QR code generation for wallet addresses
+- Toast notifications for user feedback
+- Comprehensive error handling
 
 ## How can I edit this code?
 
