@@ -280,12 +280,100 @@ serve(async (req) => {
         lowest_volume_network: networkVolumes[networkVolumes.length - 1] || null
       };
 
+      // Fetch country statistics
+      console.log('Attempting to fetch country stats...');
+      const { data: countries, error: countriesError } = await adminSupabase
+        .from('countries')
+        .select('*');
+
+      if (countriesError) {
+        console.error('Error fetching countries:', countriesError);
+      }
+
+      // Calculate stats by country for both offramp and onramp
+      const { data: allOfframpRequests, error: allOfframpError } = await adminSupabase
+        .from('offramp_requests')
+        .select('country_id, usd_amount, xof_amount, status');
+
+      const { data: allOnrampRequests, error: allOnrampError } = await adminSupabase
+        .from('onramp_requests')
+        .select('country_id, usd_amount, xof_amount, status');
+
+      const countryStatsMap = new Map();
+      
+      // Process offramp requests
+      allOfframpRequests?.forEach(req => {
+        const countryId = req.country_id || 'unknown';
+        if (!countryStatsMap.has(countryId)) {
+          countryStatsMap.set(countryId, {
+            offramp_count: 0,
+            onramp_count: 0,
+            offramp_volume_usd: 0,
+            offramp_volume_xof: 0,
+            onramp_volume_usd: 0,
+            onramp_volume_xof: 0,
+            total_transactions: 0
+          });
+        }
+        const stats = countryStatsMap.get(countryId);
+        stats.offramp_count += 1;
+        stats.offramp_volume_usd += parseFloat(req.usd_amount || 0);
+        stats.offramp_volume_xof += parseFloat(req.xof_amount || 0);
+        stats.total_transactions += 1;
+      });
+
+      // Process onramp requests
+      allOnrampRequests?.forEach(req => {
+        const countryId = req.country_id || 'unknown';
+        if (!countryStatsMap.has(countryId)) {
+          countryStatsMap.set(countryId, {
+            offramp_count: 0,
+            onramp_count: 0,
+            offramp_volume_usd: 0,
+            offramp_volume_xof: 0,
+            onramp_volume_usd: 0,
+            onramp_volume_xof: 0,
+            total_transactions: 0
+          });
+        }
+        const stats = countryStatsMap.get(countryId);
+        stats.onramp_count += 1;
+        stats.onramp_volume_usd += parseFloat(req.usd_amount || 0);
+        stats.onramp_volume_xof += parseFloat(req.xof_amount || 0);
+        stats.total_transactions += 1;
+      });
+
+      // Map country IDs to country details
+      const countryStats = Array.from(countryStatsMap.entries()).map(([countryId, stats]) => {
+        const country = countries?.find(c => c.id === countryId);
+        return {
+          country_id: countryId,
+          country_name: country?.name || 'Unknown',
+          country_code: country?.code || 'N/A',
+          flag_emoji: country?.flag_emoji || '🏴',
+          ...stats,
+          total_volume_usd: stats.offramp_volume_usd + stats.onramp_volume_usd,
+          total_volume_xof: stats.offramp_volume_xof + stats.onramp_volume_xof
+        };
+      }).sort((a, b) => b.total_transactions - a.total_transactions);
+
+      const totalCountryTransactions = countryStats.reduce((sum, c) => sum + c.total_transactions, 0);
+      countryStats.forEach(c => {
+        c.percentage = totalCountryTransactions > 0 ? (c.total_transactions / totalCountryTransactions) * 100 : 0;
+      });
+
       return new Response(JSON.stringify({
         success: true,
         data: {
           requests: requests || [],
           stats: stats || {},
           blockchainStats,
+          countryStats: {
+            by_country: countryStats,
+            total_countries: countryStats.length,
+            most_active_country: countryStats[0] || null,
+            least_active_country: countryStats[countryStats.length - 1] || null
+          },
           pagination: {
             page,
             limit,

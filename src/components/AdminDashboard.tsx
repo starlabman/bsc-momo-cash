@@ -76,6 +76,28 @@ interface BlockchainStats {
   lowest_volume_network: { network: string; volume: number; count: number; unique_tokens: number; percentage: number } | null;
 }
 
+interface CountryStats {
+  by_country: Array<{
+    country_id: string;
+    country_name: string;
+    country_code: string;
+    flag_emoji: string;
+    offramp_count: number;
+    onramp_count: number;
+    offramp_volume_usd: number;
+    offramp_volume_xof: number;
+    onramp_volume_usd: number;
+    onramp_volume_xof: number;
+    total_transactions: number;
+    total_volume_usd: number;
+    total_volume_xof: number;
+    percentage: number;
+  }>;
+  total_countries: number;
+  most_active_country: any;
+  least_active_country: any;
+}
+
 const AdminDashboard = () => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
@@ -83,6 +105,7 @@ const AdminDashboard = () => {
   const [onrampRequests, setOnrampRequests] = useState<OnrampRequest[]>([]);
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [blockchainStats, setBlockchainStats] = useState<BlockchainStats | null>(null);
+  const [countryStats, setCountryStats] = useState<CountryStats | null>(null);
   const [selectedRequest, setSelectedRequest] = useState<OfframpRequest | null>(null);
   const [selectedOnrampRequest, setSelectedOnrampRequest] = useState<OnrampRequest | null>(null);
   const [updateData, setUpdateData] = useState({
@@ -149,6 +172,7 @@ const AdminDashboard = () => {
         setRequests(data.data.requests);
         setStats(data.data.stats);
         setBlockchainStats(data.data.blockchainStats);
+        setCountryStats(data.data.countryStats);
       } else {
         throw new Error(data?.error || 'Unknown error');
       }
@@ -750,6 +774,213 @@ const AdminDashboard = () => {
                       </div>
                     </div>
                   ))}
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Statistiques par Pays */}
+      {countryStats && countryStats.by_country && countryStats.by_country.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="12" cy="12" r="10" />
+                <path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z" />
+              </svg>
+              Statistiques par Pays
+            </CardTitle>
+            <CardDescription>Utilisation de CryptoMomo dans différents pays</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+              <div className="text-center p-3 bg-blue-50 dark:bg-blue-950 rounded-lg">
+                <svg className="h-5 w-5 text-blue-600 dark:text-blue-400 mx-auto mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="12" cy="12" r="10" />
+                </svg>
+                <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{countryStats.total_countries}</p>
+                <p className="text-xs text-muted-foreground mt-1">Pays actifs</p>
+              </div>
+
+              {countryStats.most_active_country && (
+                <>
+                  <div className="text-center p-3 bg-green-50 dark:bg-green-950 rounded-lg">
+                    <span className="text-3xl mx-auto mb-2 block">{countryStats.most_active_country.flag_emoji}</span>
+                    <p className="text-2xl font-bold text-green-600 dark:text-green-400">{countryStats.most_active_country.total_transactions}</p>
+                    <p className="text-xs text-muted-foreground mt-1">Plus actif: {countryStats.most_active_country.country_name}</p>
+                  </div>
+
+                  <div className="text-center p-3 bg-purple-50 dark:bg-purple-950 rounded-lg">
+                    <TrendingUp className="h-5 w-5 text-purple-600 dark:text-purple-400 mx-auto mb-2" />
+                    <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+                      ${countryStats.most_active_country.total_volume_usd.toLocaleString('fr-FR', { maximumFractionDigits: 0 })}
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">Volume total USD</p>
+                  </div>
+                </>
+              )}
+
+              <div className="text-center p-3 bg-amber-50 dark:bg-amber-950 rounded-lg">
+                <Users className="h-5 w-5 text-amber-600 dark:text-amber-400 mx-auto mb-2" />
+                <p className="text-2xl font-bold text-amber-600 dark:text-amber-400">
+                  {countryStats.by_country.reduce((sum, c) => sum + c.total_transactions, 0)}
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">Total transactions</p>
+              </div>
+            </div>
+
+            {/* Country Usage Details */}
+            <div className="mb-6">
+              <h4 className="text-lg font-semibold mb-4">🌍 Utilisation par Pays</h4>
+              <div className="space-y-3">
+                {countryStats.by_country.map((country: any, index: number) => {
+                  const isMostActive = countryStats.most_active_country?.country_id === country.country_id;
+                  const isLeastActive = countryStats.least_active_country?.country_id === country.country_id;
+                  
+                  return (
+                    <div 
+                      key={country.country_id} 
+                      className={`p-4 rounded-lg border-2 transition-all ${
+                        isMostActive ? 'border-green-500 bg-green-50 dark:bg-green-950/50' : 
+                        isLeastActive ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/50' : 
+                        'border-muted bg-muted/30'
+                      }`}
+                    >
+                      <div className="flex justify-between items-start mb-3">
+                        <div className="flex items-center gap-2">
+                          <span className="text-2xl">{country.flag_emoji}</span>
+                          <div>
+                            <span className="font-bold text-xl">{country.country_name}</span>
+                            <span className="ml-2 text-sm text-muted-foreground">({country.country_code})</span>
+                          </div>
+                          {isMostActive && (
+                            <Badge className="bg-green-500 hover:bg-green-600">🏆 Plus actif</Badge>
+                          )}
+                          {isLeastActive && countryStats.by_country.length > 1 && (
+                            <Badge variant="outline" className="border-orange-500 text-orange-600">📉 Moins actif</Badge>
+                          )}
+                        </div>
+                        <Badge variant="secondary" className="text-sm">
+                          {country.percentage.toFixed(1)}% du total
+                        </Badge>
+                      </div>
+                      
+                      <div className="grid grid-cols-2 md:grid-cols-6 gap-3 mb-3">
+                        <div className="text-center">
+                          <p className="text-xs text-muted-foreground">Total Transactions</p>
+                          <p className="text-lg font-bold text-blue-600 dark:text-blue-400">{country.total_transactions}</p>
+                        </div>
+                        <div className="text-center">
+                          <p className="text-xs text-muted-foreground">Offramp</p>
+                          <p className="text-lg font-bold text-purple-600 dark:text-purple-400">{country.offramp_count}</p>
+                        </div>
+                        <div className="text-center">
+                          <p className="text-xs text-muted-foreground">Onramp</p>
+                          <p className="text-lg font-bold text-indigo-600 dark:text-indigo-400">{country.onramp_count}</p>
+                        </div>
+                        <div className="text-center">
+                          <p className="text-xs text-muted-foreground">Volume USD</p>
+                          <p className="text-lg font-bold text-green-600 dark:text-green-400">
+                            ${country.total_volume_usd.toLocaleString('fr-FR', { maximumFractionDigits: 0 })}
+                          </p>
+                        </div>
+                        <div className="text-center">
+                          <p className="text-xs text-muted-foreground">Volume XOF</p>
+                          <p className="text-lg font-bold text-emerald-600 dark:text-emerald-400">
+                            {country.total_volume_xof.toLocaleString('fr-FR', { maximumFractionDigits: 0 })}
+                          </p>
+                        </div>
+                        <div className="text-center">
+                          <p className="text-xs text-muted-foreground">Avg/Transaction</p>
+                          <p className="text-lg font-bold text-cyan-600 dark:text-cyan-400">
+                            ${country.total_transactions > 0 ? (country.total_volume_usd / country.total_transactions).toFixed(0) : 0}
+                          </p>
+                        </div>
+                      </div>
+                      
+                      {/* Progress bar */}
+                      <div className="relative w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 overflow-hidden">
+                        <div 
+                          className={`h-3 rounded-full transition-all duration-500 ${
+                            isMostActive ? 'bg-gradient-to-r from-green-500 to-green-600' : 
+                            isLeastActive ? 'bg-gradient-to-r from-orange-500 to-orange-600' : 
+                            'bg-gradient-to-r from-blue-500 to-blue-600'
+                          }`}
+                          style={{ width: `${country.percentage}%` }}
+                        ></div>
+                        <span className="absolute inset-0 flex items-center justify-center text-xs font-semibold text-white">
+                          {country.percentage.toFixed(1)}%
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Country comparison - Most vs Least Active */}
+            {countryStats.most_active_country && countryStats.least_active_country && countryStats.by_country.length > 1 && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="p-5 bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950 dark:to-green-900 rounded-lg border-2 border-green-500">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="text-3xl">{countryStats.most_active_country.flag_emoji}</span>
+                    <div>
+                      <p className="text-sm font-bold text-green-700 dark:text-green-300">PAYS LE PLUS ACTIF</p>
+                      <p className="text-2xl font-bold text-green-600 dark:text-green-400">
+                        {countryStats.most_active_country.country_name}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="space-y-1 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Transactions:</span>
+                      <span className="font-bold">{countryStats.most_active_country.total_transactions}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Volume USD:</span>
+                      <span className="font-bold">
+                        ${countryStats.most_active_country.total_volume_usd.toLocaleString('fr-FR', { maximumFractionDigits: 0 })}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Part de marché:</span>
+                      <span className="font-bold text-green-600 dark:text-green-400">
+                        {countryStats.most_active_country.percentage.toFixed(1)}%
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="p-5 bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-950 dark:to-orange-900 rounded-lg border-2 border-orange-500">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="text-3xl">{countryStats.least_active_country.flag_emoji}</span>
+                    <div>
+                      <p className="text-sm font-bold text-orange-700 dark:text-orange-300">PAYS MOINS ACTIF</p>
+                      <p className="text-2xl font-bold text-orange-600 dark:text-orange-400">
+                        {countryStats.least_active_country.country_name}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="space-y-1 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Transactions:</span>
+                      <span className="font-bold">{countryStats.least_active_country.total_transactions}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Volume USD:</span>
+                      <span className="font-bold">
+                        ${countryStats.least_active_country.total_volume_usd.toLocaleString('fr-FR', { maximumFractionDigits: 0 })}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Part de marché:</span>
+                      <span className="font-bold text-orange-600 dark:text-orange-400">
+                        {countryStats.least_active_country.percentage.toFixed(1)}%
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
