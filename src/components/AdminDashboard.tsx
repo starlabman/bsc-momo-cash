@@ -70,10 +70,34 @@ interface BlockchainStats {
   pending_events: number;
   total_volume: number;
   unique_networks: number;
-  recent_events: any[];
-  volume_by_network: Array<{ network: string; volume: number; count: number; unique_tokens: number; percentage: number }>;
-  highest_volume_network: { network: string; volume: number; count: number; unique_tokens: number; percentage: number } | null;
-  lowest_volume_network: { network: string; volume: number; count: number; unique_tokens: number; percentage: number } | null;
+  supported_networks?: number;
+  volume_by_network: Array<{ 
+    network: string; 
+    volume: number; 
+    count: number; 
+    unique_tokens: number; 
+    percentage: number;
+    offramp_count?: number;
+    onramp_count?: number;
+  }>;
+  highest_volume_network: { 
+    network: string; 
+    volume: number; 
+    count: number; 
+    unique_tokens: number; 
+    percentage: number;
+    offramp_count?: number;
+    onramp_count?: number;
+  } | null;
+  lowest_volume_network: { 
+    network: string; 
+    volume: number; 
+    count: number; 
+    unique_tokens: number; 
+    percentage: number;
+    offramp_count?: number;
+    onramp_count?: number;
+  } | null;
 }
 
 interface CountryStats {
@@ -767,39 +791,22 @@ const AdminDashboard = () => {
               </div>
             </div>
 
-            {/* Recent blockchain events */}
-            {blockchainStats.recent_events.length > 0 && (
-              <div className="mt-6">
-                <h4 className="text-sm font-semibold mb-3">🔄 Événements Récents par Réseau</h4>
-                <div className="space-y-2">
-                  {blockchainStats.recent_events.map((event: any) => (
-                    <div key={event.id} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg text-sm hover:bg-muted/70 transition-colors">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                          <Badge 
-                            variant={event.processed ? "default" : "secondary"}
-                            className="font-bold"
-                          >
-                            {event.token_symbol}
-                          </Badge>
-                          <span className="font-mono text-sm font-semibold">{event.amount}</span>
-                        </div>
-                        <p className="text-xs text-muted-foreground mt-1 truncate">
-                          TX: {event.transaction_hash?.substring(0, 20)}...
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <Badge variant={event.processed ? "default" : "outline"}>
-                          {event.processed ? '✓ Traité' : '⏳ En attente'}
-                        </Badge>
-                        {event.block_number && (
-                          <p className="text-xs text-muted-foreground mt-1">
-                            Bloc #{event.block_number}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  ))}
+            {/* Summary card for supported networks */}
+            {blockchainStats.supported_networks && (
+              <div className="mt-6 p-4 bg-gradient-to-br from-indigo-50 to-indigo-100 dark:from-indigo-950 dark:to-indigo-900 rounded-lg border-2 border-indigo-300 dark:border-indigo-700">
+                <div className="flex items-center gap-3">
+                  <svg className="h-8 w-8 text-indigo-600 dark:text-indigo-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M12 6v6l4 2" />
+                  </svg>
+                  <div>
+                    <p className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
+                      {blockchainStats.supported_networks} Réseaux Blockchain
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      BSC, Ethereum, Tron, Solana, Arbitrum, Optimism, Lisk, Base
+                    </p>
+                  </div>
                 </div>
               </div>
             )}
