@@ -226,58 +226,117 @@ serve(async (req) => {
         });
       }
 
-      // Fetch blockchain events statistics
+      // Fetch blockchain statistics from actual requests
       console.log('Attempting to fetch blockchain stats...');
-      const { data: blockchainEvents, error: blockchainError } = await adminSupabase
-        .from('blockchain_events')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(100);
+      
+      // Define all supported networks
+      const supportedNetworks = ['BSC', 'Ethereum', 'Tron', 'Solana', 'Arbitrum', 'Optimism', 'Lisk', 'Base'];
+      
+      // Get all offramp and onramp requests to analyze network usage
+      const { data: allOfframpForNetwork, error: offrampNetError } = await adminSupabase
+        .from('offramp_requests')
+        .select('token, usd_amount, xof_amount, status, created_at');
+      
+      const { data: allOnrampForNetwork, error: onrampNetError } = await adminSupabase
+        .from('onramp_requests')
+        .select('token, usd_amount, xof_amount, status, created_at');
 
-      if (blockchainError) {
-        console.error('Error fetching blockchain events:', blockchainError);
-      }
+      // Combine all transactions for network analysis
+      const allNetworkTransactions = [
+        ...(allOfframpForNetwork || []).map((req: any) => ({ 
+          ...req, 
+          type: 'offramp',
+          // Extract network from token (e.g., "USDT-BSC" -> "BSC")
+          network: req.token?.includes('-') ? req.token.split('-')[1] : 'BSC'
+        })),
+        ...(allOnrampForNetwork || []).map((req: any) => ({ 
+          ...req, 
+          type: 'onramp',
+          // Extract network from token
+          network: req.token?.includes('-') ? req.token.split('-')[1] : 'BSC'
+        }))
+      ];
 
-      // Calculate blockchain stats by network
-      const networkStats = blockchainEvents?.reduce((acc, e) => {
-        const network = e.network || 'bsc';
-        if (!acc[network]) {
-          acc[network] = { 
-            volume: 0, 
-            count: 0,
-            tokens: new Set()
-          };
-        }
-        acc[network].volume += parseFloat(e.amount || 0);
-        acc[network].count += 1;
-        acc[network].tokens.add(e.token_symbol);
-        return acc;
-      }, {} as Record<string, { volume: number; count: number; tokens: Set<string> }>) || {};
-
-      const networkVolumes = Object.entries(networkStats).map(([network, data]) => ({
-        network: network.toUpperCase(),
-        volume: data.volume,
-        count: data.count,
-        unique_tokens: data.tokens.size,
-        percentage: 0 // Will calculate after sorting
-      })).sort((a, b) => b.volume - a.volume);
-
-      // Calculate percentages
-      const totalNetworkVolume = networkVolumes.reduce((sum, n) => sum + n.volume, 0);
-      networkVolumes.forEach(n => {
-        n.percentage = totalNetworkVolume > 0 ? (n.volume / totalNetworkVolume) * 100 : 0;
+      // Calculate network statistics
+      const networkStatsMap = new Map();
+      
+      // Initialize all supported networks with zero values
+      supportedNetworks.forEach(network => {
+        networkStatsMap.set(network, {
+          network,
+          volume: 0,
+          count: 0,
+          tokens: new Set(),
+          offramp_count: 0,
+          onramp_count: 0
+        });
       });
 
+      // Populate with actual data
+      allNetworkTransactions.forEach((tx: any) => {
+        const network = tx.network || 'BSC';
+        if (!networkStatsMap.has(network)) {
+          networkStatsMap.set(network, {
+            network,
+            volume: 0,
+            count: 0,
+            tokens: new Set(),
+            offramp_count: 0,
+            onramp_count: 0
+          });
+        }
+        
+        const stats = networkStatsMap.get(network);
+        const amount = Number(tx.usd_amount || 0);
+        stats.volume += amount;
+        stats.count += 1;
+        
+        if (tx.type === 'offramp') {
+          stats.offramp_count += 1;
+        } else {
+          stats.onramp_count += 1;
+        }
+        
+        // Extract token symbol (e.g., "USDT-BSC" -> "USDT")
+        const tokenSymbol = tx.token?.includes('-') ? tx.token.split('-')[0] : tx.token;
+        if (tokenSymbol) {
+          stats.tokens.add(tokenSymbol);
+        }
+      });
+
+      const totalNetworkVolume = Array.from(networkStatsMap.values()).reduce((sum, stats) => sum + stats.volume, 0);
+      const totalNetworkCount = Array.from(networkStatsMap.values()).reduce((sum, stats) => sum + stats.count, 0);
+
+      const volumeByNetwork = Array.from(networkStatsMap.values())
+        .map((item: any) => ({
+          network: item.network,
+          volume: item.volume,
+          count: item.count,
+          unique_tokens: item.tokens.size,
+          offramp_count: item.offramp_count,
+          onramp_count: item.onramp_count,
+          percentage: totalNetworkVolume > 0 ? (item.volume / totalNetworkVolume) * 100 : 0
+        }))
+        .sort((a, b) => b.volume - a.volume);
+
+      const networksWithActivity = volumeByNetwork.filter(n => n.count > 0);
+      const highestVolumeNetwork = networksWithActivity.length > 0 ? networksWithActivity[0] : null;
+      const lowestVolumeNetwork = networksWithActivity.length > 0 ? networksWithActivity[networksWithActivity.length - 1] : null;
+
       const blockchainStats = {
-        total_events: blockchainEvents?.length || 0,
-        processed_events: blockchainEvents?.filter(e => e.processed).length || 0,
-        pending_events: blockchainEvents?.filter(e => !e.processed).length || 0,
-        total_volume: blockchainEvents?.reduce((sum, e) => sum + parseFloat(e.amount || 0), 0) || 0,
-        unique_networks: Object.keys(networkStats).length,
-        recent_events: blockchainEvents?.slice(0, 10) || [],
-        volume_by_network: networkVolumes,
-        highest_volume_network: networkVolumes[0] || null,
-        lowest_volume_network: networkVolumes[networkVolumes.length - 1] || null
+        total_events: totalNetworkCount,
+        processed_events: allNetworkTransactions.filter((tx: any) => 
+          tx.status === 'paid' || tx.status === 'completed'
+        ).length,
+        pending_events: allNetworkTransactions.filter((tx: any) => 
+          tx.status === 'pending_payment' || tx.status === 'pending_momo_payment' || tx.status === 'processing' || tx.status === 'received' || tx.status === 'momo_payment_received'
+        ).length,
+        total_volume: totalNetworkVolume,
+        unique_networks: networksWithActivity.length,
+        supported_networks: supportedNetworks.length,
+        volume_by_network: volumeByNetwork,
+        highest_volume_network: highestVolumeNetwork,
+        lowest_volume_network: lowestVolumeNetwork
       };
 
       // Fetch country statistics
