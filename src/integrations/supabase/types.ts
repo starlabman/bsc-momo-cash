@@ -361,22 +361,10 @@ export type Database = {
         Args: { p_admin_id: string; p_username: string }
         Returns: string
       }
-      get_request_stats: {
-        Args: Record<PropertyKey, never>
-        Returns: Json
-      }
-      is_admin_user: {
-        Args: Record<PropertyKey, never>
-        Returns: boolean
-      }
-      reminder_configure_otp_expiry: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
-      validate_admin_jwt: {
-        Args: { p_token: string }
-        Returns: boolean
-      }
+      get_request_stats: { Args: never; Returns: Json }
+      is_admin_user: { Args: never; Returns: boolean }
+      reminder_configure_otp_expiry: { Args: never; Returns: undefined }
+      validate_admin_jwt: { Args: { p_token: string }; Returns: boolean }
       verify_admin_credentials: {
         Args: { p_password: string; p_username: string }
         Returns: boolean
