@@ -60,7 +60,10 @@ serve(async (req) => {
     // Sanitize mobile number - remove all non-digit/+ characters
     const sanitizedMomoNumber = momoNumber.replace(/[^\d+]/g, '');
     
-    console.log('Creating onramp request with validated data');
+    // Combine token and network for storage (e.g., "USDC-BSC")
+    const tokenWithNetwork = network ? `${token}-${network.toUpperCase()}` : token;
+    
+    console.log('Creating onramp request with validated data', { token, network, tokenWithNetwork });
 
     // Get current exchange rate
     const { data: rateConfig, error: rateError } = await supabase
@@ -89,7 +92,7 @@ serve(async (req) => {
         xof_amount: xofAmount,
         usd_amount: usdAmount,
         crypto_amount: cryptoAmount,
-        token: token,
+        token: tokenWithNetwork,
         momo_number: sanitizedMomoNumber,
         momo_provider: momoProvider,
         recipient_address: recipientAddress,
@@ -112,7 +115,7 @@ serve(async (req) => {
         xof_amount: xofAmount,
         usd_amount: usdAmount,
         crypto_amount: cryptoAmount,
-        token: token,
+        token: tokenWithNetwork,
         momo_number: sanitizedMomoNumber,
         momo_provider: momoProvider,
         recipient_address: recipientAddress,
