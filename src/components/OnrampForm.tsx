@@ -13,6 +13,9 @@ import { formatPhoneNumber } from '@/utils/phoneDetection';
 import NetworkSelector, { SUPPORTED_NETWORKS } from '@/components/NetworkSelector';
 import WalletConnector from '@/components/WalletConnector';
 import { CountryOperatorSelector } from './CountryOperatorSelector';
+import { PaymentLinkDialog } from './PaymentLinkDialog';
+import { Switch } from '@/components/ui/switch';
+import { Link2 } from 'lucide-react';
 
 interface ExchangeRate {
   external_rate: number;
@@ -49,8 +52,13 @@ const OnrampForm = () => {
     token: 'USDC',
     momoNumber: '',
     momoProvider: '',
-    recipientAddress: ''
+    recipientAddress: '',
+    generatePaymentLink: false,
+    requesterName: ''
   });
+  
+  const [showPaymentLinkDialog, setShowPaymentLinkDialog] = useState(false);
+  const [paymentLink, setPaymentLink] = useState('');
   
   const [selectedCountry, setSelectedCountry] = useState('');
   const [selectedCountryData, setSelectedCountryData] = useState<any>(null);
@@ -144,7 +152,9 @@ const OnrampForm = () => {
           momoNumber: selectedCountryData?.phone_prefix + formData.momoNumber,
           momoProvider: formData.momoProvider || undefined,
           recipientAddress: formData.recipientAddress,
-          countryId: selectedCountry
+          countryId: selectedCountry,
+          generatePaymentLink: formData.generatePaymentLink,
+          requesterName: formData.requesterName || undefined
         }
       });
 
@@ -152,9 +162,17 @@ const OnrampForm = () => {
 
       if (data.success) {
         setRequest(data.data);
+        
+        if (data.data.payment_link) {
+          setPaymentLink(data.data.payment_link);
+          setShowPaymentLinkDialog(true);
+        }
+        
         toast({
           title: "Demande créée !",
-          description: "Votre demande d'achat de crypto a été créée avec succès",
+          description: formData.generatePaymentLink 
+            ? "Lien de paiement généré avec succès" 
+            : "Votre demande d'achat de crypto a été créée avec succès",
         });
       } else {
         throw new Error(data.error);
@@ -179,11 +197,15 @@ const OnrampForm = () => {
       token: 'USDC',
       momoNumber: '',
       momoProvider: '',
-      recipientAddress: ''
+      recipientAddress: '',
+      generatePaymentLink: false,
+      requesterName: ''
     });
     setSelectedCountry('');
     setSelectedCountryData(null);
     setIsPhoneNumberValid(false);
+    setPaymentLink('');
+    setShowPaymentLinkDialog(false);
   };
 
   if (request) {
@@ -366,6 +388,47 @@ const OnrampForm = () => {
               />
             </div>
 
+            <Card className="bg-accent/5 border-accent/20 animate-slide-in-up">
+              <CardContent className="pt-6 space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Link2 className="h-4 w-4 text-accent" />
+                    <Label htmlFor="payment-link-onramp" className="cursor-pointer">
+                      Générer un lien de paiement
+                    </Label>
+                  </div>
+                  <Switch
+                    id="payment-link-onramp"
+                    checked={formData.generatePaymentLink}
+                    onCheckedChange={(checked) => 
+                      setFormData({ ...formData, generatePaymentLink: checked })
+                    }
+                  />
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Créez un lien de paiement que vous pourrez partager avec quelqu'un d'autre pour qu'il effectue le paiement Mobile Money
+                </p>
+                
+                {formData.generatePaymentLink && (
+                  <div className="space-y-2 animate-slide-in-down">
+                    <Label htmlFor="requester-name-onramp">Votre nom (optionnel)</Label>
+                    <Input
+                      id="requester-name-onramp"
+                      type="text"
+                      placeholder="Ex: Jean Dupont"
+                      value={formData.requesterName}
+                      onChange={(e) => setFormData({ ...formData, requesterName: e.target.value })}
+                      className="text-base"
+                      maxLength={100}
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Votre nom sera affiché sur la page de paiement
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
             {loadingRate ? (
               <Card className="bg-primary/5 border-primary/20">
                 <CardContent className="pt-6">
@@ -459,6 +522,15 @@ const OnrampForm = () => {
           </CardContent>
         </Card>
       )}
+      
+      <PaymentLinkDialog
+        open={showPaymentLinkDialog}
+        onOpenChange={setShowPaymentLinkDialog}
+        paymentLink={paymentLink}
+        amount={formData.xofAmount}
+        token={formData.token}
+        type="onramp"
+      />
     </div>
   );
 };

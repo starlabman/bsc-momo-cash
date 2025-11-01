@@ -230,10 +230,15 @@ export type Database = {
           created_at: string
           exchange_rate: number
           id: string
+          link_expires_at: string | null
           momo_number: string
           momo_provider: string | null
           notes: string | null
+          paid_via_link: boolean | null
+          payment_link_token: string | null
           request_ip: string | null
+          requester_info: Json | null
+          requester_name: string | null
           status: string
           token: string
           transaction_hash: string | null
@@ -248,10 +253,15 @@ export type Database = {
           created_at?: string
           exchange_rate: number
           id?: string
+          link_expires_at?: string | null
           momo_number: string
           momo_provider?: string | null
           notes?: string | null
+          paid_via_link?: boolean | null
+          payment_link_token?: string | null
           request_ip?: string | null
+          requester_info?: Json | null
+          requester_name?: string | null
           status?: string
           token: string
           transaction_hash?: string | null
@@ -266,10 +276,15 @@ export type Database = {
           created_at?: string
           exchange_rate?: number
           id?: string
+          link_expires_at?: string | null
           momo_number?: string
           momo_provider?: string | null
           notes?: string | null
+          paid_via_link?: boolean | null
+          payment_link_token?: string | null
           request_ip?: string | null
+          requester_info?: Json | null
+          requester_name?: string | null
           status?: string
           token?: string
           transaction_hash?: string | null
@@ -294,11 +309,16 @@ export type Database = {
           crypto_amount: number
           exchange_rate: number
           id: string
+          link_expires_at: string | null
           momo_number: string
           momo_provider: string | null
           notes: string | null
+          paid_via_link: boolean | null
+          payment_link_token: string | null
           recipient_address: string
           request_ip: string | null
+          requester_info: Json | null
+          requester_name: string | null
           status: string
           token: string
           transaction_hash: string | null
@@ -312,11 +332,16 @@ export type Database = {
           crypto_amount: number
           exchange_rate: number
           id?: string
+          link_expires_at?: string | null
           momo_number: string
           momo_provider?: string | null
           notes?: string | null
+          paid_via_link?: boolean | null
+          payment_link_token?: string | null
           recipient_address: string
           request_ip?: string | null
+          requester_info?: Json | null
+          requester_name?: string | null
           status?: string
           token: string
           transaction_hash?: string | null
@@ -330,11 +355,16 @@ export type Database = {
           crypto_amount?: number
           exchange_rate?: number
           id?: string
+          link_expires_at?: string | null
           momo_number?: string
           momo_provider?: string | null
           notes?: string | null
+          paid_via_link?: boolean | null
+          payment_link_token?: string | null
           recipient_address?: string
           request_ip?: string | null
+          requester_info?: Json | null
+          requester_name?: string | null
           status?: string
           token?: string
           transaction_hash?: string | null

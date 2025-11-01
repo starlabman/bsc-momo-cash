@@ -28,7 +28,9 @@ const onrampRequestSchema = z.object({
     .max(50)
     .optional(),
   recipientAddress: z.string().min(1),
-  countryId: z.string().uuid().optional()
+  countryId: z.string().uuid().optional(),
+  generatePaymentLink: z.boolean().optional(),
+  requesterName: z.string().max(100).optional()
 });
 
 serve(async (req) => {
@@ -55,7 +57,7 @@ serve(async (req) => {
       });
     }
 
-    const { xofAmount, token, network, tokenAddress, momoNumber, momoProvider, recipientAddress, countryId } = validationResult.data;
+    const { xofAmount, token, network, tokenAddress, momoNumber, momoProvider, recipientAddress, countryId, generatePaymentLink, requesterName } = validationResult.data;
 
     // Sanitize mobile number - remove all non-digit/+ characters
     const sanitizedMomoNumber = momoNumber.replace(/[^\d+]/g, '');
@@ -63,7 +65,16 @@ serve(async (req) => {
     // Combine token and network for storage (e.g., "USDC-BSC")
     const tokenWithNetwork = network ? `${token}-${network.toUpperCase()}` : token;
     
-    console.log('Creating onramp request with validated data', { token, network, tokenWithNetwork });
+    // Generate payment link token if requested
+    let paymentLinkToken = null;
+    let linkExpiresAt = null;
+    if (generatePaymentLink) {
+      paymentLinkToken = crypto.randomUUID();
+      // Link expires in 7 days
+      linkExpiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+    }
+    
+    console.log('Creating onramp request with validated data', { token, network, tokenWithNetwork, generatePaymentLink });
 
     // Get current exchange rate
     const { data: rateConfig, error: rateError } = await supabase
@@ -98,7 +109,11 @@ serve(async (req) => {
         recipient_address: recipientAddress,
         country_id: countryId,
         exchange_rate: finalRate,
-        request_ip: req.headers.get('x-forwarded-for') || 'unknown'
+        request_ip: req.headers.get('x-forwarded-for') || 'unknown',
+        payment_link_token: paymentLinkToken,
+        link_expires_at: linkExpiresAt,
+        requester_name: requesterName,
+        paid_via_link: generatePaymentLink ? false : null
       })
       .select()
       .single();
@@ -121,7 +136,9 @@ serve(async (req) => {
         recipient_address: recipientAddress,
         exchange_rate: finalRate,
         status: request.status,
-        created_at: request.created_at
+        created_at: request.created_at,
+        payment_link_token: paymentLinkToken,
+        payment_link: paymentLinkToken ? `${req.headers.get('origin') || 'https://xusensadnrsodukuzndm.lovable.app'}/pay/${paymentLinkToken}` : null
       }
     };
 
