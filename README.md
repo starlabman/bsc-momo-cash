@@ -1,6 +1,6 @@
 # Crypto Offramp/Onramp Platform
 
-A comprehensive blockchain-to-mobile-money platform enabling seamless conversion between cryptocurrencies and fiat currencies (XOF) via mobile money operators.
+Une plateforme complète de conversion blockchain-mobile money permettant des conversions transparentes entre cryptomonnaies et monnaies fiduciaires (XOF) via les opérateurs de mobile money.
 
 ## Project info
 
@@ -11,19 +11,28 @@ A comprehensive blockchain-to-mobile-money platform enabling seamless conversion
 ### Core Functionality
 
 #### 🔄 Offramp (Crypto to Fiat)
-- Convert cryptocurrency to mobile money (XOF)
-- Support for multiple tokens (USDT, USDC, BUSD, DAI, etc.)
-- Multi-network support (BSC, Ethereum, Polygon, Avalanche, Arbitrum, Optimism)
-- Real-time exchange rate calculations with configurable margins
-- Automatic blockchain event tracking and processing
-- Direct transfer to mobile money operators (MTN, Moov, Orange, Wave, Free)
+- Conversion de cryptomonnaies vers mobile money (XOF)
+- Support de multiples tokens (USDT, USDC, BUSD, DAI, etc.)
+- Support multi-réseaux (BSC, Ethereum, Polygon, Avalanche, Arbitrum, Optimism)
+- Calculs de taux de change en temps réel avec marges configurables
+- Suivi et traitement automatique des événements blockchain
+- Transfert direct vers les opérateurs mobile money (MTN, Moov, Orange, Wave, Free)
 
 #### 💰 Onramp (Fiat to Crypto)
-- Convert mobile money to cryptocurrency
-- Support for multiple blockchain networks
-- Secure recipient wallet address validation
-- Country-specific mobile operator integration
-- Real-time crypto amount calculations
+- Conversion de mobile money vers cryptomonnaies
+- Support de multiples réseaux blockchain
+- Validation sécurisée des adresses de portefeuilles destinataires
+- Intégration des opérateurs mobiles spécifiques par pays
+- Calculs des montants crypto en temps réel
+
+#### 🔗 Payment Links (Paiement par Lien)
+- **Création de demandes de paiement partageable**: Initiez une demande et générez un lien unique
+- **Liens sécurisés avec expiration**: Validité de 7 jours pour chaque lien
+- **Support Offramp et Onramp**: Fonctionne pour les deux types de transactions
+- **QR Code intégré**: Scan facile pour les paiements crypto
+- **Partage multi-canal**: Copie, partage natif, ou QR code
+- **Informations complètes**: Affichage des montants, adresses, et instructions de paiement
+- **Suivi du statut**: Visibilité en temps réel de l'état de la transaction
 
 ### Blockchain Integration
 
@@ -77,20 +86,31 @@ A comprehensive blockchain-to-mobile-money platform enabling seamless conversion
 
 ### Database & Backend
 
-- **Supabase Backend**: Full-stack integration
-- **Edge Functions**: Serverless functions for:
-  - Offramp request creation
-  - Onramp request creation
-  - Exchange rate fetching
-  - Admin authentication
-  - Admin dashboard data
-  - Audit logging
+- **Supabase Backend**: Intégration full-stack
+- **Edge Functions**: Fonctions serverless pour:
+  - Création de demandes offramp
+  - Création de demandes onramp
+  - Récupération des taux de change
+  - Authentification admin
+  - Données du tableau de bord admin
+  - Journal d'audit
+  - Récupération des demandes de paiement par lien
 - **Database Tables**:
-  - Countries and mobile operators
-  - Offramp/onramp requests
-  - Blockchain events
-  - Exchange rates
-  - Admin users and audit logs
+  - Pays et opérateurs mobiles
+  - Demandes offramp/onramp (avec support des liens de paiement)
+  - Événements blockchain
+  - Taux de change
+  - Utilisateurs admin et journaux d'audit
+
+### Payment Link System
+
+- **Token-based Links**: Chaque demande peut générer un token unique (UUID)
+- **Expiration automatique**: Les liens expirent après 7 jours
+- **Public Access**: RLS policies permettent l'accès public via token valide
+- **Type Detection**: Différenciation automatique entre offramp et onramp
+- **Requester Information**: Stockage du nom du demandeur et infos additionnelles
+- **Payment Instructions**: Instructions détaillées pour effectuer le paiement
+- **Status Tracking**: Suivi de l'état `paid_via_link` pour les paiements complétés
 
 ### User Interface
 
