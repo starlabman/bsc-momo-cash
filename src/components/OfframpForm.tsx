@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Loader2, Coins, ArrowRight, Smartphone, CheckCircle, Globe } from 'lucide-react';
+import { Loader2, Coins, ArrowRight, Smartphone, CheckCircle, Globe, Share2, Copy } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { QRCodeSVG } from 'qrcode.react';
@@ -14,7 +14,6 @@ import { formatPhoneNumber } from '@/utils/phoneDetection';
 import NetworkSelector, { SUPPORTED_NETWORKS } from '@/components/NetworkSelector';
 import WalletConnector from '@/components/WalletConnector';
 import { CountryOperatorSelector } from './CountryOperatorSelector';
-import { PaymentLinkDialog } from './PaymentLinkDialog';
 import { Switch } from '@/components/ui/switch';
 import { Link2 } from 'lucide-react';
 
@@ -46,6 +45,7 @@ const OfframpForm = () => {
   const [exchangeRate, setExchangeRate] = useState<ExchangeRate | null>(null);
   const [calculatedXOF, setCalculatedXOF] = useState<number>(0);
   const [request, setRequest] = useState<OfframpRequest | null>(null);
+  const [paymentLinkData, setPaymentLinkData] = useState<{link: string, type: 'offramp' | 'onramp'} | null>(null);
   
   const [formData, setFormData] = useState({
     amount: '',
@@ -56,9 +56,6 @@ const OfframpForm = () => {
     generatePaymentLink: false,
     requesterName: ''
   });
-  
-  const [showPaymentLinkDialog, setShowPaymentLinkDialog] = useState(false);
-  const [paymentLink, setPaymentLink] = useState('');
   
   const [selectedCountry, setSelectedCountry] = useState('');
   const [selectedCountryData, setSelectedCountryData] = useState<any>(null);
@@ -143,10 +140,9 @@ const OfframpForm = () => {
       if (error) throw error;
 
       if (data.success) {
-        // Si un lien de paiement est généré, ne pas afficher la page de succès normale
         if (data.data.payment_link) {
-          setPaymentLink(data.data.payment_link);
-          setShowPaymentLinkDialog(true);
+          setPaymentLinkData({link: data.data.payment_link, type: 'offramp'});
+          setRequest(data.data);
           
           toast({
             title: "Lien de paiement généré !",
@@ -177,6 +173,7 @@ const OfframpForm = () => {
 
   const resetForm = () => {
     setRequest(null);
+    setPaymentLinkData(null);
     setFormData({
       amount: '',
       network: 'base', // Reset to Base
@@ -189,21 +186,81 @@ const OfframpForm = () => {
     setSelectedCountry('');
     setSelectedCountryData(null);
     setIsPhoneNumberValid(false);
-    setPaymentLink('');
-    setShowPaymentLinkDialog(false);
   };
 
   if (request) {
     return (
       <div className="max-w-2xl mx-auto space-y-6 animate-fade-in">
+        {paymentLinkData && (
+          <Card className="border-primary/20 bg-primary/5">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Share2 className="h-5 w-5 text-primary" />
+                Lien de paiement généré
+              </CardTitle>
+              <CardDescription>
+                Partagez ce lien avec la personne qui effectuera le paiement
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label>Lien de paiement</Label>
+                <div className="flex gap-2">
+                  <Input
+                    value={paymentLinkData.link}
+                    readOnly
+                    className="font-mono text-xs"
+                  />
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={async () => {
+                      try {
+                        await navigator.clipboard.writeText(paymentLinkData.link);
+                        toast({
+                          title: "Copié !",
+                          description: "Le lien a été copié dans le presse-papier",
+                        });
+                      } catch (err) {
+                        toast({
+                          title: "Erreur",
+                          description: "Impossible de copier le lien",
+                          variant: "destructive",
+                        });
+                      }
+                    }}
+                    className="shrink-0"
+                  >
+                    <Copy className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+
+              <div className="flex justify-center p-4 bg-background border rounded-lg">
+                <QRCodeSVG 
+                  value={paymentLinkData.link} 
+                  size={200}
+                  level="M"
+                />
+              </div>
+
+              <div className="text-xs text-muted-foreground">
+                <p>💡 Ce lien est valide pendant 7 jours</p>
+                <p className="mt-1">La personne pourra utiliser ce lien pour effectuer le paiement</p>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+        
         <Card className="border-green-200 bg-green-50/50 dark:border-green-800 dark:bg-green-950/20">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-green-700 dark:text-green-300">
               <CheckCircle className="h-5 w-5" />
-              Demande créée avec succès
+              {paymentLinkData ? 'Détails de la demande' : 'Demande créée avec succès'}
             </CardTitle>
             <CardDescription>
-              Envoyez exactement {request.amount} {request.token} à l'adresse ci-dessous
+              {paymentLinkData ? 'Informations de paiement' : `Envoyez exactement ${request.amount} ${request.token} à l'adresse ci-dessous`}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -491,21 +548,6 @@ const OfframpForm = () => {
           </CardContent>
         </Card>
       )}
-      
-      <PaymentLinkDialog
-        open={showPaymentLinkDialog}
-        onOpenChange={(open) => {
-          setShowPaymentLinkDialog(open);
-          if (!open) {
-            // Réinitialiser le formulaire quand on ferme le dialogue
-            resetForm();
-          }
-        }}
-        paymentLink={paymentLink}
-        amount={formData.amount}
-        token={formData.token}
-        type="offramp"
-      />
     </div>
   );
 };
