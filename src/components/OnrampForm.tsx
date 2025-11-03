@@ -161,19 +161,23 @@ const OnrampForm = () => {
       if (error) throw error;
 
       if (data.success) {
-        setRequest(data.data);
-        
+        // Si un lien de paiement est généré, ne pas afficher la page de succès normale
         if (data.data.payment_link) {
           setPaymentLink(data.data.payment_link);
           setShowPaymentLinkDialog(true);
+          
+          toast({
+            title: "Lien de paiement généré !",
+            description: "Partagez le lien pour que quelqu'un d'autre effectue le paiement",
+          });
+        } else {
+          setRequest(data.data);
+          
+          toast({
+            title: "Demande créée !",
+            description: "Votre demande d'achat de crypto a été créée avec succès",
+          });
         }
-        
-        toast({
-          title: "Demande créée !",
-          description: formData.generatePaymentLink 
-            ? "Lien de paiement généré avec succès" 
-            : "Votre demande d'achat de crypto a été créée avec succès",
-        });
       } else {
         throw new Error(data.error);
       }
@@ -525,7 +529,13 @@ const OnrampForm = () => {
       
       <PaymentLinkDialog
         open={showPaymentLinkDialog}
-        onOpenChange={setShowPaymentLinkDialog}
+        onOpenChange={(open) => {
+          setShowPaymentLinkDialog(open);
+          if (!open) {
+            // Réinitialiser le formulaire quand on ferme le dialogue
+            resetForm();
+          }
+        }}
         paymentLink={paymentLink}
         amount={formData.xofAmount}
         token={formData.token}
