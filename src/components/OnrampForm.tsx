@@ -11,7 +11,6 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { formatPhoneNumber } from '@/utils/phoneDetection';
 import NetworkSelector, { SUPPORTED_NETWORKS } from '@/components/NetworkSelector';
-import WalletConnector from '@/components/WalletConnector';
 import { CountryOperatorSelector } from './CountryOperatorSelector';
 import { Switch } from '@/components/ui/switch';
 import { Link2 } from 'lucide-react';
@@ -379,12 +378,6 @@ const OnrampForm = () => {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Wallet Connector for Base network */}
-            {formData.network === 'base' && (
-              <div className="animate-slide-in-up">
-                <WalletConnector />
-              </div>
-            )}
             <NetworkSelector
               selectedNetwork={formData.network}
               onNetworkChange={(network) => {
