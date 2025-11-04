@@ -21,26 +21,37 @@ serve(async (req) => {
   try {
     console.log('Fetching exchange rate...');
 
-    // For demo purposes, use a fixed rate since external API might be unavailable
-    // In production, you would fetch from a reliable exchange rate API
-    let externalRate = 655.50; // Fixed USD to XOF rate for demo
+    // Fetch real-time exchange rate from multiple sources
+    let externalRate = 620.00; // Fallback rate if all APIs fail
     
+    // Try primary API: exchangerate-api.com (free, reliable, 1500 req/month)
     try {
-      const response = await fetch('https://api.exchangerate.host/latest?base=USD&symbols=XOF', {
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (compatible; OfframpApp/1.0)'
-        }
-      });
+      const response = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
       
       if (response.ok) {
         const data = await response.json();
-        if (data.success && data.rates && data.rates.XOF) {
+        if (data.rates && data.rates.XOF) {
           externalRate = data.rates.XOF;
-          console.log('External rate fetched successfully:', externalRate);
+          console.log('Exchange rate from exchangerate-api.com:', externalRate);
         }
       }
     } catch (error) {
-      console.log('External API unavailable, using fallback rate:', externalRate);
+      console.log('Primary API unavailable, trying backup...');
+      
+      // Try backup API: fxratesapi.com
+      try {
+        const backupResponse = await fetch('https://api.fxratesapi.com/latest?base=USD&currencies=XOF');
+        
+        if (backupResponse.ok) {
+          const backupData = await backupResponse.json();
+          if (backupData.rates && backupData.rates.XOF) {
+            externalRate = backupData.rates.XOF;
+            console.log('Exchange rate from fxratesapi.com:', externalRate);
+          }
+        }
+      } catch (backupError) {
+        console.log('All external APIs unavailable, using fallback rate:', externalRate);
+      }
     }
     console.log('External rate fetched:', externalRate);
 
