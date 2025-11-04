@@ -81,23 +81,17 @@ serve(async (req) => {
     
     console.log('Creating offramp request with validated data', { token, network, tokenWithNetwork, generatePaymentLink });
 
-    // Get current exchange rate
-    const { data: rateConfig, error: rateError } = await supabase
-      .from('exchange_rates')
-      .select('*')
-      .eq('base_currency', 'USD')
-      .eq('target_currency', 'XOF')
-      .order('last_updated', { ascending: false })
-      .limit(1)
-      .single();
-
-    if (rateError) {
-      console.error('Error fetching rate config:', rateError);
+    // Fetch fresh exchange rate
+    const { data: exchangeRateData, error: exchangeRateError } = await supabase.functions.invoke('get-exchange-rate');
+    
+    if (exchangeRateError) {
+      console.error('Error fetching exchange rate:', exchangeRateError);
       throw new Error('Failed to fetch exchange rate');
     }
 
-    const margin = rateConfig?.margin || 0.10;
-    const finalRate = rateConfig.rate * (1 - margin);
+    const rateInfo = exchangeRateData.data;
+    const finalRate = rateInfo.final_rate;
+    const margin = rateInfo.margin;
     const xofAmount = amount * finalRate;
 
     // Create offramp request with sanitized data
