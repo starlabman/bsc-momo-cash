@@ -31,8 +31,9 @@ interface OfframpRequest {
   momo_provider: string;
   xof_amount: number;
   exchange_rate: number;
-  bsc_address: string;
+  deposit_address: string;
   token_address: string;
+  network: string;
   status: string;
   created_at: string;
 }
@@ -293,17 +294,17 @@ const OfframpForm = () => {
             <div className="space-y-4">
               <div className="text-center">
                 <Label className="text-base font-medium">
-                  Adresse BSC ({request.token})
+                  Adresse {request.network?.toUpperCase() || 'de dépôt'} ({request.token})
                 </Label>
                 <div className="mt-2 p-3 sm:p-4 bg-muted rounded-lg break-all font-mono text-xs sm:text-sm hover:bg-muted/80 transition-colors">
-                  {request.bsc_address}
+                  {request.deposit_address}
                 </div>
               </div>
 
               <div className="flex justify-center">
                 <div className="p-3 sm:p-4 bg-background border rounded-lg animate-scale-in">
                   <QRCodeSVG 
-                    value={request.bsc_address} 
+                    value={request.deposit_address} 
                     size={window.innerWidth < 640 ? 160 : 200}
                     level="M"
                   />

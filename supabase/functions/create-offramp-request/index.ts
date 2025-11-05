@@ -13,10 +13,60 @@ const supabase = createClient(
   Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
 );
 
-// Token addresses on BSC
-const TOKEN_ADDRESSES = {
-  'USDC': '0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d',
-  'USDT': '0x55d398326f99059fF775485246999027B3197955'
+// Network configurations with deposit addresses and token addresses
+const NETWORK_CONFIG: Record<string, {
+  depositAddress: string;
+  tokens: Record<string, string>;
+}> = {
+  'base': {
+    depositAddress: '0xf249F24182CdE7bAd264B60Ed38727Fd3674FE6A',
+    tokens: {
+      'USDC': '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913',
+      'USDT': '0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA'
+    }
+  },
+  'bsc': {
+    depositAddress: '0xf249F24182CdE7bAd264B60Ed38727Fd3674FE6A',
+    tokens: {
+      'USDC': '0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d',
+      'USDT': '0x55d398326f99059fF775485246999027B3197955'
+    }
+  },
+  'ethereum': {
+    depositAddress: '0xf249F24182CdE7bAd264B60Ed38727Fd3674FE6A',
+    tokens: {
+      'USDC': '0xA0b86a33E6135FF96e4D2bF53A4C2e86B5ae4f8c',
+      'USDT': '0xdAC17F958D2ee523a2206206994597C13D831ec7'
+    }
+  },
+  'arbitrum': {
+    depositAddress: '0xf249F24182CdE7bAd264B60Ed38727Fd3674FE6A',
+    tokens: {
+      'USDC': '0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
+      'USDT': '0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9'
+    }
+  },
+  'optimism': {
+    depositAddress: '0xf249F24182CdE7bAd264B60Ed38727Fd3674FE6A',
+    tokens: {
+      'USDC': '0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85',
+      'USDT': '0x94b008aA00579c1307B0EF2c499aD98a8ce58e58'
+    }
+  },
+  'polygon': {
+    depositAddress: '0xf249F24182CdE7bAd264B60Ed38727Fd3674FE6A',
+    tokens: {
+      'USDC': '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
+      'USDT': '0xc2132D05D31c914a87C6611C10748AEb04B58e8F'
+    }
+  },
+  'solana': {
+    depositAddress: 'Fq9sgX7UHqEEwpVMu7UKjpstQGcf1JD3kPnUTYRbEdcZ',
+    tokens: {
+      'USDC': 'Fq9sgX7UHqEEwpVMu7UKjpstQGcf1JD3kPnUTYRbEdcZ',
+      'USDT': 'Fq9sgX7UHqEEwpVMu7UKjpstQGcf1JD3kPnUTYRbEdcZ'
+    }
+  }
 };
 
 
@@ -120,6 +170,12 @@ serve(async (req) => {
       throw new Error('Failed to create offramp request');
     }
 
+    // Get network-specific addresses
+    const networkKey = network?.toLowerCase() || 'bsc';
+    const networkConfig = NETWORK_CONFIG[networkKey];
+    const depositAddress = networkConfig?.depositAddress || request.bsc_address;
+    const tokenContractAddress = tokenAddress || networkConfig?.tokens[token] || '';
+
     const result = {
       success: true,
       data: {
@@ -130,8 +186,9 @@ serve(async (req) => {
         momo_provider: momoProvider,
         xof_amount: xofAmount,
         exchange_rate: finalRate,
-        bsc_address: request.bsc_address,
-        token_address: TOKEN_ADDRESSES[token as keyof typeof TOKEN_ADDRESSES],
+        deposit_address: depositAddress,
+        token_address: tokenContractAddress,
+        network: networkKey,
         status: request.status,
         created_at: request.created_at,
         payment_link_token: paymentLinkToken,
