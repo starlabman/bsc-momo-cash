@@ -157,12 +157,12 @@ export const SUPPORTED_NETWORKS: BlockchainNetwork[] = [
     tokens: [
       {
         symbol: 'USDC',
-        address: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
+        address: 'Fq9sgX7UHqEEwpVMu7UKjpstQGcf1JD3kPnUTYRbEdcZ',
         decimals: 6
       },
       {
         symbol: 'USDT',
-        address: 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB',
+        address: 'Fq9sgX7UHqEEwpVMu7UKjpstQGcf1JD3kPnUTYRbEdcZ',
         decimals: 6
       }
     ]
