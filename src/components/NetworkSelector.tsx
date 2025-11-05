@@ -1,8 +1,8 @@
 import React from 'react';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
-import { Network } from 'lucide-react';
+import { Network, Check } from 'lucide-react';
+import { Card } from '@/components/ui/card';
 
 export interface BlockchainNetwork {
   id: string;
@@ -188,116 +188,133 @@ const NetworkSelector: React.FC<NetworkSelectorProps> = ({
   const availableTokens = currentNetwork?.tokens || [];
 
   return (
-    <div className={`space-y-4 animate-slide-in-up ${className}`}>
-      <div className="space-y-2">
-        <Label htmlFor="network" className="flex items-center gap-2">
-          <Network className="h-4 w-4" />
-          Réseau blockchain
+    <div className={`space-y-6 animate-slide-in-up ${className}`}>
+      {/* Network Selection */}
+      <div className="space-y-3">
+        <Label className="flex items-center gap-2 text-base font-semibold">
+          <Network className="h-5 w-5 text-primary" />
+          Sélectionner le réseau
         </Label>
-        <Select value={selectedNetwork} onValueChange={onNetworkChange}>
-          <SelectTrigger className="text-base hover:bg-muted/50 transition-colors">
-            <SelectValue placeholder="Sélectionner un réseau" />
-          </SelectTrigger>
-          <SelectContent className="bg-background border shadow-lg z-50">
-            {SUPPORTED_NETWORKS.map((network) => (
-              <SelectItem 
-                key={network.id} 
-                value={network.id}
-                className="hover:bg-muted/50 transition-colors cursor-pointer"
-              >
-                <div className="flex items-center gap-3">
-                  <img 
-                    src={network.icon} 
-                    alt={network.name} 
-                    className="w-6 h-6 rounded-full"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.style.display = 'none';
-                    }}
-                  />
-                  <div className="flex flex-col">
-                    <span className="font-medium">{network.name}</span>
-                    <span className="text-xs text-muted-foreground">{network.symbol}</span>
-                  </div>
-                  <Badge variant="outline" className="ml-auto text-xs">
-                    #{network.chainId}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+          {SUPPORTED_NETWORKS.map((network) => (
+            <Card
+              key={network.id}
+              onClick={() => onNetworkChange(network.id)}
+              className={`
+                relative p-4 cursor-pointer transition-all duration-300
+                hover:shadow-lg hover:scale-[1.02] border-2
+                ${selectedNetwork === network.id 
+                  ? 'border-primary bg-primary/5 shadow-primary' 
+                  : 'border-border hover:border-primary/50'
+                }
+              `}
+            >
+              {selectedNetwork === network.id && (
+                <div className="absolute top-2 right-2 w-5 h-5 bg-primary rounded-full flex items-center justify-center">
+                  <Check className="h-3 w-3 text-primary-foreground" />
+                </div>
+              )}
+              <div className="flex flex-col items-center gap-2 text-center">
+                <img 
+                  src={network.icon} 
+                  alt={network.name} 
+                  className="w-10 h-10 rounded-full"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.style.display = 'none';
+                  }}
+                />
+                <div className="space-y-1">
+                  <p className="font-semibold text-sm">{network.name}</p>
+                  <Badge variant="outline" className="text-xs">
+                    {network.symbol}
                   </Badge>
                 </div>
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="token">Token</Label>
-        <Select 
-          value={selectedToken} 
-          onValueChange={onTokenChange}
-          disabled={!currentNetwork}
-        >
-          <SelectTrigger className="text-base hover:bg-muted/50 transition-colors">
-            <SelectValue placeholder="Sélectionner un token" />
-          </SelectTrigger>
-          <SelectContent className="bg-background border shadow-lg z-50">
-            {availableTokens.map((token) => (
-              <SelectItem 
-                key={token.symbol} 
-                value={token.symbol}
-                className="hover:bg-muted/50 transition-colors"
-              >
-                <div className="flex items-center justify-between w-full">
-                  <span>{token.symbol}</span>
-                  <Badge variant="outline" className="ml-2 text-xs">
-                    {currentNetwork?.symbol}
-                  </Badge>
-                </div>
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-
-      {currentNetwork && (
-        <div className="p-4 bg-gradient-to-r from-primary/5 to-accent/5 border border-primary/20 rounded-lg animate-fade-in">
-          <div className="flex items-center gap-3 mb-3">
-            <img 
-              src={currentNetwork.icon} 
-              alt={currentNetwork.name} 
-              className="w-8 h-8 rounded-full"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.style.display = 'none';
-              }}
-            />
-            <div className="flex-1">
-              <div className="flex items-center gap-2">
-                <span className="font-semibold text-base">{currentNetwork.name}</span>
-                <Badge variant="secondary" className="text-xs">
-                  {currentNetwork.symbol}
-                </Badge>
               </div>
-              <div className="flex items-center gap-3 mt-1">
-                <Badge variant="outline" className="text-xs">
-                  Chain ID: {currentNetwork.chainId}
-                </Badge>
-                <span className="text-xs text-muted-foreground">
-                  {availableTokens.length} token{availableTokens.length > 1 ? 's' : ''} disponible{availableTokens.length > 1 ? 's' : ''}
-                </span>
+            </Card>
+          ))}
+        </div>
+      </div>
+
+      {/* Token Selection */}
+      {currentNetwork && (
+        <div className="space-y-3 animate-slide-in-up">
+          <Label className="text-base font-semibold">
+            Sélectionner le token sur {currentNetwork.name}
+          </Label>
+          <div className="grid grid-cols-2 gap-3">
+            {availableTokens.map((token) => (
+              <Card
+                key={token.symbol}
+                onClick={() => onTokenChange(token.symbol)}
+                className={`
+                  relative p-4 cursor-pointer transition-all duration-300
+                  hover:shadow-lg hover:scale-[1.02] border-2
+                  ${selectedToken === token.symbol 
+                    ? 'border-primary bg-primary/5 shadow-primary' 
+                    : 'border-border hover:border-primary/50'
+                  }
+                `}
+              >
+                {selectedToken === token.symbol && (
+                  <div className="absolute top-2 right-2 w-5 h-5 bg-primary rounded-full flex items-center justify-center">
+                    <Check className="h-3 w-3 text-primary-foreground" />
+                  </div>
+                )}
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                    <span className="text-lg font-bold text-primary">
+                      {token.symbol.charAt(0)}
+                    </span>
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-semibold">{token.symbol}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {token.decimals} decimals
+                    </p>
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
+          
+          {/* Network Info */}
+          <Card className="p-4 bg-gradient-to-r from-primary/5 to-accent/5 border-primary/20">
+            <div className="flex items-start gap-3">
+              <img 
+                src={currentNetwork.icon} 
+                alt={currentNetwork.name} 
+                className="w-10 h-10 rounded-full"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.style.display = 'none';
+                }}
+              />
+              <div className="flex-1 space-y-2">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="font-semibold">{currentNetwork.name}</span>
+                  <Badge variant="secondary" className="text-xs">
+                    {currentNetwork.symbol}
+                  </Badge>
+                  <Badge variant="outline" className="text-xs">
+                    Chain #{currentNetwork.chainId}
+                  </Badge>
+                </div>
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <span>{availableTokens.length} tokens disponibles</span>
+                  <span>•</span>
+                  <a 
+                    href={currentNetwork.blockExplorer} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-primary hover:underline"
+                  >
+                    Explorer ↗
+                  </a>
+                </div>
               </div>
             </div>
-          </div>
-          <div className="text-xs text-muted-foreground">
-            <span className="font-medium">Explorer:</span>{' '}
-            <a 
-              href={currentNetwork.blockExplorer} 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-primary hover:underline"
-            >
-              {currentNetwork.blockExplorer}
-            </a>
-          </div>
+          </Card>
         </div>
       )}
     </div>
