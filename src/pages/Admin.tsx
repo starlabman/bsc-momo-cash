@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { ArrowRightLeft, LogOut, User } from 'lucide-react';
+import { ArrowRightLeft, LogOut, User, Menu } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import AdminDashboard from '@/components/AdminDashboard';
+import { AdminSidebar } from '@/components/AdminSidebar';
+import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -96,47 +98,56 @@ const Admin = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
-      {/* Header */}
-      <header className="border-b bg-background/80 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="h-8 w-8 bg-primary rounded-lg flex items-center justify-center">
-                <ArrowRightLeft className="h-5 w-5 text-primary-foreground" />
-              </div>
-              <div>
-                <h1 className="text-xl font-bold">CryptoMomo Admin</h1>
-                <p className="text-xs text-muted-foreground">Tableau de bord administrateur</p>
+    <SidebarProvider>
+      <div className="min-h-screen w-full flex bg-gradient-to-br from-background via-background to-primary/5">
+        <AdminSidebar />
+        
+        <div className="flex-1 flex flex-col w-full">
+          {/* Header */}
+          <header className="border-b bg-background/95 backdrop-blur-sm sticky top-0 z-40">
+            <div className="px-4 lg:px-8 py-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <SidebarTrigger className="lg:hidden" />
+                  <div className="hidden lg:block h-8 w-8 bg-primary rounded-lg flex items-center justify-center">
+                    <ArrowRightLeft className="h-5 w-5 text-primary-foreground" />
+                  </div>
+                  <div>
+                    <h1 className="text-lg lg:text-xl font-bold">CryptoMomo Admin</h1>
+                    <p className="text-xs text-muted-foreground hidden sm:block">Tableau de bord administrateur</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-3">
+                  <div className="hidden md:flex items-center gap-2">
+                    <User className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm text-muted-foreground">{adminUser.username}</span>
+                    <Badge variant="outline" className="text-xs">Admin</Badge>
+                  </div>
+                  
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={handleLogout}
+                    className="flex items-center gap-2"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    <span className="hidden sm:inline">Déconnexion</span>
+                  </Button>
+                </div>
               </div>
             </div>
-            
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <User className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm text-muted-foreground">{adminUser.username}</span>
-                <Badge variant="outline" className="text-xs">Admin</Badge>
-              </div>
-              
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={handleLogout}
-                className="flex items-center gap-2"
-              >
-                <LogOut className="h-4 w-4" />
-                Déconnexion
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
+          </header>
 
-      {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
-        <AdminDashboard />
-      </main>
-    </div>
+          {/* Main Content */}
+          <main className="flex-1 overflow-auto">
+            <div className="px-4 lg:px-8 py-6">
+              <AdminDashboard />
+            </div>
+          </main>
+        </div>
+      </div>
+    </SidebarProvider>
   );
 };
 

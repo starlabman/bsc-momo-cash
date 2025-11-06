@@ -374,12 +374,14 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
+    <div className="space-y-8">
+      {/* Header avec bouton refresh */}
+      <div className="flex items-center justify-between animate-slide-in-down">
         <div>
-          <h1 className="text-3xl font-bold">Dashboard Admin</h1>
-          <p className="text-muted-foreground">Gestion des demandes de conversion crypto</p>
+          <h2 className="text-2xl lg:text-3xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+            Vue d'ensemble
+          </h2>
+          <p className="text-sm text-muted-foreground mt-1">Aperçu des transactions et statistiques</p>
         </div>
         <Button 
           onClick={() => {
@@ -387,90 +389,91 @@ const AdminDashboard = () => {
             fetchOnrampRequests();
           }} 
           disabled={loading}
-          className="flex items-center gap-2"
+          className="gap-2 shadow-lg hover:shadow-xl transition-shadow"
         >
           <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-          Actualiser
+          <span className="hidden sm:inline">Actualiser</span>
         </Button>
       </div>
 
-      {/* Statistiques générales */}
-      {stats && (
-        <div className="space-y-4">
-          {/* Volumes totaux */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Card className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900">
-              <CardHeader>
-                <CardTitle className="text-xl flex items-center gap-2">
-                  <TrendingUp className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-                  Volume Total USD
-                </CardTitle>
-                <CardDescription>Total des transactions en USD</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-4xl font-bold text-blue-600 dark:text-blue-400">
-                  ${stats.total_volume_usd.toLocaleString('fr-FR', { maximumFractionDigits: 2 })}
-                </p>
-              </CardContent>
-            </Card>
+      {/* Statistiques générales - Section Dashboard */}
+      <div id="dashboard" className="scroll-mt-20">
+        {stats && (
+          <div className="space-y-6">
+            {/* Volumes totaux */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
+              <Card className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900 border-blue-200 dark:border-blue-800 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
+                <CardHeader>
+                  <CardTitle className="text-xl flex items-center gap-2">
+                    <TrendingUp className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                    Volume Total USD
+                  </CardTitle>
+                  <CardDescription>Total des transactions en USD</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-3xl lg:text-4xl font-bold text-blue-600 dark:text-blue-400">
+                    ${stats.total_volume_usd.toLocaleString('fr-FR', { maximumFractionDigits: 2 })}
+                  </p>
+                </CardContent>
+              </Card>
 
-            <Card className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950 dark:to-green-900">
-              <CardHeader>
-                <CardTitle className="text-xl flex items-center gap-2">
-                  <TrendingUp className="h-5 w-5 text-green-600 dark:text-green-400" />
-                  Volume Total XOF
-                </CardTitle>
-                <CardDescription>Total des transactions en XOF</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-4xl font-bold text-green-600 dark:text-green-400">
-                  {stats.total_volume_xof.toLocaleString('fr-FR', { maximumFractionDigits: 0 })} XOF
-                </p>
-              </CardContent>
-            </Card>
-          </div>
+              <Card className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950 dark:to-green-900 border-green-200 dark:border-green-800 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
+                <CardHeader>
+                  <CardTitle className="text-xl flex items-center gap-2">
+                    <TrendingUp className="h-5 w-5 text-green-600 dark:text-green-400" />
+                    Volume Total XOF
+                  </CardTitle>
+                  <CardDescription>Total des transactions en XOF</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-3xl lg:text-4xl font-bold text-green-600 dark:text-green-400">
+                    {stats.total_volume_xof.toLocaleString('fr-FR', { maximumFractionDigits: 0 })} XOF
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
 
           {/* Statistiques Offramp */}
-          <Card>
+          <Card className="shadow-lg hover:shadow-xl transition-shadow">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-lg lg:text-xl">
                 <ArrowRightLeft className="h-5 w-5" />
                 Statistiques Offramp (Crypto → Mobile Money)
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
-                <div className="text-center p-3 bg-yellow-50 dark:bg-yellow-950 rounded-lg">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 lg:gap-4">
+                <div className="text-center p-3 bg-yellow-50 dark:bg-yellow-950 rounded-lg hover:scale-105 transition-transform">
                   <Clock className="h-5 w-5 text-yellow-600 dark:text-yellow-400 mx-auto mb-2" />
                   <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{stats.pending_payment}</p>
                   <p className="text-xs text-muted-foreground mt-1">En attente</p>
                 </div>
                 
-                <div className="text-center p-3 bg-blue-50 dark:bg-blue-950 rounded-lg">
+                <div className="text-center p-3 bg-blue-50 dark:bg-blue-950 rounded-lg hover:scale-105 transition-transform">
                   <TrendingUp className="h-5 w-5 text-blue-600 dark:text-blue-400 mx-auto mb-2" />
                   <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{stats.received}</p>
                   <p className="text-xs text-muted-foreground mt-1">Reçu</p>
                 </div>
 
-                <div className="text-center p-3 bg-orange-50 dark:bg-orange-950 rounded-lg">
+                <div className="text-center p-3 bg-orange-50 dark:bg-orange-950 rounded-lg hover:scale-105 transition-transform">
                   <Settings className="h-5 w-5 text-orange-600 dark:text-orange-400 mx-auto mb-2" />
                   <p className="text-2xl font-bold text-orange-600 dark:text-orange-400">{stats.processing}</p>
                   <p className="text-xs text-muted-foreground mt-1">En cours</p>
                 </div>
 
-                <div className="text-center p-3 bg-green-50 dark:bg-green-950 rounded-lg">
+                <div className="text-center p-3 bg-green-50 dark:bg-green-950 rounded-lg hover:scale-105 transition-transform">
                   <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400 mx-auto mb-2" />
                   <p className="text-2xl font-bold text-green-600 dark:text-green-400">{stats.paid}</p>
                   <p className="text-xs text-muted-foreground mt-1">Payé</p>
                 </div>
 
-                <div className="text-center p-3 bg-red-50 dark:bg-red-950 rounded-lg">
+                <div className="text-center p-3 bg-red-50 dark:bg-red-950 rounded-lg hover:scale-105 transition-transform">
                   <XCircle className="h-5 w-5 text-red-600 dark:text-red-400 mx-auto mb-2" />
                   <p className="text-2xl font-bold text-red-600 dark:text-red-400">{stats.failed}</p>
                   <p className="text-xs text-muted-foreground mt-1">Échoué</p>
                 </div>
 
-                <div className="text-center p-3 bg-purple-50 dark:bg-purple-950 rounded-lg">
+                <div className="text-center p-3 bg-purple-50 dark:bg-purple-950 rounded-lg hover:scale-105 transition-transform">
                   <Users className="h-5 w-5 text-purple-600 dark:text-purple-400 mx-auto mb-2" />
                   <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">{stats.total_offramp || 0}</p>
                   <p className="text-xs text-muted-foreground mt-1">Total</p>
@@ -480,9 +483,9 @@ const AdminDashboard = () => {
           </Card>
 
           {/* Statistiques Onramp */}
-          <Card>
+          <Card className="shadow-lg hover:shadow-xl transition-shadow">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-lg lg:text-xl">
                 <ArrowDownUp className="h-5 w-5" />
                 Statistiques Onramp (Mobile Money → Crypto)
               </CardTitle>
@@ -570,9 +573,9 @@ const AdminDashboard = () => {
 
       {/* Statistiques Blockchain par Réseau */}
       {blockchainStats && (
-        <Card>
+        <Card className="shadow-lg hover:shadow-xl transition-shadow">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2 text-lg lg:text-xl">
               <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <rect x="3" y="3" width="7" height="7" />
                 <rect x="14" y="3" width="7" height="7" />
@@ -1021,23 +1024,17 @@ const AdminDashboard = () => {
         </Card>
       )}
 
-      {/* Requests Tabs */}
-      <Tabs defaultValue="offramp" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 mb-6">
-          <TabsTrigger value="offramp" className="flex items-center gap-2">
-            <ArrowRightLeft className="h-4 w-4" />
-            Crypto → Mobile Money ({requests.length})
-          </TabsTrigger>
-          <TabsTrigger value="onramp" className="flex items-center gap-2">
-            <ArrowDownUp className="h-4 w-4" />
-            Mobile Money → Crypto ({onrampRequests.length})
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="offramp">
-          <Card>
+      {/* Requests Tabs - Sections Offramp et Onramp */}
+      <div className="space-y-6">
+        {/* Section Offramp */}
+        <div id="offramp" className="scroll-mt-20">
+          <Card className="shadow-lg">
             <CardHeader>
-              <CardTitle>Demandes Offramp (Crypto → Mobile Money)</CardTitle>
+              <CardTitle className="flex items-center gap-2 text-lg lg:text-xl">
+                <ArrowRightLeft className="h-5 w-5" />
+                Demandes Offramp (Crypto → Mobile Money)
+                <Badge variant="secondary" className="ml-2">{requests.length}</Badge>
+              </CardTitle>
               <CardDescription>
                 Liste des demandes de conversion crypto vers Mobile Money
               </CardDescription>
@@ -1355,8 +1352,8 @@ const AdminDashboard = () => {
               )}
             </CardContent>
           </Card>
-        </TabsContent>
-      </Tabs>
+        </div>
+      </div>
     </div>
   );
 };
