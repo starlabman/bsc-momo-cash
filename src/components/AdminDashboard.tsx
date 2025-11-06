@@ -1023,6 +1023,7 @@ const AdminDashboard = () => {
           </CardContent>
         </Card>
       )}
+      </div>
 
       {/* Requests Tabs - Sections Offramp et Onramp */}
       <div className="space-y-6">
@@ -1190,12 +1191,17 @@ const AdminDashboard = () => {
               )}
             </CardContent>
           </Card>
-        </TabsContent>
+        </div>
 
-        <TabsContent value="onramp">
-          <Card>
+        {/* Section Onramp */}
+        <div id="onramp" className="scroll-mt-20">
+          <Card className="shadow-lg">
             <CardHeader>
-              <CardTitle>Demandes Onramp (Mobile Money → Crypto)</CardTitle>
+              <CardTitle className="flex items-center gap-2 text-lg lg:text-xl">
+                <ArrowDownUp className="h-5 w-5" />
+                Demandes Onramp (Mobile Money → Crypto)
+                <Badge variant="secondary" className="ml-2">{onrampRequests.length}</Badge>
+              </CardTitle>
               <CardDescription>
                 Liste des demandes de conversion Mobile Money vers crypto
               </CardDescription>
