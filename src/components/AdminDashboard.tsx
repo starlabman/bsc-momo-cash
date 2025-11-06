@@ -13,6 +13,12 @@ import { Loader2, RefreshCw, Settings, TrendingUp, Users, Clock, CheckCircle, XC
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
+type DashboardSection = 'dashboard' | 'offramp' | 'onramp' | 'stats';
+
+interface AdminDashboardProps {
+  section?: DashboardSection;
+}
+
 interface OfframpRequest {
   id: string;
   amount: number;
@@ -122,7 +128,7 @@ interface CountryStats {
   least_active_country: any;
 }
 
-const AdminDashboard = () => {
+const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }) => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [requests, setRequests] = useState<OfframpRequest[]>([]);
@@ -373,15 +379,22 @@ const AdminDashboard = () => {
     });
   };
 
+  const sectionTitles = {
+    dashboard: { title: 'Vue d\'ensemble', subtitle: 'Aperçu des transactions et statistiques' },
+    offramp: { title: 'Transactions Offramp', subtitle: 'Crypto → Mobile Money' },
+    onramp: { title: 'Transactions Onramp', subtitle: 'Mobile Money → Crypto' },
+    stats: { title: 'Statistiques', subtitle: 'Analyses et métriques détaillées' }
+  };
+
   return (
     <div className="space-y-8">
       {/* Header avec bouton refresh */}
       <div className="flex items-center justify-between animate-slide-in-down">
         <div>
           <h2 className="text-2xl lg:text-3xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-            Vue d'ensemble
+            {sectionTitles[section].title}
           </h2>
-          <p className="text-sm text-muted-foreground mt-1">Aperçu des transactions et statistiques</p>
+          <p className="text-sm text-muted-foreground mt-1">{sectionTitles[section].subtitle}</p>
         </div>
         <Button 
           onClick={() => {
@@ -397,6 +410,7 @@ const AdminDashboard = () => {
       </div>
 
       {/* Statistiques générales - Section Dashboard */}
+      {(section === 'dashboard' || section === 'stats') && (
       <div id="dashboard" className="scroll-mt-20">
         {stats && (
           <div className="space-y-6">
@@ -1024,10 +1038,12 @@ const AdminDashboard = () => {
         </Card>
       )}
       </div>
+      )}
 
       {/* Requests Tabs - Sections Offramp et Onramp */}
       <div className="space-y-6">
         {/* Section Offramp */}
+        {(section === 'dashboard' || section === 'offramp') && (
         <div id="offramp" className="scroll-mt-20">
           <Card className="shadow-lg">
             <CardHeader>
@@ -1192,8 +1208,10 @@ const AdminDashboard = () => {
             </CardContent>
           </Card>
         </div>
+        )}
 
         {/* Section Onramp */}
+        {(section === 'dashboard' || section === 'onramp') && (
         <div id="onramp" className="scroll-mt-20">
           <Card className="shadow-lg">
             <CardHeader>
@@ -1359,6 +1377,7 @@ const AdminDashboard = () => {
             </CardContent>
           </Card>
         </div>
+        )}
       </div>
     </div>
   );

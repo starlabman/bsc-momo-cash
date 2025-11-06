@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ArrowRightLeft, LogOut, User, Menu } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -9,11 +9,22 @@ import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
+type DashboardSection = 'dashboard' | 'offramp' | 'onramp' | 'stats';
+
 const Admin = () => {
   const [adminUser, setAdminUser] = useState<any>(null);
   const [isValidating, setIsValidating] = useState(true);
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
+
+  const getCurrentSection = (): DashboardSection => {
+    const hash = location.hash.replace('#', '');
+    if (hash === 'offramp' || hash === 'onramp' || hash === 'stats') {
+      return hash;
+    }
+    return 'dashboard';
+  };
 
   useEffect(() => {
     validateSession();
@@ -142,7 +153,7 @@ const Admin = () => {
           {/* Main Content */}
           <main className="flex-1 overflow-auto">
             <div className="px-4 lg:px-8 py-6">
-              <AdminDashboard />
+              <AdminDashboard section={getCurrentSection()} />
             </div>
           </main>
         </div>
