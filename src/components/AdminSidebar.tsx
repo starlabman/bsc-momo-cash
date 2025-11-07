@@ -14,7 +14,6 @@ export function AdminSidebar() {
         <div className="px-3 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
           Statistiques
         </div>
-        <NavLink to="/admin#stats-global" icon={TrendingUp} label="Globales" />
         <NavLink to="/admin#stats-country" icon={TrendingUp} label="Par Pays" />
         <NavLink to="/admin#stats-blockchain" icon={TrendingUp} label="Par Réseau" />
         <NavLink to="/admin#stats-users" icon={TrendingUp} label="Utilisateurs" />
