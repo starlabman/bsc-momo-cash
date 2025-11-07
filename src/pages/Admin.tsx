@@ -9,7 +9,7 @@ import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
-type DashboardSection = 'dashboard' | 'offramp' | 'onramp' | 'stats';
+type DashboardSection = 'dashboard' | 'offramp' | 'onramp' | 'stats-country' | 'stats-blockchain' | 'stats-users';
 
 const Admin = () => {
   const [adminUser, setAdminUser] = useState<any>(null);
@@ -20,7 +20,7 @@ const Admin = () => {
 
   const getCurrentSection = (): DashboardSection => {
     const hash = location.hash.replace('#', '');
-    if (hash === 'offramp' || hash === 'onramp' || hash === 'stats') {
+    if (hash === 'offramp' || hash === 'onramp' || hash === 'stats-country' || hash === 'stats-blockchain' || hash === 'stats-users') {
       return hash;
     }
     return 'dashboard';
