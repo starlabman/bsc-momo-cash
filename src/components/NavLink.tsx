@@ -1,30 +1,26 @@
 import React from 'react';
-import { LucideIcon } from 'lucide-react';
+import { Link, LinkProps, useLocation } from 'react-router-dom';
+import { cn } from '@/lib/utils';
 
-interface NavLinkProps {
-  to: string;
-  icon: LucideIcon;
-  label: string;
+interface NavLinkProps extends LinkProps {
+  activeClassName?: string;
+  end?: boolean;
 }
 
 export const NavLink = React.forwardRef<HTMLAnchorElement, NavLinkProps>(
-  ({ to, icon: Icon, label }, ref) => {
-    const isActive = window.location.pathname + window.location.hash === to || 
-                     (to === '/admin' && window.location.hash === '');
-    
+  ({ className, activeClassName, to, end = false, ...props }, ref) => {
+    const location = useLocation();
+    const isActive = end 
+      ? location.pathname === to 
+      : location.pathname.startsWith(to.toString());
+
     return (
-      <a
+      <Link
         ref={ref}
-        href={to}
-        className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
-          isActive 
-            ? 'bg-primary text-primary-foreground' 
-            : 'hover:bg-accent text-muted-foreground hover:text-foreground'
-        }`}
-      >
-        <Icon className="h-5 w-5" />
-        <span className="font-medium">{label}</span>
-      </a>
+        to={to}
+        className={cn(className, isActive && activeClassName)}
+        {...props}
+      />
     );
   }
 );

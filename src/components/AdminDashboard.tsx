@@ -13,7 +13,7 @@ import { Loader2, RefreshCw, Settings, TrendingUp, Users, Clock, CheckCircle, XC
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
-type DashboardSection = 'dashboard' | 'offramp' | 'onramp' | 'stats-global' | 'stats-country' | 'stats-blockchain' | 'stats-users';
+type DashboardSection = 'dashboard' | 'offramp' | 'onramp' | 'stats';
 
 interface AdminDashboardProps {
   section?: DashboardSection;
@@ -104,16 +104,6 @@ interface BlockchainStats {
     offramp_count?: number;
     onramp_count?: number;
   } | null;
-  by_network?: Array<{
-    network: string;
-    total_events: number;
-    total_amount: number;
-  }>;
-  by_token?: Array<{
-    token_symbol: string;
-    total_events: number;
-    total_amount: number;
-  }>;
 }
 
 interface CountryStats {
@@ -393,10 +383,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
     dashboard: { title: 'Vue d\'ensemble', subtitle: 'Aperçu des transactions et statistiques' },
     offramp: { title: 'Transactions Offramp', subtitle: 'Crypto → Mobile Money' },
     onramp: { title: 'Transactions Onramp', subtitle: 'Mobile Money → Crypto' },
-    'stats-global': { title: 'Statistiques Globales', subtitle: 'Vue d\'ensemble des statistiques générales' },
-    'stats-country': { title: 'Statistiques par Pays', subtitle: 'Analyses détaillées par pays' },
-    'stats-blockchain': { title: 'Statistiques Blockchain', subtitle: 'Analyses par réseau et événements blockchain' },
-    'stats-users': { title: 'Statistiques Utilisateurs', subtitle: 'Analyses des requêtes et utilisateurs' }
+    stats: { title: 'Statistiques', subtitle: 'Analyses et métriques détaillées' }
   };
 
   return (
@@ -422,348 +409,635 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
         </Button>
       </div>
 
-      {/* Statistiques générales - Section Dashboard et Stats Global */}
-      {(section === 'dashboard' || section === 'stats-global') && (
+      {/* Statistiques générales - Section Dashboard */}
+      {(section === 'dashboard' || section === 'stats') && (
       <div id="dashboard" className="scroll-mt-20">
         {stats && (
           <div className="space-y-6">
-            {/* Stats Cards */}
-            <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
-              <Card className="bg-gradient-to-br from-blue-500/10 to-blue-600/5 border-blue-500/20 hover:border-blue-500/40 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/10">
-                <CardContent className="pt-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-muted-foreground">En attente</p>
-                      <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{stats.pending_payment}</p>
-                    </div>
-                    <Clock className="h-8 w-8 text-blue-500/50" />
-                  </div>
+            {/* Volumes totaux */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
+              <Card className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900 border-blue-200 dark:border-blue-800 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
+                <CardHeader>
+                  <CardTitle className="text-xl flex items-center gap-2">
+                    <TrendingUp className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                    Volume Total USD
+                  </CardTitle>
+                  <CardDescription>Total des transactions en USD</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-3xl lg:text-4xl font-bold text-blue-600 dark:text-blue-400">
+                    ${stats.total_volume_usd.toLocaleString('fr-FR', { maximumFractionDigits: 2 })}
+                  </p>
                 </CardContent>
               </Card>
 
-              <Card className="bg-gradient-to-br from-yellow-500/10 to-yellow-600/5 border-yellow-500/20 hover:border-yellow-500/40 transition-all duration-300 hover:shadow-lg hover:shadow-yellow-500/10">
-                <CardContent className="pt-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-muted-foreground">Reçu</p>
-                      <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{stats.received}</p>
-                    </div>
-                    <ArrowDownUp className="h-8 w-8 text-yellow-500/50" />
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-gradient-to-br from-purple-500/10 to-purple-600/5 border-purple-500/20 hover:border-purple-500/40 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/10">
-                <CardContent className="pt-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-muted-foreground">En traitement</p>
-                      <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">{stats.processing}</p>
-                    </div>
-                    <RefreshCw className="h-8 w-8 text-purple-500/50" />
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-gradient-to-br from-green-500/10 to-green-600/5 border-green-500/20 hover:border-green-500/40 transition-all duration-300 hover:shadow-lg hover:shadow-green-500/10">
-                <CardContent className="pt-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-muted-foreground">Payé</p>
-                      <p className="text-2xl font-bold text-green-600 dark:text-green-400">{stats.paid}</p>
-                    </div>
-                    <CheckCircle className="h-8 w-8 text-green-500/50" />
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-gradient-to-br from-red-500/10 to-red-600/5 border-red-500/20 hover:border-red-500/40 transition-all duration-300 hover:shadow-lg hover:shadow-red-500/10">
-                <CardContent className="pt-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-muted-foreground">Échoué</p>
-                      <p className="text-2xl font-bold text-red-600 dark:text-red-400">{stats.failed}</p>
-                    </div>
-                    <XCircle className="h-8 w-8 text-red-500/50" />
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20 hover:border-primary/40 transition-all duration-300 hover:shadow-lg hover:shadow-primary/10">
-                <CardContent className="pt-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-muted-foreground">Total Offramp</p>
-                      <p className="text-2xl font-bold">{stats.total_offramp}</p>
-                    </div>
-                    <TrendingUp className="h-8 w-8 text-primary/50" />
-                  </div>
+              <Card className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950 dark:to-green-900 border-green-200 dark:border-green-800 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
+                <CardHeader>
+                  <CardTitle className="text-xl flex items-center gap-2">
+                    <TrendingUp className="h-5 w-5 text-green-600 dark:text-green-400" />
+                    Volume Total XOF
+                  </CardTitle>
+                  <CardDescription>Total des transactions en XOF</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-3xl lg:text-4xl font-bold text-green-600 dark:text-green-400">
+                    {stats.total_volume_xof.toLocaleString('fr-FR', { maximumFractionDigits: 0 })} XOF
+                  </p>
                 </CardContent>
               </Card>
             </div>
 
-            {/* Onramp Stats */}
-            <div className="grid gap-4 grid-cols-2 md:grid-cols-4">
-              <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20 hover:border-primary/40 transition-all duration-300 hover:shadow-lg hover:shadow-primary/10">
-                <CardContent className="pt-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-muted-foreground">Total Onramp</p>
-                      <p className="text-2xl font-bold">{stats.total_onramp}</p>
-                    </div>
-                    <ArrowRightLeft className="h-8 w-8 text-primary/50" />
-                  </div>
-                </CardContent>
-              </Card>
+          {/* Statistiques Offramp */}
+          <Card className="shadow-lg hover:shadow-xl transition-shadow">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-lg lg:text-xl">
+                <ArrowRightLeft className="h-5 w-5" />
+                Statistiques Offramp (Crypto → Mobile Money)
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 lg:gap-4">
+                <div className="text-center p-3 bg-yellow-50 dark:bg-yellow-950 rounded-lg hover:scale-105 transition-transform">
+                  <Clock className="h-5 w-5 text-yellow-600 dark:text-yellow-400 mx-auto mb-2" />
+                  <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{stats.pending_payment}</p>
+                  <p className="text-xs text-muted-foreground mt-1">En attente</p>
+                </div>
+                
+                <div className="text-center p-3 bg-blue-50 dark:bg-blue-950 rounded-lg hover:scale-105 transition-transform">
+                  <TrendingUp className="h-5 w-5 text-blue-600 dark:text-blue-400 mx-auto mb-2" />
+                  <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{stats.received}</p>
+                  <p className="text-xs text-muted-foreground mt-1">Reçu</p>
+                </div>
 
-              <Card className="bg-gradient-to-br from-blue-500/10 to-blue-600/5 border-blue-500/20 hover:border-blue-500/40 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/10">
-                <CardContent className="pt-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-muted-foreground">En attente</p>
-                      <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{stats.pending_onramp}</p>
-                    </div>
-                    <Clock className="h-8 w-8 text-blue-500/50" />
-                  </div>
-                </CardContent>
-              </Card>
+                <div className="text-center p-3 bg-orange-50 dark:bg-orange-950 rounded-lg hover:scale-105 transition-transform">
+                  <Settings className="h-5 w-5 text-orange-600 dark:text-orange-400 mx-auto mb-2" />
+                  <p className="text-2xl font-bold text-orange-600 dark:text-orange-400">{stats.processing}</p>
+                  <p className="text-xs text-muted-foreground mt-1">En cours</p>
+                </div>
 
-              <Card className="bg-gradient-to-br from-green-500/10 to-green-600/5 border-green-500/20 hover:border-green-500/40 transition-all duration-300 hover:shadow-lg hover:shadow-green-500/10">
-                <CardContent className="pt-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-muted-foreground">Complété</p>
-                      <p className="text-2xl font-bold text-green-600 dark:text-green-400">{stats.completed_onramp}</p>
-                    </div>
-                    <CheckCircle className="h-8 w-8 text-green-500/50" />
-                  </div>
-                </CardContent>
-              </Card>
+                <div className="text-center p-3 bg-green-50 dark:bg-green-950 rounded-lg hover:scale-105 transition-transform">
+                  <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400 mx-auto mb-2" />
+                  <p className="text-2xl font-bold text-green-600 dark:text-green-400">{stats.paid}</p>
+                  <p className="text-xs text-muted-foreground mt-1">Payé</p>
+                </div>
 
-              <Card className="bg-gradient-to-br from-amber-500/10 to-amber-600/5 border-amber-500/20 hover:border-amber-500/40 transition-all duration-300 hover:shadow-lg hover:shadow-amber-500/10">
-                <CardContent className="pt-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-muted-foreground">Volume Total</p>
-                      <p className="text-lg font-bold text-amber-600 dark:text-amber-400">
-                        {Number(stats.total_volume_usd).toLocaleString('en-US', { 
-                          style: 'currency', 
-                          currency: 'USD',
-                          minimumFractionDigits: 0,
-                          maximumFractionDigits: 0
-                        })}
-                      </p>
-                    </div>
-                    <TrendingUp className="h-8 w-8 text-amber-500/50" />
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+                <div className="text-center p-3 bg-red-50 dark:bg-red-950 rounded-lg hover:scale-105 transition-transform">
+                  <XCircle className="h-5 w-5 text-red-600 dark:text-red-400 mx-auto mb-2" />
+                  <p className="text-2xl font-bold text-red-600 dark:text-red-400">{stats.failed}</p>
+                  <p className="text-xs text-muted-foreground mt-1">Échoué</p>
+                </div>
+
+                <div className="text-center p-3 bg-purple-50 dark:bg-purple-950 rounded-lg hover:scale-105 transition-transform">
+                  <Users className="h-5 w-5 text-purple-600 dark:text-purple-400 mx-auto mb-2" />
+                  <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">{stats.total_offramp || 0}</p>
+                  <p className="text-xs text-muted-foreground mt-1">Total</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Statistiques Onramp */}
+          <Card className="shadow-lg hover:shadow-xl transition-shadow">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-lg lg:text-xl">
+                <ArrowDownUp className="h-5 w-5" />
+                Statistiques Onramp (Mobile Money → Crypto)
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="text-center p-3 bg-amber-50 dark:bg-amber-950 rounded-lg">
+                  <Clock className="h-5 w-5 text-amber-600 dark:text-amber-400 mx-auto mb-2" />
+                  <p className="text-2xl font-bold text-amber-600 dark:text-amber-400">{stats.pending_onramp || 0}</p>
+                  <p className="text-xs text-muted-foreground mt-1">En attente paiement</p>
+                </div>
+
+                <div className="text-center p-3 bg-emerald-50 dark:bg-emerald-950 rounded-lg">
+                  <CheckCircle className="h-5 w-5 text-emerald-600 dark:text-emerald-400 mx-auto mb-2" />
+                  <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{stats.completed_onramp || 0}</p>
+                  <p className="text-xs text-muted-foreground mt-1">Complété</p>
+                </div>
+
+                <div className="text-center p-3 bg-indigo-50 dark:bg-indigo-950 rounded-lg">
+                  <Users className="h-5 w-5 text-indigo-600 dark:text-indigo-400 mx-auto mb-2" />
+                  <p className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">{stats.total_onramp || 0}</p>
+                  <p className="text-xs text-muted-foreground mt-1">Total</p>
+                </div>
+
+                <div className="text-center p-3 bg-cyan-50 dark:bg-cyan-950 rounded-lg">
+                  <TrendingUp className="h-5 w-5 text-cyan-600 dark:text-cyan-400 mx-auto mb-2" />
+                  <p className="text-2xl font-bold text-cyan-600 dark:text-cyan-400">
+                    {stats.total_onramp && stats.completed_onramp ? 
+                      Math.round((stats.completed_onramp / stats.total_onramp) * 100) : 0}%
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">Taux réussite</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Métriques de performance */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-sm">Total Transactions</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-3xl font-bold">
+                  {(stats.total_offramp || 0) + (stats.total_onramp || 0)}
+                </p>
+                <p className="text-xs text-muted-foreground mt-2">
+                  {stats.total_offramp || 0} offramp + {stats.total_onramp || 0} onramp
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-sm">Taux de réussite Offramp</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-3xl font-bold text-green-600 dark:text-green-400">
+                  {stats.total_offramp ? 
+                    Math.round((stats.paid / stats.total_offramp) * 100) : 0}%
+                </p>
+                <p className="text-xs text-muted-foreground mt-2">
+                  {stats.paid} payés sur {stats.total_offramp || 0} total
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-sm">Montant moyen par transaction</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">
+                  ${stats.total_offramp ? 
+                    (stats.total_volume_usd / stats.total_offramp).toFixed(2) : 0}
+                </p>
+                <p className="text-xs text-muted-foreground mt-2">
+                  Basé sur {stats.total_offramp || 0} transactions offramp
+                </p>
+              </CardContent>
+            </Card>
           </div>
-        )}
-      </div>
+        </div>
       )}
 
-      {/* Statistiques Pays */}
-      {(section === 'dashboard' || section === 'stats-country') && countryStats && (
-        <Card className="shadow-lg">
+      {/* Statistiques Blockchain par Réseau */}
+      {blockchainStats && (
+        <Card className="shadow-lg hover:shadow-xl transition-shadow">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-lg lg:text-xl">
+              <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <rect x="3" y="3" width="7" height="7" />
+                <rect x="14" y="3" width="7" height="7" />
+                <rect x="14" y="14" width="7" height="7" />
+                <rect x="3" y="14" width="7" height="7" />
+              </svg>
+              Statistiques par Réseau Blockchain
+            </CardTitle>
+            <CardDescription>Utilisation et volume des différents réseaux blockchain</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+              <div className="text-center p-3 bg-violet-50 dark:bg-violet-950 rounded-lg">
+                <svg className="h-5 w-5 text-violet-600 dark:text-violet-400 mx-auto mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <rect x="3" y="3" width="7" height="7" />
+                  <rect x="14" y="3" width="7" height="7" />
+                  <rect x="14" y="14" width="7" height="7" />
+                  <rect x="3" y="14" width="7" height="7" />
+                </svg>
+                <p className="text-2xl font-bold text-violet-600 dark:text-violet-400">{blockchainStats.total_events}</p>
+                <p className="text-xs text-muted-foreground mt-1">Total événements</p>
+              </div>
+
+              <div className="text-center p-3 bg-green-50 dark:bg-green-950 rounded-lg">
+                <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400 mx-auto mb-2" />
+                <p className="text-2xl font-bold text-green-600 dark:text-green-400">{blockchainStats.processed_events}</p>
+                <p className="text-xs text-muted-foreground mt-1">Traités</p>
+              </div>
+
+              <div className="text-center p-3 bg-yellow-50 dark:bg-yellow-950 rounded-lg">
+                <Clock className="h-5 w-5 text-yellow-600 dark:text-yellow-400 mx-auto mb-2" />
+                <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{blockchainStats.pending_events}</p>
+                <p className="text-xs text-muted-foreground mt-1">En attente</p>
+              </div>
+
+              <div className="text-center p-3 bg-blue-50 dark:bg-blue-950 rounded-lg">
+                <TrendingUp className="h-5 w-5 text-blue-600 dark:text-blue-400 mx-auto mb-2" />
+                <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                  {blockchainStats.total_volume.toLocaleString('fr-FR', { maximumFractionDigits: 2 })}
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">Volume total</p>
+              </div>
+
+              <div className="text-center p-3 bg-purple-50 dark:bg-purple-950 rounded-lg">
+                <svg className="h-5 w-5 text-purple-600 dark:text-purple-400 mx-auto mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M12 6v6l4 2" />
+                </svg>
+                <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">{blockchainStats.unique_networks}</p>
+                <p className="text-xs text-muted-foreground mt-1">Réseaux actifs</p>
+              </div>
+            </div>
+
+            {/* Network Usage Details */}
+            {blockchainStats.volume_by_network && blockchainStats.volume_by_network.length > 0 && (
+              <div className="mb-6">
+                <h4 className="text-lg font-semibold mb-4">📊 Utilisation par Réseau Blockchain</h4>
+                <div className="space-y-3">
+                  {blockchainStats.volume_by_network.map((item: any, index: number) => {
+                    const isHighest = blockchainStats.highest_volume_network?.network === item.network;
+                    const isLowest = blockchainStats.lowest_volume_network?.network === item.network;
+                    
+                    return (
+                      <div 
+                        key={item.network} 
+                        className={`p-4 rounded-lg border-2 transition-all ${
+                          isHighest ? 'border-green-500 bg-green-50 dark:bg-green-950/50' : 
+                          isLowest ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/50' : 
+                          'border-muted bg-muted/30'
+                        }`}
+                      >
+                        <div className="flex justify-between items-start mb-3">
+                          <div className="flex items-center gap-2">
+                            <span className="font-bold text-xl">{item.network}</span>
+                            {isHighest && (
+                              <Badge className="bg-green-600 hover:bg-green-700 text-white">
+                                🏆 Plus utilisé
+                              </Badge>
+                            )}
+                            {isLowest && (
+                              <Badge className="bg-orange-600 hover:bg-orange-700 text-white">
+                                Moins utilisé
+                              </Badge>
+                            )}
+                          </div>
+                          <div className="text-right">
+                            <span className="text-3xl font-bold text-primary">{item.percentage.toFixed(1)}%</span>
+                            <p className="text-xs text-muted-foreground">du total</p>
+                          </div>
+                        </div>
+                        
+                        <div className="grid grid-cols-3 gap-4 mb-3">
+                          <div className="p-2 bg-background/50 rounded">
+                            <p className="text-xs text-muted-foreground">Transactions</p>
+                            <p className="text-xl font-bold text-blue-600 dark:text-blue-400">{item.count}</p>
+                          </div>
+                          <div className="p-2 bg-background/50 rounded">
+                            <p className="text-xs text-muted-foreground">Volume</p>
+                            <p className="text-xl font-bold text-green-600 dark:text-green-400">
+                              {item.volume.toLocaleString('fr-FR', { maximumFractionDigits: 2 })}
+                            </p>
+                          </div>
+                          <div className="p-2 bg-background/50 rounded">
+                            <p className="text-xs text-muted-foreground">Tokens</p>
+                            <p className="text-xl font-bold text-purple-600 dark:text-purple-400">{item.unique_tokens}</p>
+                          </div>
+                        </div>
+                        
+                        {/* Progress bar */}
+                        <div className="relative w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 overflow-hidden">
+                          <div 
+                            className={`h-3 rounded-full transition-all duration-500 ${
+                              isHighest ? 'bg-gradient-to-r from-green-500 to-green-600' : 
+                              isLowest ? 'bg-gradient-to-r from-orange-500 to-orange-600' : 
+                              'bg-gradient-to-r from-blue-500 to-blue-600'
+                            }`}
+                            style={{ width: `${item.percentage}%` }}
+                          ></div>
+                          <span className="absolute inset-0 flex items-center justify-center text-xs font-semibold text-white">
+                            {item.percentage.toFixed(1)}%
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Highest and lowest volume networks - Summary */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              {blockchainStats.highest_volume_network && (
+                <div className="p-5 bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950 dark:to-green-900 rounded-lg border-2 border-green-500">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="text-2xl">🏆</span>
+                    <p className="text-sm font-bold text-green-700 dark:text-green-300">
+                      RÉSEAU LE PLUS UTILISÉ
+                    </p>
+                  </div>
+                  <p className="text-3xl font-bold text-green-600 dark:text-green-400 mb-2">
+                    {blockchainStats.highest_volume_network.network}
+                  </p>
+                  <div className="space-y-1 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Volume:</span>
+                      <span className="font-bold">
+                        {blockchainStats.highest_volume_network.volume.toLocaleString('fr-FR', { maximumFractionDigits: 2 })}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Transactions:</span>
+                      <span className="font-bold">{blockchainStats.highest_volume_network.count}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Part de marché:</span>
+                      <span className="font-bold text-green-600 dark:text-green-400">
+                        {blockchainStats.highest_volume_network.percentage.toFixed(1)}%
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {blockchainStats.lowest_volume_network && (
+                <div className="p-5 bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-950 dark:to-orange-900 rounded-lg border-2 border-orange-500">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="text-2xl">📉</span>
+                    <p className="text-sm font-bold text-orange-700 dark:text-orange-300">
+                      RÉSEAU MOINS UTILISÉ
+                    </p>
+                  </div>
+                  <p className="text-3xl font-bold text-orange-600 dark:text-orange-400 mb-2">
+                    {blockchainStats.lowest_volume_network.network}
+                  </p>
+                  <div className="space-y-1 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Volume:</span>
+                      <span className="font-bold">
+                        {blockchainStats.lowest_volume_network.volume.toLocaleString('fr-FR', { maximumFractionDigits: 2 })}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Transactions:</span>
+                      <span className="font-bold">{blockchainStats.lowest_volume_network.count}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Part de marché:</span>
+                      <span className="font-bold text-orange-600 dark:text-orange-400">
+                        {blockchainStats.lowest_volume_network.percentage.toFixed(1)}%
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Volume comparison */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              <div className="p-4 bg-gradient-to-br from-indigo-50 to-indigo-100 dark:from-indigo-950 dark:to-indigo-900 rounded-lg">
+                <p className="text-sm text-muted-foreground mb-2">Volume Offramp (XOF)</p>
+                <p className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
+                  {stats?.total_volume_xof?.toLocaleString('fr-FR', { maximumFractionDigits: 0 }) || '0'} XOF
+                </p>
+              </div>
+              <div className="p-4 bg-gradient-to-br from-cyan-50 to-cyan-100 dark:from-cyan-950 dark:to-cyan-900 rounded-lg">
+                <p className="text-sm text-muted-foreground mb-2">Volume Offramp (USD)</p>
+                <p className="text-2xl font-bold text-cyan-600 dark:text-cyan-400">
+                  ${stats?.total_volume_usd?.toLocaleString('fr-FR', { maximumFractionDigits: 2 }) || '0'}
+                </p>
+              </div>
+              <div className="p-4 bg-gradient-to-br from-teal-50 to-teal-100 dark:from-teal-950 dark:to-teal-900 rounded-lg">
+                <p className="text-sm text-muted-foreground mb-2">Total Volume Blockchain</p>
+                <p className="text-2xl font-bold text-teal-600 dark:text-teal-400">
+                  {blockchainStats.total_volume.toLocaleString('fr-FR', { maximumFractionDigits: 2 })}
+                </p>
+              </div>
+            </div>
+
+            {/* Summary card for supported networks */}
+            {blockchainStats.supported_networks && (
+              <div className="mt-6 p-4 bg-gradient-to-br from-indigo-50 to-indigo-100 dark:from-indigo-950 dark:to-indigo-900 rounded-lg border-2 border-indigo-300 dark:border-indigo-700">
+                <div className="flex items-center gap-3">
+                  <svg className="h-8 w-8 text-indigo-600 dark:text-indigo-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M12 6v6l4 2" />
+                  </svg>
+                  <div>
+                    <p className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
+                      {blockchainStats.supported_networks} Réseaux Blockchain
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      BSC, Ethereum, Tron, Solana, Arbitrum, Optimism, Lisk, Base
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Statistiques par Pays */}
+      {countryStats && countryStats.by_country && countryStats.by_country.length > 0 && (
+        <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <TrendingUp className="h-5 w-5" />
+              <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="12" cy="12" r="10" />
+                <path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z" />
+              </svg>
               Statistiques par Pays
             </CardTitle>
+            <CardDescription>Utilisation de CryptoMomo dans différents pays</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-6">
-              <div className="grid gap-4 md:grid-cols-2">
-                <div className="p-4 rounded-lg bg-gradient-to-br from-green-500/10 to-green-600/5 border border-green-500/20">
-                  <p className="text-sm font-medium text-muted-foreground mb-2">Pays le plus actif</p>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-xl font-bold">{countryStats.most_active_country?.country_name || 'N/A'}</p>
-                      <p className="text-sm text-muted-foreground">{countryStats.most_active_country?.total_requests || 0} requêtes</p>
-                    </div>
-                    <p className="text-3xl">{countryStats.most_active_country?.flag_emoji || '🌍'}</p>
-                  </div>
-                </div>
-
-                <div className="p-4 rounded-lg bg-gradient-to-br from-blue-500/10 to-blue-600/5 border border-blue-500/20">
-                  <p className="text-sm font-medium text-muted-foreground mb-2">Pays le moins actif</p>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-xl font-bold">{countryStats.least_active_country?.country_name || 'N/A'}</p>
-                      <p className="text-sm text-muted-foreground">{countryStats.least_active_country?.total_requests || 0} requêtes</p>
-                    </div>
-                    <p className="text-3xl">{countryStats.least_active_country?.flag_emoji || '🌍'}</p>
-                  </div>
-                </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+              <div className="text-center p-3 bg-blue-50 dark:bg-blue-950 rounded-lg">
+                <svg className="h-5 w-5 text-blue-600 dark:text-blue-400 mx-auto mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="12" cy="12" r="10" />
+                </svg>
+                <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{countryStats.total_countries}</p>
+                <p className="text-xs text-muted-foreground mt-1">Pays actifs</p>
               </div>
 
-              <div>
-                <h4 className="text-sm font-semibold mb-3">Répartition par pays</h4>
-                <div className="overflow-x-auto">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Pays</TableHead>
-                        <TableHead className="text-right">Requêtes</TableHead>
-                        <TableHead className="text-right">Volume (USD)</TableHead>
-                        <TableHead className="text-right">Volume (XOF)</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {countryStats.by_country?.map((country: any) => (
-                        <TableRow key={country.country_id}>
-                          <TableCell className="flex items-center gap-2">
-                            <span className="text-2xl">{country.flag_emoji}</span>
-                            <span className="font-medium">{country.country_name}</span>
-                          </TableCell>
-                          <TableCell className="text-right">{country.total_requests}</TableCell>
-                          <TableCell className="text-right">
-                            {Number(country.total_usd || 0).toLocaleString('en-US', { 
-                              style: 'currency', 
-                              currency: 'USD',
-                              minimumFractionDigits: 0,
-                              maximumFractionDigits: 0
-                            })}
-                          </TableCell>
-                          <TableCell className="text-right">
-                            {Number(country.total_xof || 0).toLocaleString('fr-FR', { 
-                              minimumFractionDigits: 0,
-                              maximumFractionDigits: 0
-                            })} XOF
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
+              {countryStats.most_active_country && (
+                <>
+                  <div className="text-center p-3 bg-green-50 dark:bg-green-950 rounded-lg">
+                    <span className="text-3xl mx-auto mb-2 block">{countryStats.most_active_country.flag_emoji}</span>
+                    <p className="text-2xl font-bold text-green-600 dark:text-green-400">{countryStats.most_active_country.total_transactions}</p>
+                    <p className="text-xs text-muted-foreground mt-1">Plus actif: {countryStats.most_active_country.country_name}</p>
+                  </div>
+
+                  <div className="text-center p-3 bg-purple-50 dark:bg-purple-950 rounded-lg">
+                    <TrendingUp className="h-5 w-5 text-purple-600 dark:text-purple-400 mx-auto mb-2" />
+                    <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+                      ${countryStats.most_active_country.total_volume_usd.toLocaleString('fr-FR', { maximumFractionDigits: 0 })}
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">Volume total USD</p>
+                  </div>
+                </>
+              )}
+
+              <div className="text-center p-3 bg-amber-50 dark:bg-amber-950 rounded-lg">
+                <Users className="h-5 w-5 text-amber-600 dark:text-amber-400 mx-auto mb-2" />
+                <p className="text-2xl font-bold text-amber-600 dark:text-amber-400">
+                  {countryStats.by_country.reduce((sum, c) => sum + c.total_transactions, 0)}
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">Total transactions</p>
               </div>
             </div>
+
+            {/* Country Usage Details */}
+            <div className="mb-6">
+              <h4 className="text-lg font-semibold mb-4">🌍 Utilisation par Pays</h4>
+              <div className="space-y-3">
+                {countryStats.by_country.map((country: any, index: number) => {
+                  const isMostActive = countryStats.most_active_country?.country_id === country.country_id;
+                  const isLeastActive = countryStats.least_active_country?.country_id === country.country_id;
+                  
+                  return (
+                    <div 
+                      key={country.country_id} 
+                      className={`p-4 rounded-lg border-2 transition-all ${
+                        isMostActive ? 'border-green-500 bg-green-50 dark:bg-green-950/50' : 
+                        isLeastActive ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/50' : 
+                        'border-muted bg-muted/30'
+                      }`}
+                    >
+                      <div className="flex justify-between items-start mb-3">
+                        <div className="flex items-center gap-2">
+                          <span className="text-2xl">{country.flag_emoji}</span>
+                          <div>
+                            <span className="font-bold text-xl">{country.country_name}</span>
+                            <span className="ml-2 text-sm text-muted-foreground">({country.country_code})</span>
+                          </div>
+                          {isMostActive && (
+                            <Badge className="bg-green-500 hover:bg-green-600">🏆 Plus actif</Badge>
+                          )}
+                          {isLeastActive && countryStats.by_country.length > 1 && (
+                            <Badge variant="outline" className="border-orange-500 text-orange-600">📉 Moins actif</Badge>
+                          )}
+                        </div>
+                        <Badge variant="secondary" className="text-sm">
+                          {country.percentage.toFixed(1)}% du total
+                        </Badge>
+                      </div>
+                      
+                      <div className="grid grid-cols-2 md:grid-cols-6 gap-3 mb-3">
+                        <div className="text-center">
+                          <p className="text-xs text-muted-foreground">Total Transactions</p>
+                          <p className="text-lg font-bold text-blue-600 dark:text-blue-400">{country.total_transactions}</p>
+                        </div>
+                        <div className="text-center">
+                          <p className="text-xs text-muted-foreground">Offramp</p>
+                          <p className="text-lg font-bold text-purple-600 dark:text-purple-400">{country.offramp_count}</p>
+                        </div>
+                        <div className="text-center">
+                          <p className="text-xs text-muted-foreground">Onramp</p>
+                          <p className="text-lg font-bold text-indigo-600 dark:text-indigo-400">{country.onramp_count}</p>
+                        </div>
+                        <div className="text-center">
+                          <p className="text-xs text-muted-foreground">Volume USD</p>
+                          <p className="text-lg font-bold text-green-600 dark:text-green-400">
+                            ${country.total_volume_usd.toLocaleString('fr-FR', { maximumFractionDigits: 0 })}
+                          </p>
+                        </div>
+                        <div className="text-center">
+                          <p className="text-xs text-muted-foreground">Volume XOF</p>
+                          <p className="text-lg font-bold text-emerald-600 dark:text-emerald-400">
+                            {country.total_volume_xof.toLocaleString('fr-FR', { maximumFractionDigits: 0 })}
+                          </p>
+                        </div>
+                        <div className="text-center">
+                          <p className="text-xs text-muted-foreground">Avg/Transaction</p>
+                          <p className="text-lg font-bold text-cyan-600 dark:text-cyan-400">
+                            ${country.total_transactions > 0 ? (country.total_volume_usd / country.total_transactions).toFixed(0) : 0}
+                          </p>
+                        </div>
+                      </div>
+                      
+                      {/* Progress bar */}
+                      <div className="relative w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 overflow-hidden">
+                        <div 
+                          className={`h-3 rounded-full transition-all duration-500 ${
+                            isMostActive ? 'bg-gradient-to-r from-green-500 to-green-600' : 
+                            isLeastActive ? 'bg-gradient-to-r from-orange-500 to-orange-600' : 
+                            'bg-gradient-to-r from-blue-500 to-blue-600'
+                          }`}
+                          style={{ width: `${country.percentage}%` }}
+                        ></div>
+                        <span className="absolute inset-0 flex items-center justify-center text-xs font-semibold text-white">
+                          {country.percentage.toFixed(1)}%
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Country comparison - Most vs Least Active */}
+            {countryStats.most_active_country && countryStats.least_active_country && countryStats.by_country.length > 1 && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="p-5 bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950 dark:to-green-900 rounded-lg border-2 border-green-500">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="text-3xl">{countryStats.most_active_country.flag_emoji}</span>
+                    <div>
+                      <p className="text-sm font-bold text-green-700 dark:text-green-300">PAYS LE PLUS ACTIF</p>
+                      <p className="text-2xl font-bold text-green-600 dark:text-green-400">
+                        {countryStats.most_active_country.country_name}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="space-y-1 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Transactions:</span>
+                      <span className="font-bold">{countryStats.most_active_country.total_transactions}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Volume USD:</span>
+                      <span className="font-bold">
+                        ${countryStats.most_active_country.total_volume_usd.toLocaleString('fr-FR', { maximumFractionDigits: 0 })}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Part de marché:</span>
+                      <span className="font-bold text-green-600 dark:text-green-400">
+                        {countryStats.most_active_country.percentage.toFixed(1)}%
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="p-5 bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-950 dark:to-orange-900 rounded-lg border-2 border-orange-500">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="text-3xl">{countryStats.least_active_country.flag_emoji}</span>
+                    <div>
+                      <p className="text-sm font-bold text-orange-700 dark:text-orange-300">PAYS MOINS ACTIF</p>
+                      <p className="text-2xl font-bold text-orange-600 dark:text-orange-400">
+                        {countryStats.least_active_country.country_name}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="space-y-1 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Transactions:</span>
+                      <span className="font-bold">{countryStats.least_active_country.total_transactions}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Volume USD:</span>
+                      <span className="font-bold">
+                        ${countryStats.least_active_country.total_volume_usd.toLocaleString('fr-FR', { maximumFractionDigits: 0 })}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Part de marché:</span>
+                      <span className="font-bold text-orange-600 dark:text-orange-400">
+                        {countryStats.least_active_country.percentage.toFixed(1)}%
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
       )}
-
-      {/* Statistiques Blockchain */}
-      {(section === 'dashboard' || section === 'stats-blockchain') && blockchainStats && (
-      <Card className="shadow-lg">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <TrendingUp className="h-5 w-5" />
-            Statistiques Blockchain
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-6">
-            <div className="grid gap-4 md:grid-cols-3">
-              <div className="p-4 rounded-lg bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20">
-                <p className="text-sm font-medium text-muted-foreground mb-2">Total événements</p>
-                <p className="text-2xl font-bold">{blockchainStats.total_events || 0}</p>
-              </div>
-
-              <div className="p-4 rounded-lg bg-gradient-to-br from-green-500/10 to-green-600/5 border border-green-500/20">
-                <p className="text-sm font-medium text-muted-foreground mb-2">Traités</p>
-                <p className="text-2xl font-bold text-green-600 dark:text-green-400">{blockchainStats.processed_events || 0}</p>
-              </div>
-
-              <div className="p-4 rounded-lg bg-gradient-to-br from-yellow-500/10 to-yellow-600/5 border border-yellow-500/20">
-                <p className="text-sm font-medium text-muted-foreground mb-2">En attente</p>
-                <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{blockchainStats.pending_events || 0}</p>
-              </div>
-            </div>
-
-            <div>
-              <h4 className="text-sm font-semibold mb-3">Par réseau</h4>
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Réseau</TableHead>
-                      <TableHead className="text-right">Événements</TableHead>
-                      <TableHead className="text-right">Volume Total</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {blockchainStats.by_network?.map((network: any) => (
-                      <TableRow key={network.network}>
-                        <TableCell className="font-medium uppercase">{network.network}</TableCell>
-                        <TableCell className="text-right">{network.total_events}</TableCell>
-                        <TableCell className="text-right">
-                          {Number(network.total_amount || 0).toLocaleString('en-US', { 
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 6
-                          })}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            </div>
-
-            <div>
-              <h4 className="text-sm font-semibold mb-3">Par token</h4>
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Token</TableHead>
-                      <TableHead className="text-right">Événements</TableHead>
-                      <TableHead className="text-right">Volume Total</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {blockchainStats.by_token?.map((token: any) => (
-                      <TableRow key={token.token_symbol}>
-                        <TableCell className="font-medium">{token.token_symbol}</TableCell>
-                        <TableCell className="text-right">{token.total_events}</TableCell>
-                        <TableCell className="text-right">
-                          {Number(token.total_amount || 0).toLocaleString('en-US', { 
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 6
-                          })}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-      )}
-
-      {/* Statistiques Utilisateurs */}
-      {(section === 'dashboard' || section === 'stats-users') && (
-        <Card className="shadow-lg">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Users className="h-5 w-5" />
-              Statistiques Utilisateurs
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-6">
-              <div className="grid gap-4 md:grid-cols-2">
-                <div className="p-4 rounded-lg bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20">
-                  <p className="text-sm font-medium text-muted-foreground mb-2">Total requêtes uniques</p>
-                  <p className="text-2xl font-bold">{requests.length + onrampRequests.length}</p>
-                </div>
-
-                <div className="p-4 rounded-lg bg-gradient-to-br from-blue-500/10 to-blue-600/5 border border-blue-500/20">
-                  <p className="text-sm font-medium text-muted-foreground mb-2">Utilisateurs actifs</p>
-                  <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-                    {new Set([
-                      ...requests.map(r => r.momo_number),
-                      ...onrampRequests.map(r => r.momo_number)
-                    ]).size}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+      </div>
       )}
 
       {/* Requests Tabs - Sections Offramp et Onramp */}
