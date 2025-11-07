@@ -13,7 +13,7 @@ import { Loader2, RefreshCw, Settings, TrendingUp, Users, Clock, CheckCircle, XC
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
-type DashboardSection = 'dashboard' | 'offramp' | 'onramp' | 'stats-country' | 'stats-blockchain' | 'stats-users';
+type DashboardSection = 'dashboard' | 'offramp' | 'onramp' | 'stats-global' | 'stats-country' | 'stats-blockchain' | 'stats-users';
 
 interface AdminDashboardProps {
   section?: DashboardSection;
@@ -393,6 +393,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
     dashboard: { title: 'Vue d\'ensemble', subtitle: 'Aperçu des transactions et statistiques' },
     offramp: { title: 'Transactions Offramp', subtitle: 'Crypto → Mobile Money' },
     onramp: { title: 'Transactions Onramp', subtitle: 'Mobile Money → Crypto' },
+    'stats-global': { title: 'Statistiques Globales', subtitle: 'Vue d\'ensemble des statistiques générales' },
     'stats-country': { title: 'Statistiques par Pays', subtitle: 'Analyses détaillées par pays' },
     'stats-blockchain': { title: 'Statistiques Blockchain', subtitle: 'Analyses par réseau et événements blockchain' },
     'stats-users': { title: 'Statistiques Utilisateurs', subtitle: 'Analyses des requêtes et utilisateurs' }
@@ -421,8 +422,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
         </Button>
       </div>
 
-      {/* Statistiques générales - Section Dashboard */}
-      {section === 'dashboard' && (
+      {/* Statistiques générales - Section Dashboard et Stats Global */}
+      {(section === 'dashboard' || section === 'stats-global') && (
       <div id="dashboard" className="scroll-mt-20">
         {stats && (
           <div className="space-y-6">
