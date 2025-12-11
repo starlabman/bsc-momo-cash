@@ -190,6 +190,18 @@ const OfframpForm = () => {
     setIsPhoneNumberValid(false);
   };
 
+  const currentNetwork = SUPPORTED_NETWORKS.find(n => n.id === formData.network);
+
+  // Form steps for progress indicator - must be before early return
+  const formSteps = useMemo(() => [
+    { id: 'network', label: 'Réseau', completed: !!formData.network && !!formData.token, active: !formData.network },
+    { id: 'amount', label: 'Montant', completed: !!formData.amount && parseFloat(formData.amount) > 0, active: !!formData.network && !formData.amount },
+    { id: 'recipient', label: 'Destinataire', completed: isPhoneNumberValid, active: !!formData.amount && !isPhoneNumberValid },
+    { id: 'confirm', label: 'Confirmer', completed: false, active: isPhoneNumberValid },
+  ], [formData.network, formData.token, formData.amount, isPhoneNumberValid]);
+
+  const USD_PRESETS = [10, 25, 50, 100, 250, 500];
+
   if (request) {
     return (
       <div className="max-w-2xl mx-auto space-y-6 animate-fade-in">
@@ -347,18 +359,6 @@ const OfframpForm = () => {
       </div>
     );
   }
-
-  const currentNetwork = SUPPORTED_NETWORKS.find(n => n.id === formData.network);
-
-  // Form steps for progress indicator
-  const formSteps = useMemo(() => [
-    { id: 'network', label: 'Réseau', completed: !!formData.network && !!formData.token, active: !formData.network },
-    { id: 'amount', label: 'Montant', completed: !!formData.amount && parseFloat(formData.amount) > 0, active: !!formData.network && !formData.amount },
-    { id: 'recipient', label: 'Destinataire', completed: isPhoneNumberValid, active: !!formData.amount && !isPhoneNumberValid },
-    { id: 'confirm', label: 'Confirmer', completed: false, active: isPhoneNumberValid },
-  ], [formData.network, formData.token, formData.amount, isPhoneNumberValid]);
-
-  const USD_PRESETS = [10, 25, 50, 100, 250, 500];
 
   return (
     <div className="max-w-2xl mx-auto space-y-6 animate-slide-in-up">

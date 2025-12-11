@@ -209,6 +209,18 @@ const OnrampForm = () => {
     setIsPhoneNumberValid(false);
   };
 
+  const currentNetwork = SUPPORTED_NETWORKS.find(n => n.id === formData.network);
+
+  // Form steps for progress indicator - must be before early return
+  const formSteps = useMemo(() => [
+    { id: 'network', label: 'Réseau', completed: !!formData.network && !!formData.token, active: !formData.network },
+    { id: 'amount', label: 'Montant', completed: !!formData.xofAmount && parseFloat(formData.xofAmount) > 0, active: !!formData.network && !formData.xofAmount },
+    { id: 'wallet', label: 'Wallet', completed: !!formData.recipientAddress, active: !!formData.xofAmount && !formData.recipientAddress },
+    { id: 'confirm', label: 'Confirmer', completed: false, active: isPhoneNumberValid && !!formData.recipientAddress },
+  ], [formData.network, formData.token, formData.xofAmount, formData.recipientAddress, isPhoneNumberValid]);
+
+  const XOF_PRESETS = [5000, 10000, 25000, 50000, 100000, 250000];
+
   if (request) {
     return (
       <div className="max-w-2xl mx-auto space-y-6 animate-fade-in">
@@ -362,18 +374,6 @@ const OnrampForm = () => {
       </div>
     );
   }
-
-  const currentNetwork = SUPPORTED_NETWORKS.find(n => n.id === formData.network);
-
-  // Form steps for progress indicator
-  const formSteps = useMemo(() => [
-    { id: 'network', label: 'Réseau', completed: !!formData.network && !!formData.token, active: !formData.network },
-    { id: 'amount', label: 'Montant', completed: !!formData.xofAmount && parseFloat(formData.xofAmount) > 0, active: !!formData.network && !formData.xofAmount },
-    { id: 'wallet', label: 'Wallet', completed: !!formData.recipientAddress, active: !!formData.xofAmount && !formData.recipientAddress },
-    { id: 'confirm', label: 'Confirmer', completed: false, active: isPhoneNumberValid && !!formData.recipientAddress },
-  ], [formData.network, formData.token, formData.xofAmount, formData.recipientAddress, isPhoneNumberValid]);
-
-  const XOF_PRESETS = [5000, 10000, 25000, 50000, 100000, 250000];
 
   return (
     <div className="max-w-2xl mx-auto space-y-6 animate-slide-in-up">
