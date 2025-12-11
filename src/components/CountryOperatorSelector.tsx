@@ -60,8 +60,30 @@ export const CountryOperatorSelector: React.FC<CountryOperatorSelectorProps> = (
 
   // Validate phone number when it changes or operator changes
   useEffect(() => {
-    validatePhoneNumber();
-  }, [phoneNumber, selectedOperator, operators]);
+    // Use setTimeout to avoid calling setState during render of parent component
+    const timeoutId = setTimeout(() => {
+      if (!phoneNumber || !selectedOperator) {
+        onValidationChange(false);
+        return;
+      }
+
+      const selectedOp = operators.find(op => op.name === selectedOperator);
+      if (!selectedOp) {
+        onValidationChange(false);
+        return;
+      }
+
+      // Check if phone number matches any of the operator's patterns
+      const isValid = selectedOp.number_patterns.some(pattern => {
+        const regex = new RegExp(pattern);
+        return regex.test(phoneNumber);
+      });
+
+      onValidationChange(isValid);
+    }, 0);
+
+    return () => clearTimeout(timeoutId);
+  }, [phoneNumber, selectedOperator, operators, onValidationChange]);
 
   const fetchCountries = async () => {
     try {
@@ -102,27 +124,6 @@ export const CountryOperatorSelector: React.FC<CountryOperatorSelectorProps> = (
         variant: "destructive",
       });
     }
-  };
-
-  const validatePhoneNumber = () => {
-    if (!phoneNumber || !selectedOperator) {
-      onValidationChange(false);
-      return;
-    }
-
-    const selectedOp = operators.find(op => op.name === selectedOperator);
-    if (!selectedOp) {
-      onValidationChange(false);
-      return;
-    }
-
-    // Check if phone number matches any of the operator's patterns
-    const isValid = selectedOp.number_patterns.some(pattern => {
-      const regex = new RegExp(pattern);
-      return regex.test(phoneNumber);
-    });
-
-    onValidationChange(isValid);
   };
 
   const getSelectedCountry = () => {
