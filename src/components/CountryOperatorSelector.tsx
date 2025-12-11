@@ -166,31 +166,74 @@ export const CountryOperatorSelector: React.FC<CountryOperatorSelectorProps> = (
   };
 
   if (loading) {
-    return <div className="space-y-4">Chargement des pays...</div>;
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center gap-2 text-muted-foreground">
+          <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+          <span className="text-sm">Chargement des pays...</span>
+        </div>
+      </div>
+    );
   }
+
+  const selectedCountryObj = getSelectedCountry();
 
   return (
     <div className="space-y-4">
-      <div>
-        <Label htmlFor="country">Pays</Label>
+      {/* Country Selection with visual cards for popular countries */}
+      <div className="space-y-3">
+        <Label className="text-sm font-medium flex items-center gap-2">
+          <span>🌍</span> Pays
+        </Label>
+        
+        {/* Quick select for popular countries */}
+        <div className="grid grid-cols-4 sm:grid-cols-8 gap-2 mb-2">
+          {countries.slice(0, 8).map((country) => (
+            <button
+              key={country.id}
+              type="button"
+              onClick={() => {
+                onCountryChange(country.id, country);
+                onOperatorChange('');
+                onPhoneNumberChange('');
+              }}
+              className={`
+                flex flex-col items-center p-2 rounded-lg border-2 transition-all duration-200
+                hover:scale-105 hover:border-primary/50
+                ${selectedCountry === country.id 
+                  ? 'border-primary bg-primary/5' 
+                  : 'border-border hover:bg-muted/50'
+                }
+              `}
+              title={country.name}
+            >
+              <span className="text-2xl">{country.flag_emoji}</span>
+              <span className="text-[10px] text-muted-foreground mt-1 truncate w-full text-center">
+                {country.code}
+              </span>
+            </button>
+          ))}
+        </div>
+        
+        {/* Dropdown for all countries */}
         <Select value={selectedCountry} onValueChange={(value) => {
           const country = countries.find(c => c.id === value);
           if (country) {
             onCountryChange(value, country);
-            onOperatorChange(''); // Reset operator when country changes
-            onPhoneNumberChange(''); // Reset phone number when country changes
+            onOperatorChange('');
+            onPhoneNumberChange('');
           }
         }}>
-          <SelectTrigger>
-            <SelectValue placeholder="Sélectionnez un pays" />
+          <SelectTrigger className="h-11">
+            <SelectValue placeholder="Ou sélectionnez un autre pays..." />
           </SelectTrigger>
-          <SelectContent className="bg-background border border-border">
+          <SelectContent className="bg-background border border-border max-h-[300px]">
             {countries.map((country) => (
               <SelectItem key={country.id} value={country.id}>
                 <div className="flex items-center gap-2">
-                  <span>{country.flag_emoji}</span>
+                  <span className="text-lg">{country.flag_emoji}</span>
                   <span>{country.name}</span>
-                  <span className="text-muted-foreground">({country.phone_prefix})</span>
+                  <span className="text-muted-foreground text-xs">({country.phone_prefix})</span>
                 </div>
               </SelectItem>
             ))}
@@ -198,57 +241,79 @@ export const CountryOperatorSelector: React.FC<CountryOperatorSelectorProps> = (
         </Select>
       </div>
 
-      {selectedCountry && (
-        <div>
-          <Label htmlFor="operator">Opérateur Mobile Money</Label>
-          <Select value={selectedOperator} onValueChange={onOperatorChange}>
-            <SelectTrigger>
-              <SelectValue placeholder="Sélectionnez un opérateur" />
-            </SelectTrigger>
-            <SelectContent className="bg-background border border-border">
-              {operators.map((operator) => (
-                <SelectItem key={operator.id} value={operator.name}>
-                  {operator.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+      {/* Operator Selection with visual cards */}
+      {selectedCountry && operators.length > 0 && (
+        <div className="space-y-3 animate-fade-in">
+          <Label className="text-sm font-medium flex items-center gap-2">
+            <span>📱</span> Opérateur Mobile Money
+          </Label>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            {operators.map((operator) => (
+              <button
+                key={operator.id}
+                type="button"
+                onClick={() => onOperatorChange(operator.name)}
+                className={`
+                  flex items-center justify-center p-3 rounded-lg border-2 transition-all duration-200
+                  hover:scale-[1.02] hover:border-primary/50 font-medium text-sm
+                  ${selectedOperator === operator.name 
+                    ? 'border-primary bg-primary/5 text-primary' 
+                    : 'border-border hover:bg-muted/50'
+                  }
+                `}
+              >
+                {operator.name}
+              </button>
+            ))}
+          </div>
         </div>
       )}
 
+      {/* Phone Number Input with better UX */}
       {selectedCountry && selectedOperator && (
-        <div>
-          <Label htmlFor="phoneNumber">
-            Numéro Mobile Money
-            {getSelectedCountry() && (
-              <span className="text-muted-foreground ml-2">
-                ({getSelectedCountry()?.phone_prefix})
-              </span>
-            )}
+        <div className="space-y-2 animate-fade-in">
+          <Label htmlFor="phoneNumber" className="text-sm font-medium flex items-center gap-2">
+            <span>📞</span> Numéro Mobile Money
           </Label>
           <div className="relative">
-            <Input
-              id="phoneNumber"
-              type="tel"
-              value={phoneNumber}
-              onChange={(e) => {
-                const formatted = formatPhoneNumber(e.target.value);
-                onPhoneNumberChange(formatted);
-              }}
-              placeholder="Ex: 70123456"
-              className={`
-                ${isPhoneNumberValid() === false ? 'border-destructive' : ''}
-                ${isPhoneNumberValid() === true ? 'border-green-500' : ''}
-              `}
-            />
-            {phoneNumber && (
-              <div className="text-sm text-muted-foreground mt-1">
-                Numéro complet: {getDisplayPhoneNumber()}
+            <div className="flex">
+              <div className="flex items-center px-3 bg-muted border border-r-0 border-input rounded-l-md text-sm text-muted-foreground">
+                {selectedCountryObj?.flag_emoji} {selectedCountryObj?.phone_prefix}
               </div>
-            )}
-            {isPhoneNumberValid() === false && phoneNumber && (
-              <div className="text-sm text-destructive mt-1">
-                Format de numéro invalide pour cet opérateur
+              <Input
+                id="phoneNumber"
+                type="tel"
+                value={phoneNumber}
+                onChange={(e) => {
+                  const formatted = formatPhoneNumber(e.target.value);
+                  onPhoneNumberChange(formatted);
+                }}
+                placeholder="70 123 456"
+                className={`
+                  rounded-l-none text-base h-11
+                  ${isPhoneNumberValid() === false ? 'border-destructive focus-visible:ring-destructive' : ''}
+                  ${isPhoneNumberValid() === true ? 'border-green-500 focus-visible:ring-green-500' : ''}
+                `}
+              />
+            </div>
+            
+            {/* Validation feedback */}
+            {phoneNumber && (
+              <div className={`
+                flex items-center gap-1.5 mt-2 text-sm
+                ${isPhoneNumberValid() === true ? 'text-green-600' : ''}
+                ${isPhoneNumberValid() === false ? 'text-destructive' : 'text-muted-foreground'}
+              `}>
+                {isPhoneNumberValid() === true && <span>✓</span>}
+                {isPhoneNumberValid() === false && <span>✗</span>}
+                <span>
+                  {isPhoneNumberValid() === true 
+                    ? `Numéro valide: ${getDisplayPhoneNumber()}`
+                    : isPhoneNumberValid() === false 
+                    ? 'Format invalide pour cet opérateur'
+                    : `Numéro: ${getDisplayPhoneNumber()}`
+                  }
+                </span>
               </div>
             )}
           </div>
