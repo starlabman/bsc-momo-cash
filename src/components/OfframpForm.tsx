@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Loader2, Coins, ArrowRight, Smartphone, CheckCircle, Globe, Share2, Copy } from 'lucide-react';
+import { Loader2, Coins, ArrowRight, Smartphone, CheckCircle, Globe, Share2, Copy, Sparkles } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { QRCodeSVG } from 'qrcode.react';
@@ -15,6 +14,9 @@ import NetworkSelector, { SUPPORTED_NETWORKS } from '@/components/NetworkSelecto
 import { CountryOperatorSelector } from './CountryOperatorSelector';
 import { Switch } from '@/components/ui/switch';
 import { Link2 } from 'lucide-react';
+import AmountPresets from './AmountPresets';
+import FormStepIndicator from './FormStepIndicator';
+import LiveConversionPreview from './LiveConversionPreview';
 
 interface ExchangeRate {
   external_rate: number;
@@ -348,52 +350,104 @@ const OfframpForm = () => {
 
   const currentNetwork = SUPPORTED_NETWORKS.find(n => n.id === formData.network);
 
+  // Form steps for progress indicator
+  const formSteps = useMemo(() => [
+    { id: 'network', label: 'Réseau', completed: !!formData.network && !!formData.token, active: !formData.network },
+    { id: 'amount', label: 'Montant', completed: !!formData.amount && parseFloat(formData.amount) > 0, active: !!formData.network && !formData.amount },
+    { id: 'recipient', label: 'Destinataire', completed: isPhoneNumberValid, active: !!formData.amount && !isPhoneNumberValid },
+    { id: 'confirm', label: 'Confirmer', completed: false, active: isPhoneNumberValid },
+  ], [formData.network, formData.token, formData.amount, isPhoneNumberValid]);
+
+  const USD_PRESETS = [10, 25, 50, 100, 250, 500];
+
   return (
     <div className="max-w-2xl mx-auto space-y-6 animate-slide-in-up">
-      <Card className="hover-scale shadow-card border-primary/10 bg-gradient-card">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-lg sm:text-xl animate-fade-in">
-            <Coins className="h-5 w-5 text-primary animate-float" />
-            Conversion Crypto → Mobile Money
-          </CardTitle>
-          <CardDescription className="flex items-center gap-1 animate-slide-in-down">
-            <Globe className="h-4 w-4" />
-            Convertissez vos tokens crypto en XOF directement sur votre Mobile Money
-          </CardDescription>
+      {/* Live Conversion Preview - Always visible at top */}
+      <LiveConversionPreview
+        fromAmount={formData.amount}
+        fromCurrency="USD"
+        toAmount={calculatedXOF}
+        toCurrency="XOF"
+        rate={exchangeRate?.final_rate}
+        loading={loadingRate}
+        onRefresh={fetchExchangeRate}
+      />
+
+      <Card className="shadow-card border-primary/10 bg-gradient-card overflow-hidden">
+        <CardHeader className="pb-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
+                <div className="w-8 h-8 rounded-lg bg-gradient-primary flex items-center justify-center">
+                  <Coins className="h-4 w-4 text-white" />
+                </div>
+                Crypto → Mobile Money
+              </CardTitle>
+              <CardDescription className="mt-1">
+                Convertissez vos tokens en XOF
+              </CardDescription>
+            </div>
+            <Badge variant="outline" className="text-xs gap-1">
+              <Sparkles className="h-3 w-3" />
+              Sans KYC
+            </Badge>
+          </div>
+          
+          {/* Progress Indicator */}
+          <div className="mt-4">
+            <FormStepIndicator steps={formSteps} />
+          </div>
         </CardHeader>
+        
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
-            <NetworkSelector
-              selectedNetwork={formData.network}
-              onNetworkChange={(network) => {
-                const newNetwork = SUPPORTED_NETWORKS.find(n => n.id === network);
-                const firstToken = newNetwork?.tokens[0]?.symbol || 'USDC';
-                setFormData({ ...formData, network, token: firstToken });
-              }}
-              selectedToken={formData.token}
-              onTokenChange={(token) => setFormData({ ...formData, token })}
-            />
+            {/* Network & Token Selection */}
+            <div className="space-y-4">
+              <NetworkSelector
+                selectedNetwork={formData.network}
+                onNetworkChange={(network) => {
+                  const newNetwork = SUPPORTED_NETWORKS.find(n => n.id === network);
+                  const firstToken = newNetwork?.tokens[0]?.symbol || 'USDC';
+                  setFormData({ ...formData, network, token: firstToken });
+                }}
+                selectedToken={formData.token}
+                onTokenChange={(token) => setFormData({ ...formData, token })}
+              />
+            </div>
 
-            <div className="space-y-2 animate-slide-in-up">
-              <Label htmlFor="amount">Montant (USD)</Label>
+            {/* Amount Input with Presets */}
+            <div className="space-y-3">
+              <Label htmlFor="amount" className="text-sm font-medium flex items-center gap-2">
+                💵 Montant à envoyer (USD)
+              </Label>
+              
+              {/* Quick Amount Presets */}
+              <AmountPresets
+                presets={USD_PRESETS}
+                currency="$"
+                onSelect={(amount) => setFormData({ ...formData, amount: String(amount) })}
+                selectedAmount={formData.amount}
+              />
+              
               <Input
                 id="amount"
                 type="number"
-                placeholder="100"
+                placeholder="Ou entrez un montant personnalisé"
                 min="1"
                 max="1000"
                 step="0.01"
                 value={formData.amount}
                 onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
-                className="text-base hover:border-primary/50 transition-colors"
+                className="text-base h-11"
                 required
               />
               <p className="text-xs text-muted-foreground">
-                Limite : 1000 USD par transaction
+                Min: 1 USD • Max: 1000 USD
               </p>
             </div>
 
-            <div className="animate-slide-in-up">
+            {/* Country/Operator Selection */}
+            <div className="pt-2 border-t border-border/50">
               <CountryOperatorSelector
                 selectedCountry={selectedCountry}
                 selectedOperator={formData.momoProvider}
@@ -408,12 +462,13 @@ const OfframpForm = () => {
               />
             </div>
 
-            <Card className="bg-accent/5 border-accent/20 animate-slide-in-up">
-              <CardContent className="pt-6 space-y-4">
+            {/* Payment Link Option */}
+            <Card className="bg-muted/30 border-dashed">
+              <CardContent className="pt-4 pb-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Link2 className="h-4 w-4 text-accent" />
-                    <Label htmlFor="payment-link" className="cursor-pointer">
+                    <Link2 className="h-4 w-4 text-muted-foreground" />
+                    <Label htmlFor="payment-link" className="cursor-pointer text-sm">
                       Générer un lien de paiement
                     </Label>
                   </div>
@@ -425,81 +480,39 @@ const OfframpForm = () => {
                     }
                   />
                 </div>
-                <p className="text-xs text-muted-foreground">
-                  Créez un lien de paiement que vous pourrez partager avec quelqu'un d'autre pour qu'il effectue le paiement
-                </p>
                 
                 {formData.generatePaymentLink && (
-                  <div className="space-y-2 animate-slide-in-down">
-                    <Label htmlFor="requester-name">Votre nom (optionnel)</Label>
+                  <div className="space-y-2 mt-4 animate-fade-in">
+                    <Label htmlFor="requester-name" className="text-xs">Votre nom (optionnel)</Label>
                     <Input
                       id="requester-name"
                       type="text"
                       placeholder="Ex: Jean Dupont"
                       value={formData.requesterName}
                       onChange={(e) => setFormData({ ...formData, requesterName: e.target.value })}
-                      className="text-base"
+                      className="h-9"
                       maxLength={100}
                     />
-                    <p className="text-xs text-muted-foreground">
-                      Votre nom sera affiché sur la page de paiement
-                    </p>
                   </div>
                 )}
               </CardContent>
             </Card>
 
-            {loadingRate ? (
-              <Card className="bg-primary/5 border-primary/20">
-                <CardContent className="pt-6">
-                  <div className="space-y-3">
-                    <Skeleton className="h-4 w-32" />
-                    <Skeleton className="h-8 w-48" />
-                  </div>
-                </CardContent>
-              </Card>
-            ) : exchangeRate && calculatedXOF > 0 && (
-              <Card className="bg-gradient-to-r from-primary/5 to-accent/5 border-primary/20 animate-bounce-in hover:shadow-glow transition-all duration-300">
-                <CardContent className="pt-6">
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <div className="animate-zoom-in">
-                      <p className="text-sm text-muted-foreground">Vous recevrez</p>
-                      <p className="text-xl sm:text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-                        {Math.round(calculatedXOF).toLocaleString()} XOF
-                      </p>
-                    </div>
-                    <div className="text-left sm:text-right animate-slide-in-right">
-                      <p className="text-xs text-muted-foreground">
-                        Taux : 1 USD = {Math.round(exchangeRate.final_rate)} XOF
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        Marge : {(exchangeRate.margin * 100).toFixed(1)}%
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-
+            {/* Submit Button */}
             <Button 
               type="submit" 
-              className="w-full h-12 text-base bg-gradient-primary hover:shadow-primary transition-all duration-300 animate-pulse-glow" 
-              disabled={loading || !exchangeRate || loadingRate || !isPhoneNumberValid || !selectedCountry}
+              className="w-full h-12 text-base bg-gradient-primary hover:opacity-90 transition-all duration-300" 
+              disabled={loading || !exchangeRate || loadingRate || !isPhoneNumberValid || !selectedCountry || !formData.amount}
             >
               {loading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Création en cours...
                 </>
-              ) : loadingRate ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Chargement du taux...
-                </>
               ) : (
                 <>
                   <Coins className="mr-2 h-4 w-4" />
-                  Créer la demande
+                  {formData.generatePaymentLink ? 'Générer le lien' : 'Créer la demande'}
                 </>
               )}
             </Button>
@@ -507,40 +520,12 @@ const OfframpForm = () => {
         </CardContent>
       </Card>
 
-      {loadingRate ? (
-        <Card>
-          <CardContent className="pt-6 space-y-3">
-            <div className="flex items-center justify-between">
-              <Skeleton className="h-4 w-40" />
-              <Skeleton className="h-4 w-24" />
-            </div>
-            <div className="flex items-center justify-between">
-              <Skeleton className="h-4 w-48" />
-              <Skeleton className="h-4 w-28" />
-            </div>
-            <Skeleton className="h-3 w-56" />
-          </CardContent>
-        </Card>
-      ) : exchangeRate && (
-        <Card className="animate-fade-in">
-          <CardContent className="pt-6">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-sm">
-              <span className="text-muted-foreground">Taux de change USD/XOF</span>
-              <span className="font-medium">
-                1 USD = {Math.round(exchangeRate.external_rate)} XOF
-              </span>
-            </div>
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-sm mt-1">
-              <span className="text-muted-foreground">Taux après marge ({(exchangeRate.margin * 100).toFixed(1)}%)</span>
-              <span className="font-medium text-primary">
-                1 USD = {Math.round(exchangeRate.final_rate)} XOF
-              </span>
-            </div>
-            <p className="text-xs text-muted-foreground mt-2">
-              Dernière mise à jour : {new Date(exchangeRate.last_updated).toLocaleString('fr-FR')}
-            </p>
-          </CardContent>
-        </Card>
+      {/* Exchange Rate Info Footer */}
+      {exchangeRate && (
+        <div className="text-center text-xs text-muted-foreground space-y-1">
+          <p>Taux: 1 USD = {Math.round(exchangeRate.final_rate)} XOF (marge {(exchangeRate.margin * 100).toFixed(0)}%)</p>
+          <p>Mis à jour: {new Date(exchangeRate.last_updated).toLocaleString('fr-FR')}</p>
+        </div>
       )}
     </div>
   );
