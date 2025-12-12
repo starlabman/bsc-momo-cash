@@ -19,7 +19,7 @@ const Index = () => {
                 <ArrowRightLeft className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold bg-gradient-hero bg-clip-text text-transparent">CryptoMomo</h1>
+                <h1 className="text-2xl font-bold bg-gradient-hero bg-clip-text text-transparent">SikaPay</h1>
                 <p className="text-xs text-muted-foreground font-medium">Crypto ↔ Mobile Money</p>
               </div>
             </div>
@@ -140,7 +140,7 @@ const Index = () => {
                 <div className="h-8 w-8 bg-gradient-primary rounded-lg flex items-center justify-center">
                   <ArrowRightLeft className="h-5 w-5 text-white" />
                 </div>
-                <span className="text-lg font-bold bg-gradient-hero bg-clip-text text-transparent">CryptoMomo</span>
+                <span className="text-lg font-bold bg-gradient-hero bg-clip-text text-transparent">SikaPay</span>
               </div>
               <p className="text-sm text-muted-foreground">
                 Solution off-ramp crypto vers Mobile Money multi-blockchain.
@@ -187,7 +187,7 @@ const Index = () => {
           
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-8 border-t border-primary/10">
             <div className="text-sm text-muted-foreground">
-              © 2024 CryptoMomo. Tous droits réservés.
+              © 2024 SikaPay. Tous droits réservés.
             </div>
             <div className="flex items-center gap-6 text-xs text-muted-foreground">
               <span className="flex items-center gap-2">
