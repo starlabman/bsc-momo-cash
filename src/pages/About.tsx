@@ -16,6 +16,11 @@ const About = () => {
       description: "Transactions traitées en quelques minutes. Recevez votre argent sur Mobile Money sans délai."
     },
     {
+      icon: Shield,
+      title: "Sécurité",
+      description: "Protocoles de sécurité avancés pour protéger vos transactions et vos données personnelles."
+    },
+    {
       icon: Globe,
       title: "Multi-Blockchain",
       description: "Support de plusieurs réseaux : BSC, Ethereum, Tron, Solana et plus encore."
