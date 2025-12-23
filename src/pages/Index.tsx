@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -27,6 +28,11 @@ const Index = () => {
               <Badge variant="outline" className="text-xs animate-glow-pulse border-primary/30 bg-primary/5">
                 Multi-Blockchain
               </Badge>
+              <Link to="/about">
+                <Button variant="ghost" size="sm" className="text-xs hover:bg-primary/10">
+                  À propos
+                </Button>
+              </Link>
               <Button 
                 variant="ghost" 
                 size="sm" 
