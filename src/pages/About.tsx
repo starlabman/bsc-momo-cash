@@ -6,14 +6,14 @@ import { Card, CardContent } from "@/components/ui/card";
 const About = () => {
   const features = [
     {
+      icon: Shield,
+      title: "Sans KYC",
+      description: "Aucune vérification d'identité requise. Conversion rapide et anonyme pour votre confidentialité."
+    },
+    {
       icon: Zap,
       title: "Rapidité",
       description: "Transactions traitées en quelques minutes. Recevez votre argent sur Mobile Money sans délai."
-    },
-    {
-      icon: Shield,
-      title: "Sécurité",
-      description: "Protocoles de sécurité avancés pour protéger vos transactions et vos données personnelles."
     },
     {
       icon: Globe,
