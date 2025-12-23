@@ -33,6 +33,11 @@ const Index = () => {
                   À propos
                 </Button>
               </Link>
+              <Link to="/faq">
+                <Button variant="ghost" size="sm" className="text-xs hover:bg-primary/10">
+                  FAQ
+                </Button>
+              </Link>
               <Button 
                 variant="ghost" 
                 size="sm" 
