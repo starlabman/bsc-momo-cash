@@ -2,6 +2,7 @@ import { ArrowRightLeft, Shield, Zap, Globe, Users, HeadphonesIcon, ArrowLeft } 
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import Footer from "@/components/Footer";
 
 const About = () => {
   const features = [
@@ -171,14 +172,7 @@ const About = () => {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="py-8 px-4 border-t border-border/40">
-        <div className="container max-w-4xl mx-auto text-center">
-          <p className="text-sm text-muted-foreground">
-            © 2024 SikaPay. Tous droits réservés.
-          </p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };
