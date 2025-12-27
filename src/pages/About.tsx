@@ -1,8 +1,9 @@
-import { ArrowRightLeft, Shield, Zap, Globe, Users, HeadphonesIcon, ArrowLeft } from "lucide-react";
+import { Shield, Zap, Globe, Users, HeadphonesIcon } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Footer from "@/components/Footer";
+import Header from "@/components/Header";
 
 const About = () => {
   const features = [
@@ -40,26 +41,7 @@ const About = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-xl">
-        <div className="container flex h-16 items-center justify-between px-4">
-          <Link to="/" className="flex items-center gap-3">
-            <div className="h-10 w-10 bg-gradient-primary rounded-xl flex items-center justify-center shadow-lg">
-              <ArrowRightLeft className="h-6 w-6 text-white" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold bg-gradient-hero bg-clip-text text-transparent">SikaPay</h1>
-              <p className="text-xs text-muted-foreground font-medium">Crypto ↔ Mobile Money</p>
-            </div>
-          </Link>
-          <Link to="/">
-            <Button variant="outline" size="sm">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Retour
-            </Button>
-          </Link>
-        </div>
-      </header>
+      <Header />
 
       {/* Hero Section */}
       <section className="py-16 px-4">

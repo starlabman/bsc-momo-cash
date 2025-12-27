@@ -1,11 +1,11 @@
-import { ArrowRightLeft, ArrowLeft, Mail, Phone, MessageCircle, Send, MapPin, Clock } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Mail, Phone, MessageCircle, Send, MapPin, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import Footer from "@/components/Footer";
+import Header from "@/components/Header";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -61,26 +61,7 @@ const Contact = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-xl">
-        <div className="container flex h-16 items-center justify-between px-4">
-          <Link to="/" className="flex items-center gap-3">
-            <div className="h-10 w-10 bg-gradient-primary rounded-xl flex items-center justify-center shadow-lg">
-              <ArrowRightLeft className="h-6 w-6 text-white" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold bg-gradient-hero bg-clip-text text-transparent">SikaPay</h1>
-              <p className="text-xs text-muted-foreground font-medium">Crypto ↔ Mobile Money</p>
-            </div>
-          </Link>
-          <Link to="/">
-            <Button variant="outline" size="sm">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Retour
-            </Button>
-          </Link>
-        </div>
-      </header>
+      <Header />
 
       {/* Hero Section */}
       <section className="py-16 px-4">
