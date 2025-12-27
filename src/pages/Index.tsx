@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ArrowRightLeft, Shield, Zap, Users, ArrowDownUp } from 'lucide-react';
 import OfframpForm from '@/components/OfframpForm';
 import OnrampForm from '@/components/OnrampForm';
+import Footer from '@/components/Footer';
 
 const Index = () => {
   return (
@@ -36,6 +37,11 @@ const Index = () => {
               <Link to="/faq">
                 <Button variant="ghost" size="sm" className="text-xs hover:bg-primary/10">
                   FAQ
+                </Button>
+              </Link>
+              <Link to="/contact">
+                <Button variant="ghost" size="sm" className="text-xs hover:bg-primary/10">
+                  Contact
                 </Button>
               </Link>
               <Button 
@@ -142,75 +148,7 @@ const Index = () => {
         </div>
       </main>
 
-      {/* Footer */}
-      <footer className="border-t bg-gradient-to-r from-muted/10 via-muted/20 to-muted/10 backdrop-blur-sm mt-20">
-        <div className="container mx-auto px-4 py-12">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-            <div className="space-y-4">
-              <div className="flex items-center gap-3">
-                <div className="h-8 w-8 bg-gradient-primary rounded-lg flex items-center justify-center">
-                  <ArrowRightLeft className="h-5 w-5 text-white" />
-                </div>
-                <span className="text-lg font-bold bg-gradient-hero bg-clip-text text-transparent">SikaPay</span>
-              </div>
-              <p className="text-sm text-muted-foreground">
-                Solution off-ramp crypto vers Mobile Money multi-blockchain.
-              </p>
-            </div>
-            
-            <div className="space-y-4">
-              <h3 className="font-semibold text-foreground">Réseaux supportés</h3>
-              <div className="flex flex-wrap gap-2">
-                <Badge variant="outline" className="text-xs">BSC</Badge>
-                <Badge variant="outline" className="text-xs">Ethereum</Badge>
-                <Badge variant="outline" className="text-xs">Tron</Badge>
-                <Badge variant="outline" className="text-xs">Solana</Badge>
-                <Badge variant="outline" className="text-xs">Arbitrum</Badge>
-                <Badge variant="outline" className="text-xs">Optimism</Badge>
-                <Badge variant="outline" className="text-xs">Lisk</Badge>
-              </div>
-            </div>
-            
-            <div className="space-y-4">
-              <h3 className="font-semibold text-foreground">Pays supportés</h3>
-              <div className="flex flex-wrap gap-3 text-3xl">
-                <span className="hover:scale-125 transition-transform cursor-pointer" title="Bénin">🇧🇯</span>
-                <span className="hover:scale-125 transition-transform cursor-pointer" title="Burkina Faso">🇧🇫</span>
-                <span className="hover:scale-125 transition-transform cursor-pointer" title="Côte d'Ivoire">🇨🇮</span>
-                <span className="hover:scale-125 transition-transform cursor-pointer" title="Guinée">🇬🇳</span>
-                <span className="hover:scale-125 transition-transform cursor-pointer" title="Mali">🇲🇱</span>
-                <span className="hover:scale-125 transition-transform cursor-pointer" title="Niger">🇳🇪</span>
-                <span className="hover:scale-125 transition-transform cursor-pointer" title="Sénégal">🇸🇳</span>
-                <span className="hover:scale-125 transition-transform cursor-pointer" title="Togo">🇹🇬</span>
-              </div>
-            </div>
-            
-            <div className="space-y-4">
-              <h3 className="font-semibold text-foreground">Avantages</h3>
-              <ul className="text-sm text-muted-foreground space-y-2">
-                <li>• Sans frais utilisateur</li>
-                <li>• Conversion instantanée</li>
-                <li>• Sans vérification KYC</li>
-                <li>• Support 24/7</li>
-              </ul>
-            </div>
-          </div>
-          
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-8 border-t border-primary/10">
-            <div className="text-sm text-muted-foreground">
-              © 2024 SikaPay. Tous droits réservés.
-            </div>
-            <div className="flex items-center gap-6 text-xs text-muted-foreground">
-              <span className="flex items-center gap-2">
-                <div className="h-2 w-2 bg-green-500 rounded-full animate-pulse"></div>
-                Service en ligne
-              </span>
-              <span>USDC/USDT ↔ XOF</span>
-              <span>Multi-Blockchain</span>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };

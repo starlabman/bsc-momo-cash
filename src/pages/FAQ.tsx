@@ -7,6 +7,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import Footer from "@/components/Footer";
 
 const FAQ = () => {
   const faqs = [
@@ -139,14 +140,7 @@ const FAQ = () => {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="py-8 px-4 border-t border-border/40">
-        <div className="container max-w-4xl mx-auto text-center">
-          <p className="text-sm text-muted-foreground">
-            © 2024 SikaPay. Tous droits réservés.
-          </p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };
