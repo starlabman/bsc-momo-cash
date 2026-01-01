@@ -94,15 +94,26 @@ const PaymentLink = () => {
       <div className="max-w-2xl mx-auto space-y-6 py-8">
         <Card className="border-primary/20">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Coins className="h-5 w-5 text-primary" />
-              Demande de paiement {isOfframp ? 'Crypto → Mobile Money' : 'Mobile Money → Crypto'}
-            </CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle className="flex items-center gap-2">
+                <Coins className="h-5 w-5 text-primary" />
+                Demande de paiement {isOfframp ? 'Crypto → Mobile Money' : 'Mobile Money → Crypto'}
+              </CardTitle>
+              <Badge variant="outline" className="font-mono text-xs bg-background">
+                {request.reference_id}
+              </Badge>
+            </div>
             <CardDescription>
               {request.requester_name && `De: ${request.requester_name}`}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
+            {/* Reference ID prominently displayed */}
+            <div className="p-3 bg-primary/10 border border-primary/20 rounded-lg text-center">
+              <Label className="text-xs text-muted-foreground">Référence de transaction</Label>
+              <p className="text-xl font-bold font-mono text-primary">{request.reference_id}</p>
+              <p className="text-xs text-muted-foreground mt-1">À mentionner lors du paiement</p>
+            </div>
             {/* Transaction Details */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {isOfframp ? (
@@ -204,7 +215,7 @@ const PaymentLink = () => {
                       <span className="font-mono">{Math.round(request.xof_amount).toLocaleString()} XOF</span>
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      Référence à mentionner : <span className="font-mono">{request.id.substring(0, 8)}</span>
+                      Référence à mentionner : <span className="font-mono font-bold text-primary">{request.reference_id}</span>
                     </p>
                     <div className="mt-4 pt-4 border-t">
                       <p className="text-sm font-medium">Instructions:</p>

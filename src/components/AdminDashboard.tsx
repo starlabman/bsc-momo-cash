@@ -21,6 +21,7 @@ interface AdminDashboardProps {
 
 interface OfframpRequest {
   id: string;
+  reference_id: string;
   amount: number;
   token: string;
   momo_number: string;
@@ -40,6 +41,7 @@ interface OfframpRequest {
 
 interface OnrampRequest {
   id: string;
+  reference_id: string;
   xof_amount: number;
   usd_amount: number;
   crypto_amount: number;
@@ -1061,6 +1063,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                 <Table>
                   <TableHeader>
                     <TableRow>
+                      <TableHead>Référence</TableHead>
                       <TableHead>Date</TableHead>
                       <TableHead>Montant</TableHead>
                       <TableHead>Token</TableHead>
@@ -1073,6 +1076,11 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                   <TableBody>
                     {requests.map((request) => (
                       <TableRow key={request.id}>
+                        <TableCell>
+                          <Badge variant="outline" className="font-mono text-xs">
+                            {request.reference_id}
+                          </Badge>
+                        </TableCell>
                         <TableCell className="text-xs">
                           {new Date(request.created_at).toLocaleDateString('fr-FR')}
                           <br />
@@ -1229,6 +1237,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                 <Table>
                   <TableHeader>
                     <TableRow>
+                      <TableHead>Référence</TableHead>
                       <TableHead>Date</TableHead>
                       <TableHead>XOF</TableHead>
                       <TableHead>Crypto</TableHead>
@@ -1241,6 +1250,11 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                   <TableBody>
                     {onrampRequests.map((request) => (
                       <TableRow key={request.id}>
+                        <TableCell>
+                          <Badge variant="outline" className="font-mono text-xs">
+                            {request.reference_id}
+                          </Badge>
+                        </TableCell>
                         <TableCell className="text-xs">
                           {new Date(request.created_at).toLocaleDateString('fr-FR')}
                           <br />

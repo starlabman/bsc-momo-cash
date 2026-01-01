@@ -27,6 +27,7 @@ interface ExchangeRate {
 
 interface OnrampRequest {
   id: string;
+  reference_id: string;
   xof_amount: number;
   usd_amount: number;
   crypto_amount: number;
@@ -288,15 +289,26 @@ const OnrampForm = () => {
         
         <Card className="border-green-200 bg-green-50/50 dark:border-green-800 dark:bg-green-950/20">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-green-700 dark:text-green-300">
-              <CheckCircle className="h-5 w-5" />
-              {paymentLinkData ? 'Détails de la demande' : 'Demande d\'achat créée avec succès'}
-            </CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle className="flex items-center gap-2 text-green-700 dark:text-green-300">
+                <CheckCircle className="h-5 w-5" />
+                {paymentLinkData ? 'Détails de la demande' : 'Demande d\'achat créée avec succès'}
+              </CardTitle>
+              <Badge variant="outline" className="font-mono text-xs bg-background">
+                {request.reference_id}
+              </Badge>
+            </div>
             <CardDescription>
               {paymentLinkData ? 'Informations de paiement' : `Envoyez exactement ${Math.round(request.xof_amount).toLocaleString()} XOF via Mobile Money`}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
+            {/* Reference ID prominently displayed */}
+            <div className="p-3 bg-primary/10 border border-primary/20 rounded-lg text-center">
+              <Label className="text-xs text-muted-foreground">Référence de transaction</Label>
+              <p className="text-xl font-bold font-mono text-primary">{request.reference_id}</p>
+              <p className="text-xs text-muted-foreground mt-1">Mentionnez cette référence lors du paiement</p>
+            </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Montant à envoyer</Label>
@@ -334,7 +346,7 @@ const OnrampForm = () => {
                       <span className="font-mono">{Math.round(request.xof_amount).toLocaleString()} XOF</span>
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      Référence à mentionner : <span className="font-mono">{request.id.substring(0, 8)}</span>
+                      Référence à mentionner : <span className="font-mono font-bold text-primary">{request.reference_id}</span>
                     </p>
                   </div>
                 </CardContent>
