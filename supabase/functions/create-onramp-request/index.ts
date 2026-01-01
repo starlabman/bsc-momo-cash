@@ -121,6 +121,7 @@ serve(async (req) => {
       success: true,
       data: {
         id: request.id,
+        reference_id: request.reference_id,
         xof_amount: xofAmount,
         usd_amount: usdAmount,
         crypto_amount: cryptoAmount,

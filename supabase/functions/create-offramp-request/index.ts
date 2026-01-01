@@ -180,6 +180,7 @@ serve(async (req) => {
       success: true,
       data: {
         id: request.id,
+        reference_id: request.reference_id,
         amount: amount,
         token: tokenWithNetwork,
         momo_number: sanitizedMomoNumber,

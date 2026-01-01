@@ -236,6 +236,7 @@ export type Database = {
           notes: string | null
           paid_via_link: boolean | null
           payment_link_token: string | null
+          reference_id: string
           request_ip: string | null
           requester_info: Json | null
           requester_name: string | null
@@ -259,6 +260,7 @@ export type Database = {
           notes?: string | null
           paid_via_link?: boolean | null
           payment_link_token?: string | null
+          reference_id: string
           request_ip?: string | null
           requester_info?: Json | null
           requester_name?: string | null
@@ -282,6 +284,7 @@ export type Database = {
           notes?: string | null
           paid_via_link?: boolean | null
           payment_link_token?: string | null
+          reference_id?: string
           request_ip?: string | null
           requester_info?: Json | null
           requester_name?: string | null
@@ -316,6 +319,7 @@ export type Database = {
           paid_via_link: boolean | null
           payment_link_token: string | null
           recipient_address: string
+          reference_id: string
           request_ip: string | null
           requester_info: Json | null
           requester_name: string | null
@@ -339,6 +343,7 @@ export type Database = {
           paid_via_link?: boolean | null
           payment_link_token?: string | null
           recipient_address: string
+          reference_id: string
           request_ip?: string | null
           requester_info?: Json | null
           requester_name?: string | null
@@ -362,6 +367,7 @@ export type Database = {
           paid_via_link?: boolean | null
           payment_link_token?: string | null
           recipient_address?: string
+          reference_id?: string
           request_ip?: string | null
           requester_info?: Json | null
           requester_name?: string | null
@@ -389,6 +395,10 @@ export type Database = {
     Functions: {
       create_admin_jwt: {
         Args: { p_admin_id: string; p_username: string }
+        Returns: string
+      }
+      generate_transaction_reference: {
+        Args: { prefix?: string }
         Returns: string
       }
       get_request_stats: { Args: never; Returns: Json }
