@@ -9,7 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Loader2, RefreshCw, Settings, TrendingUp, Users, Clock, CheckCircle, XCircle, ArrowRightLeft, ArrowDownUp } from 'lucide-react';
+import { Loader2, RefreshCw, Settings, TrendingUp, Users, Clock, CheckCircle, XCircle, ArrowRightLeft, ArrowDownUp, Search, X } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
@@ -150,6 +150,12 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
     notes: '',
     transaction_hash: ''
   });
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<{
+    offramp: OfframpRequest[];
+    onramp: OnrampRequest[];
+  } | null>(null);
+  const [isSearching, setIsSearching] = useState(false);
 
   // Helper function to get admin authorization headers
   const getAuthHeaders = () => {
@@ -381,6 +387,42 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
     });
   };
 
+  // Search function
+  const handleSearch = () => {
+    if (!searchQuery.trim()) {
+      setSearchResults(null);
+      return;
+    }
+
+    setIsSearching(true);
+    const query = searchQuery.trim().toUpperCase();
+
+    // Search in both offramp and onramp requests
+    const matchingOfframp = requests.filter(r => 
+      r.reference_id?.toUpperCase().includes(query) ||
+      r.momo_number?.includes(query) ||
+      r.transaction_hash?.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    const matchingOnramp = onrampRequests.filter(r => 
+      r.reference_id?.toUpperCase().includes(query) ||
+      r.momo_number?.includes(query) ||
+      r.recipient_address?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      r.transaction_hash?.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    setSearchResults({
+      offramp: matchingOfframp,
+      onramp: matchingOnramp
+    });
+    setIsSearching(false);
+  };
+
+  const clearSearch = () => {
+    setSearchQuery('');
+    setSearchResults(null);
+  };
+
   const sectionTitles = {
     dashboard: { title: 'Vue d\'ensemble', subtitle: 'Aperçu des transactions et statistiques' },
     offramp: { title: 'Transactions Offramp', subtitle: 'Crypto → Mobile Money' },
@@ -388,27 +430,83 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
     stats: { title: 'Statistiques', subtitle: 'Analyses et métriques détaillées' }
   };
 
+  // Determine which requests to display (filtered or all)
+  const displayedOfframpRequests = searchResults ? searchResults.offramp : requests;
+  const displayedOnrampRequests = searchResults ? searchResults.onramp : onrampRequests;
+
   return (
     <div className="space-y-8">
       {/* Header avec bouton refresh */}
-      <div className="flex items-center justify-between animate-slide-in-down">
-        <div>
-          <h2 className="text-2xl lg:text-3xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-            {sectionTitles[section].title}
-          </h2>
-          <p className="text-sm text-muted-foreground mt-1">{sectionTitles[section].subtitle}</p>
+      <div className="flex flex-col gap-4 animate-slide-in-down">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-2xl lg:text-3xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+              {sectionTitles[section].title}
+            </h2>
+            <p className="text-sm text-muted-foreground mt-1">{sectionTitles[section].subtitle}</p>
+          </div>
+          <Button 
+            onClick={() => {
+              fetchRequests();
+              fetchOnrampRequests();
+            }} 
+            disabled={loading}
+            className="gap-2 shadow-lg hover:shadow-xl transition-shadow"
+          >
+            <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+            <span className="hidden sm:inline">Actualiser</span>
+          </Button>
         </div>
-        <Button 
-          onClick={() => {
-            fetchRequests();
-            fetchOnrampRequests();
-          }} 
-          disabled={loading}
-          className="gap-2 shadow-lg hover:shadow-xl transition-shadow"
-        >
-          <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-          <span className="hidden sm:inline">Actualiser</span>
-        </Button>
+
+        {/* Search Bar */}
+        <Card className="border-primary/20 bg-primary/5">
+          <CardContent className="pt-4">
+            <div className="flex flex-col sm:flex-row gap-3">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Rechercher par référence (OFF-XXXXXX, ONR-XXXXXX), numéro, adresse..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                  className="pl-10 pr-10"
+                />
+                {searchQuery && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7"
+                    onClick={clearSearch}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
+              <Button onClick={handleSearch} disabled={isSearching} className="gap-2">
+                {isSearching ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Search className="h-4 w-4" />
+                )}
+                Rechercher
+              </Button>
+            </div>
+            
+            {searchResults && (
+              <div className="mt-3 flex items-center gap-2 text-sm">
+                <Badge variant="secondary">
+                  {searchResults.offramp.length + searchResults.onramp.length} résultat(s)
+                </Badge>
+                <span className="text-muted-foreground">
+                  {searchResults.offramp.length} offramp, {searchResults.onramp.length} onramp
+                </span>
+                <Button variant="ghost" size="sm" onClick={clearSearch} className="ml-auto text-xs">
+                  Effacer la recherche
+                </Button>
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
 
       {/* Statistiques générales - Section Dashboard */}
@@ -1052,7 +1150,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
               <CardTitle className="flex items-center gap-2 text-lg lg:text-xl">
                 <ArrowRightLeft className="h-5 w-5" />
                 Demandes Offramp (Crypto → Mobile Money)
-                <Badge variant="secondary" className="ml-2">{requests.length}</Badge>
+                <Badge variant="secondary" className="ml-2">{displayedOfframpRequests.length}</Badge>
+                {searchResults && displayedOfframpRequests.length !== requests.length && (
+                  <span className="text-xs text-muted-foreground font-normal">/ {requests.length} total</span>
+                )}
               </CardTitle>
               <CardDescription>
                 Liste des demandes de conversion crypto vers Mobile Money
@@ -1074,7 +1175,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {requests.map((request) => (
+                    {displayedOfframpRequests.map((request) => (
                       <TableRow key={request.id}>
                         <TableCell>
                           <Badge variant="outline" className="font-mono text-xs">
@@ -1226,7 +1327,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
               <CardTitle className="flex items-center gap-2 text-lg lg:text-xl">
                 <ArrowDownUp className="h-5 w-5" />
                 Demandes Onramp (Mobile Money → Crypto)
-                <Badge variant="secondary" className="ml-2">{onrampRequests.length}</Badge>
+                <Badge variant="secondary" className="ml-2">{displayedOnrampRequests.length}</Badge>
+                {searchResults && displayedOnrampRequests.length !== onrampRequests.length && (
+                  <span className="text-xs text-muted-foreground font-normal">/ {onrampRequests.length} total</span>
+                )}
               </CardTitle>
               <CardDescription>
                 Liste des demandes de conversion Mobile Money vers crypto
@@ -1248,7 +1352,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {onrampRequests.map((request) => (
+                    {displayedOnrampRequests.map((request) => (
                       <TableRow key={request.id}>
                         <TableCell>
                           <Badge variant="outline" className="font-mono text-xs">
