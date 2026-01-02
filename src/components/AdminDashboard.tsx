@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Loader2, RefreshCw, Settings, TrendingUp, Users, Clock, CheckCircle, XCircle, ArrowRightLeft, ArrowDownUp, Search, X } from 'lucide-react';
+import AdminFilters from './AdminFilters';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
@@ -156,6 +157,17 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
     onramp: OnrampRequest[];
   } | null>(null);
   const [isSearching, setIsSearching] = useState(false);
+  const [filteredOfframpRequests, setFilteredOfframpRequests] = useState<OfframpRequest[]>([]);
+  const [filteredOnrampRequests, setFilteredOnrampRequests] = useState<OnrampRequest[]>([]);
+
+  // Update filtered requests when main requests change
+  useEffect(() => {
+    setFilteredOfframpRequests(requests);
+  }, [requests]);
+
+  useEffect(() => {
+    setFilteredOnrampRequests(onrampRequests);
+  }, [onrampRequests]);
 
   // Helper function to get admin authorization headers
   const getAuthHeaders = () => {
@@ -430,9 +442,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
     stats: { title: 'Statistiques', subtitle: 'Analyses et métriques détaillées' }
   };
 
-  // Determine which requests to display (filtered or all)
-  const displayedOfframpRequests = searchResults ? searchResults.offramp : requests;
-  const displayedOnrampRequests = searchResults ? searchResults.onramp : onrampRequests;
+  // Determine which requests to display (search results > filters > all)
+  const displayedOfframpRequests = searchResults ? searchResults.offramp : filteredOfframpRequests;
+  const displayedOnrampRequests = searchResults ? searchResults.onramp : filteredOnrampRequests;
 
   return (
     <div className="space-y-8">
@@ -507,6 +519,15 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
             )}
           </CardContent>
         </Card>
+
+        {/* Advanced Filters */}
+        <AdminFilters
+          offrampRequests={requests}
+          onrampRequests={onrampRequests}
+          onFilteredOfframp={setFilteredOfframpRequests}
+          onFilteredOnramp={setFilteredOnrampRequests}
+          activeTab={section === 'offramp' ? 'offramp' : section === 'onramp' ? 'onramp' : 'all'}
+        />
       </div>
 
       {/* Statistiques générales - Section Dashboard */}
