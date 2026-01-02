@@ -18,12 +18,6 @@ const PaymentLink = () => {
   const [request, setRequest] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (token) {
-      fetchPaymentRequest();
-    }
-  }, [token]);
-
   const fetchPaymentRequest = async () => {
     setLoading(true);
     setError(null);
@@ -52,6 +46,40 @@ const PaymentLink = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (token) {
+      fetchPaymentRequest();
+    }
+  }, [token]);
+
+  // Real-time subscription for status updates
+  useEffect(() => {
+    if (!request?.id) return;
+
+    const table = request.type === 'offramp' ? 'offramp_requests' : 'onramp_requests';
+    
+    const channel = supabase
+      .channel(`payment-status-${request.id}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: table,
+          filter: `id=eq.${request.id}`
+        },
+        (payload) => {
+          console.log('Status update received:', payload);
+          setRequest((prev: any) => ({ ...prev, ...payload.new }));
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [request?.id, request?.type]);
 
   if (loading) {
     return (

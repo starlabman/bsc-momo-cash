@@ -74,6 +74,8 @@ interface FilterState {
 interface AdminFiltersProps {
   offrampRequests: OfframpRequest[];
   onrampRequests: OnrampRequest[];
+  filteredOfframpRequests: OfframpRequest[];
+  filteredOnrampRequests: OnrampRequest[];
   onFilteredOfframp: (requests: OfframpRequest[]) => void;
   onFilteredOnramp: (requests: OnrampRequest[]) => void;
   activeTab: 'offramp' | 'onramp' | 'all';
@@ -82,6 +84,8 @@ interface AdminFiltersProps {
 const AdminFilters: React.FC<AdminFiltersProps> = ({
   offrampRequests,
   onrampRequests,
+  filteredOfframpRequests,
+  filteredOnrampRequests,
   onFilteredOfframp,
   onFilteredOnramp,
   activeTab
@@ -244,9 +248,13 @@ const AdminFilters: React.FC<AdminFiltersProps> = ({
     return count;
   };
 
-  // Export to CSV
+  // Export to CSV - uses filtered data
   const exportToCSV = (type: 'offramp' | 'onramp' | 'all') => {
     let csvContent = '';
+    
+    // Use filtered data instead of raw data
+    const offrampToExport = filteredOfframpRequests;
+    const onrampToExport = filteredOnrampRequests;
     
     if (type === 'offramp' || type === 'all') {
       // Offramp headers
@@ -256,10 +264,10 @@ const AdminFilters: React.FC<AdminFiltersProps> = ({
         'Hash Transaction', 'Statut', 'Notes'
       ];
       
-      csvContent += 'TRANSACTIONS OFFRAMP (Crypto → Mobile Money)\n';
+      csvContent += `TRANSACTIONS OFFRAMP (Crypto → Mobile Money) - ${offrampToExport.length} transaction(s)\n`;
       csvContent += offrampHeaders.join(';') + '\n';
       
-      offrampRequests.forEach(r => {
+      offrampToExport.forEach(r => {
         const row = [
           r.reference_id,
           format(new Date(r.created_at), 'dd/MM/yyyy HH:mm'),
@@ -289,10 +297,10 @@ const AdminFilters: React.FC<AdminFiltersProps> = ({
         'Hash Transaction', 'Statut', 'Notes'
       ];
       
-      csvContent += 'TRANSACTIONS ONRAMP (Mobile Money → Crypto)\n';
+      csvContent += `TRANSACTIONS ONRAMP (Mobile Money → Crypto) - ${onrampToExport.length} transaction(s)\n`;
       csvContent += onrampHeaders.join(';') + '\n';
       
-      onrampRequests.forEach(r => {
+      onrampToExport.forEach(r => {
         const row = [
           r.reference_id,
           format(new Date(r.created_at), 'dd/MM/yyyy HH:mm'),
@@ -312,11 +320,12 @@ const AdminFilters: React.FC<AdminFiltersProps> = ({
       });
     }
     
-    // Download file
+    // Download file with filter indicator
+    const filterIndicator = hasActiveFilters() ? '_filtered' : '';
     const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = `transactions_${type}_${format(new Date(), 'yyyy-MM-dd_HH-mm')}.csv`;
+    link.download = `transactions_${type}${filterIndicator}_${format(new Date(), 'yyyy-MM-dd_HH-mm')}.csv`;
     link.click();
   };
 

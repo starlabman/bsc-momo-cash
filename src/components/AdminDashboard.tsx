@@ -524,6 +524,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
         <AdminFilters
           offrampRequests={requests}
           onrampRequests={onrampRequests}
+          filteredOfframpRequests={filteredOfframpRequests}
+          filteredOnrampRequests={filteredOnrampRequests}
           onFilteredOfframp={setFilteredOfframpRequests}
           onFilteredOnramp={setFilteredOnrampRequests}
           activeTab={section === 'offramp' ? 'offramp' : section === 'onramp' ? 'onramp' : 'all'}
