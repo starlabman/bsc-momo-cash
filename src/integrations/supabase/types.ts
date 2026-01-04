@@ -191,6 +191,7 @@ export type Database = {
         Row: {
           country_id: string
           created_at: string
+          deposit_number: string | null
           id: string
           name: string
           number_patterns: string[]
@@ -199,6 +200,7 @@ export type Database = {
         Insert: {
           country_id: string
           created_at?: string
+          deposit_number?: string | null
           id?: string
           name: string
           number_patterns: string[]
@@ -207,6 +209,7 @@ export type Database = {
         Update: {
           country_id?: string
           created_at?: string
+          deposit_number?: string | null
           id?: string
           name?: string
           number_patterns?: string[]
