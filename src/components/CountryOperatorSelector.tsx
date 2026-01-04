@@ -18,6 +18,7 @@ interface MobileOperator {
   name: string;
   country_id: string;
   number_patterns: string[];
+  deposit_number: string | null;
 }
 
 interface CountryOperatorSelectorProps {
@@ -25,10 +26,12 @@ interface CountryOperatorSelectorProps {
   selectedOperator?: string;
   phoneNumber: string;
   onCountryChange: (countryId: string, country: Country) => void;
-  onOperatorChange: (operatorName: string) => void;
+  onOperatorChange: (operatorName: string, operator?: MobileOperator) => void;
   onPhoneNumberChange: (phoneNumber: string) => void;
   onValidationChange: (isValid: boolean) => void;
 }
+
+export type { MobileOperator, Country };
 
 export const CountryOperatorSelector: React.FC<CountryOperatorSelectorProps> = ({
   selectedCountry,
@@ -253,7 +256,7 @@ export const CountryOperatorSelector: React.FC<CountryOperatorSelectorProps> = (
               <button
                 key={operator.id}
                 type="button"
-                onClick={() => onOperatorChange(operator.name)}
+                onClick={() => onOperatorChange(operator.name, operator)}
                 className={`
                   flex items-center justify-center p-3 rounded-lg border-2 transition-all duration-200
                   hover:scale-[1.02] hover:border-primary/50 font-medium text-sm

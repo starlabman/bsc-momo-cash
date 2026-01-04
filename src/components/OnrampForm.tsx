@@ -10,7 +10,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { formatPhoneNumber } from '@/utils/phoneDetection';
 import NetworkSelector, { SUPPORTED_NETWORKS } from '@/components/NetworkSelector';
-import { CountryOperatorSelector } from './CountryOperatorSelector';
+import { CountryOperatorSelector, MobileOperator } from './CountryOperatorSelector';
 import { Switch } from '@/components/ui/switch';
 import { Link2 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
@@ -38,6 +38,7 @@ interface OnrampRequest {
   exchange_rate: number;
   status: string;
   created_at: string;
+  deposit_number?: string;
 }
 
 const OnrampForm = () => {
@@ -62,6 +63,7 @@ const OnrampForm = () => {
   
   const [selectedCountry, setSelectedCountry] = useState('');
   const [selectedCountryData, setSelectedCountryData] = useState<any>(null);
+  const [selectedOperatorData, setSelectedOperatorData] = useState<MobileOperator | null>(null);
   const [isPhoneNumberValid, setIsPhoneNumberValid] = useState(false);
 
   // Fetch exchange rate on component mount
@@ -161,16 +163,22 @@ const OnrampForm = () => {
       if (error) throw error;
 
       if (data.success) {
+        // Add deposit number from selected operator to request data
+        const requestWithDeposit = {
+          ...data.data,
+          deposit_number: selectedOperatorData?.deposit_number
+        };
+        
         if (data.data.payment_link) {
           setPaymentLinkData({link: data.data.payment_link, type: 'onramp'});
-          setRequest(data.data);
+          setRequest(requestWithDeposit);
           
           toast({
             title: "Lien de paiement généré !",
             description: "Partagez le lien pour que quelqu'un d'autre effectue le paiement",
           });
         } else {
-          setRequest(data.data);
+          setRequest(requestWithDeposit);
           
           toast({
             title: "Demande créée !",
@@ -207,6 +215,7 @@ const OnrampForm = () => {
     });
     setSelectedCountry('');
     setSelectedCountryData(null);
+    setSelectedOperatorData(null);
     setIsPhoneNumberValid(false);
   };
 
@@ -335,10 +344,15 @@ const OnrampForm = () => {
               <Card className="bg-primary/5 border-primary/20">
                 <CardContent className="pt-4">
                   <div className="space-y-3">
-                    <div className="flex items-center gap-2">
-                      <Smartphone className="h-4 w-4 text-primary" />
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <Smartphone className="h-4 w-4 text-primary shrink-0" />
                       <span className="font-medium">Numéro de destination :</span>
-                      <span className="font-mono">+221 77 XXX XX XX</span>
+                      <span className="font-mono font-bold text-primary">
+                        {request.deposit_number 
+                          ? `${selectedCountryData?.phone_prefix || ''} ${request.deposit_number}`
+                          : 'Non configuré - Contactez le support'
+                        }
+                      </span>
                     </div>
                     <div className="flex items-center gap-2">
                       <DollarSign className="h-4 w-4 text-primary" />
@@ -506,7 +520,10 @@ const OnrampForm = () => {
                   setSelectedCountry(countryId);
                   setSelectedCountryData(countryData);
                 }}
-                onOperatorChange={(operator) => setFormData({ ...formData, momoProvider: operator })}
+                onOperatorChange={(operator, operatorData) => {
+                  setFormData({ ...formData, momoProvider: operator });
+                  setSelectedOperatorData(operatorData || null);
+                }}
                 onPhoneNumberChange={(phoneNumber) => setFormData({ ...formData, momoNumber: phoneNumber })}
                 onValidationChange={setIsPhoneNumberValid}
               />
