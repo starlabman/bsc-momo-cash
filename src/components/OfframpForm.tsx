@@ -11,7 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 import { QRCodeSVG } from 'qrcode.react';
 import { formatPhoneNumber } from '@/utils/phoneDetection';
 import NetworkSelector, { SUPPORTED_NETWORKS } from '@/components/NetworkSelector';
-import { CountryOperatorSelector } from './CountryOperatorSelector';
+import { CountryOperatorSelector, MobileOperator } from './CountryOperatorSelector';
 import { Switch } from '@/components/ui/switch';
 import { Link2 } from 'lucide-react';
 import AmountPresets from './AmountPresets';
@@ -62,6 +62,7 @@ const OfframpForm = () => {
   
   const [selectedCountry, setSelectedCountry] = useState('');
   const [selectedCountryData, setSelectedCountryData] = useState<any>(null);
+  const [selectedOperatorData, setSelectedOperatorData] = useState<MobileOperator | null>(null);
   const [isPhoneNumberValid, setIsPhoneNumberValid] = useState(false);
 
   // Fetch exchange rate on component mount
@@ -188,6 +189,7 @@ const OfframpForm = () => {
     });
     setSelectedCountry('');
     setSelectedCountryData(null);
+    setSelectedOperatorData(null);
     setIsPhoneNumberValid(false);
   };
 
@@ -468,7 +470,10 @@ const OfframpForm = () => {
                   setSelectedCountry(countryId);
                   setSelectedCountryData(countryData);
                 }}
-                onOperatorChange={(operator) => setFormData({ ...formData, momoProvider: operator })}
+                onOperatorChange={(operator, operatorData) => {
+                  setFormData({ ...formData, momoProvider: operator });
+                  setSelectedOperatorData(operatorData || null);
+                }}
                 onPhoneNumberChange={(phoneNumber) => setFormData({ ...formData, momoNumber: phoneNumber })}
                 onValidationChange={setIsPhoneNumberValid}
               />
