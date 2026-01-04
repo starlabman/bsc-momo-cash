@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowRightLeft, Shield, Zap, Users, ArrowDownUp } from 'lucide-react';
+import { ArrowRightLeft, ArrowDownUp } from 'lucide-react';
 import OfframpForm from '@/components/OfframpForm';
 import OnrampForm from '@/components/OnrampForm';
 import Footer from '@/components/Footer';
@@ -24,50 +24,6 @@ const Index = () => {
               <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto animate-slide-in-up font-medium">
                 Solution multi-blockchain rapide et sécurisée pour vos conversions crypto ↔ XOF
               </p>
-            </div>
-            {/* Features */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16 max-w-5xl mx-auto">
-              <Card className="glass-card interactive-card border-primary/20 hover:border-primary/40 group">
-                <CardContent className="pt-8 text-center">
-                  <div className="mb-6 relative">
-                    <div className="h-16 w-16 bg-gradient-primary rounded-2xl mx-auto flex items-center justify-center shadow-glow group-hover:animate-float">
-                      <Shield className="h-8 w-8 text-white" />
-                    </div>
-                  </div>
-                  <h3 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors">Sans KYC</h3>
-                  <p className="text-muted-foreground leading-relaxed">
-                    Aucune vérification d'identité requise, conversion rapide et anonyme
-                  </p>
-                </CardContent>
-              </Card>
-              
-              <Card className="glass-card interactive-card border-primary/20 hover:border-primary/40 group" style={{ animationDelay: '0.1s' }}>
-                <CardContent className="pt-8 text-center">
-                  <div className="mb-6 relative">
-                    <div className="h-16 w-16 bg-gradient-primary rounded-2xl mx-auto flex items-center justify-center shadow-glow group-hover:animate-float">
-                      <Zap className="h-8 w-8 text-white" />
-                    </div>
-                  </div>
-                  <h3 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors">Multi-Blockchain</h3>
-                  <p className="text-muted-foreground leading-relaxed">
-                    Support BSC, Ethereum, Tron, Solana, Arbitrum, Optimism et Lisk
-                  </p>
-                </CardContent>
-              </Card>
-              
-              <Card className="glass-card interactive-card border-primary/20 hover:border-primary/40 group" style={{ animationDelay: '0.2s' }}>
-                <CardContent className="pt-8 text-center">
-                  <div className="mb-6 relative">
-                    <div className="h-16 w-16 bg-gradient-primary rounded-2xl mx-auto flex items-center justify-center shadow-glow group-hover:animate-float">
-                      <Users className="h-8 w-8 text-white" />
-                    </div>
-                  </div>
-                  <h3 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors">Tous opérateurs</h3>
-                  <p className="text-muted-foreground leading-relaxed">
-                    Compatible Moov, MTN, Orange Money et Wave
-                  </p>
-                </CardContent>
-              </Card>
             </div>
           </div>
 
