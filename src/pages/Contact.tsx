@@ -224,7 +224,7 @@ const Contact = () => {
                     Pour les questions concernant une transaction en cours, utilisez WhatsApp ou Telegram pour une réponse plus rapide.
                   </p>
                   <div className="flex gap-3">
-                    <a href="https://wa.me/221771234567" target="_blank" rel="noopener noreferrer">
+                    <a href="https://wa.me/22898244850" target="_blank" rel="noopener noreferrer">
                       <Button size="sm" className="bg-green-600 hover:bg-green-700">
                         WhatsApp
                       </Button>
