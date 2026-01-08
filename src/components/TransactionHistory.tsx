@@ -56,88 +56,39 @@ const TransactionHistory = () => {
     setHasSearched(true);
 
     try {
-      // Fetch offramp requests
-      const { data: offrampData, error: offrampError } = await supabase
-        .from('offramp_requests')
-        .select('id, amount, xof_amount, status, created_at, reference_id, momo_number')
-        .ilike('momo_number', `%${phone}%`)
-        .order('created_at', { ascending: false });
+      // Use edge function to search transactions securely
+      const { data, error } = await supabase.functions.invoke('search-transactions', {
+        body: { phoneNumber: phone }
+      });
 
-      // Fetch onramp requests
-      const { data: onrampData, error: onrampError } = await supabase
-        .from('onramp_requests')
-        .select('id, crypto_amount, xof_amount, status, created_at, reference_id, momo_number')
-        .ilike('momo_number', `%${phone}%`)
-        .order('created_at', { ascending: false });
+      if (error) {
+        console.error('Search error:', error);
+        throw error;
+      }
 
-      if (offrampError) console.error('Offramp error:', offrampError);
-      if (onrampError) console.error('Onramp error:', onrampError);
-
-      const allTransactions: Transaction[] = [
-        ...(offrampData || []).map(tx => ({
-          id: tx.id,
-          type: 'offramp' as const,
-          amount: tx.amount,
-          xof_amount: tx.xof_amount,
-          status: tx.status,
-          created_at: tx.created_at,
-          reference_id: tx.reference_id,
-        })),
-        ...(onrampData || []).map(tx => ({
-          id: tx.id,
-          type: 'onramp' as const,
-          amount: tx.crypto_amount,
-          xof_amount: tx.xof_amount,
-          status: tx.status,
-          created_at: tx.created_at,
-          reference_id: tx.reference_id,
-        })),
-      ].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
-
-      setTransactions(allTransactions);
+      if (data.success) {
+        setTransactions(data.data || []);
+      } else {
+        console.error('Search failed:', data.error);
+        setTransactions([]);
+      }
     } catch (error) {
       console.error('Error fetching transactions:', error);
+      setTransactions([]);
     } finally {
       setLoading(false);
     }
   };
 
-  // Real-time subscription
+  // Auto-refresh every 30 seconds when searched
   useEffect(() => {
     if (!searchedPhone) return;
 
-    const offrampChannel = supabase
-      .channel('offramp-history')
-      .on('postgres_changes', {
-        event: '*',
-        schema: 'public',
-        table: 'offramp_requests',
-      }, (payload) => {
-        const record = payload.new as any;
-        if (record?.momo_number?.includes(searchedPhone)) {
-          fetchTransactions(searchedPhone);
-        }
-      })
-      .subscribe();
+    const interval = setInterval(() => {
+      fetchTransactions(searchedPhone);
+    }, 30000); // Refresh every 30 seconds
 
-    const onrampChannel = supabase
-      .channel('onramp-history')
-      .on('postgres_changes', {
-        event: '*',
-        schema: 'public',
-        table: 'onramp_requests',
-      }, (payload) => {
-        const record = payload.new as any;
-        if (record?.momo_number?.includes(searchedPhone)) {
-          fetchTransactions(searchedPhone);
-        }
-      })
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(offrampChannel);
-      supabase.removeChannel(onrampChannel);
-    };
+    return () => clearInterval(interval);
   }, [searchedPhone]);
 
   const handleSearch = (e: React.FormEvent) => {
