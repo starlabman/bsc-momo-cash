@@ -6,6 +6,7 @@ import OnrampForm from '@/components/OnrampForm';
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
 import TestimonialsSection from '@/components/TestimonialsSection';
+import TransactionHistory from '@/components/TransactionHistory';
 
 const Index = () => {
   return (
@@ -55,6 +56,11 @@ const Index = () => {
                 <OnrampForm />
               </TabsContent>
             </Tabs>
+          </div>
+
+          {/* Transaction History Section */}
+          <div className="max-w-4xl mx-auto">
+            <TransactionHistory />
           </div>
 
           {/* Testimonials Section */}
