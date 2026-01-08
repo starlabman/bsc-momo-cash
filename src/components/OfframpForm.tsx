@@ -21,6 +21,8 @@ import LiveConversionPreview from './LiveConversionPreview';
 interface ExchangeRate {
   external_rate: number;
   final_rate: number;
+  offramp_rate: number;
+  onramp_rate: number;
   margin: number;
   last_updated: string;
 }
@@ -72,11 +74,12 @@ const OfframpForm = () => {
 
 
   // Calculate XOF amount when amount or rate changes
+  // Offramp: Crypto → XOF, utilise offramp_rate (taux - 5%)
   useEffect(() => {
     if (formData.amount && exchangeRate) {
       const amount = parseFloat(formData.amount);
       if (!isNaN(amount)) {
-        setCalculatedXOF(amount * exchangeRate.final_rate);
+        setCalculatedXOF(amount * exchangeRate.offramp_rate);
       } else {
         setCalculatedXOF(0);
       }
@@ -382,7 +385,7 @@ const OfframpForm = () => {
         fromCurrency="USD"
         toAmount={calculatedXOF}
         toCurrency="XOF"
-        rate={exchangeRate?.final_rate}
+        rate={exchangeRate?.offramp_rate}
         loading={loadingRate}
         onRefresh={fetchExchangeRate}
       />

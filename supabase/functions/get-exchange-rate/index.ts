@@ -70,8 +70,13 @@ serve(async (req) => {
       throw new Error('Failed to fetch rate configuration');
     }
 
-    const margin = rateConfig?.margin || 0.10;
-    const finalRate = externalRate * (1 - margin);
+    const margin = rateConfig?.margin || 0.05; // 5% margin par défaut
+    
+    // Offramp (Crypto → Mobile Money): taux - 5% (l'utilisateur reçoit moins de XOF)
+    const offrampRate = externalRate * (1 - margin);
+    
+    // Onramp (Mobile Money → Crypto): taux + 5% (l'utilisateur paie plus de XOF)
+    const onrampRate = externalRate * (1 + margin);
 
     // Update the rate in database if config exists
     if (rateConfig) {
@@ -95,7 +100,9 @@ serve(async (req) => {
         target_currency: 'XOF',
         external_rate: externalRate,
         margin: margin,
-        final_rate: finalRate,
+        offramp_rate: offrampRate,  // Crypto → XOF
+        onramp_rate: onrampRate,    // XOF → Crypto
+        final_rate: offrampRate,    // Pour rétrocompatibilité
         last_updated: new Date().toISOString()
       }
     };
