@@ -54,7 +54,7 @@ const Footer = () => {
             <h3 className="font-semibold text-foreground">Contact</h3>
             <ul className="text-sm text-muted-foreground space-y-2">
               <li>📧 support@sikapay.com</li>
-              <li>📱 WhatsApp: +221 77 123 45 67</li>
+              <li>📱 WhatsApp: +228 98 24 48 50</li>
               <li>💬 Telegram: @sikapay_support</li>
               <li>🕐 Support 24/7</li>
             </ul>
