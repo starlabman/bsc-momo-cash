@@ -1,0 +1,1 @@
+ALTER TABLE exchange_rates ALTER COLUMN margin SET DEFAULT 0.05;
