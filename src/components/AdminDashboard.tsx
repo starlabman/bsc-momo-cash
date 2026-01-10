@@ -1183,59 +1183,203 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Référence</TableHead>
-                      <TableHead>Date</TableHead>
-                      <TableHead>Montant</TableHead>
-                      <TableHead>Token</TableHead>
-                      <TableHead>Mobile Money</TableHead>
-                      <TableHead>XOF</TableHead>
-                      <TableHead>Statut</TableHead>
-                      <TableHead>Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
+              {displayedOfframpRequests.length === 0 ? (
+                <div className="text-center py-12 text-muted-foreground">
+                  <ArrowRightLeft className="h-12 w-12 mx-auto mb-4 opacity-30" />
+                  <p>Aucune demande offramp trouvée</p>
+                </div>
+              ) : (
+                <>
+                  {/* Vue Desktop - Tableau */}
+                  <div className="hidden lg:block overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow className="bg-muted/30">
+                          <TableHead className="font-semibold">Transaction</TableHead>
+                          <TableHead className="font-semibold">Destinataire</TableHead>
+                          <TableHead className="font-semibold text-right">Montant</TableHead>
+                          <TableHead className="font-semibold text-center">Statut</TableHead>
+                          <TableHead className="font-semibold text-right">Actions</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {displayedOfframpRequests.map((request) => (
+                          <TableRow key={request.id} className="hover:bg-muted/20 transition-colors">
+                            <TableCell>
+                              <div className="flex flex-col gap-1">
+                                <Badge variant="outline" className="font-mono text-xs w-fit">
+                                  {request.reference_id}
+                                </Badge>
+                                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                  <span>{new Date(request.created_at).toLocaleDateString('fr-FR')}</span>
+                                  <span>•</span>
+                                  <span>{new Date(request.created_at).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</span>
+                                </div>
+                                <Badge variant="secondary" className="text-xs w-fit mt-1">
+                                  {request.token}
+                                </Badge>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex flex-col gap-1">
+                                <span className="font-medium">{request.momo_number}</span>
+                                {request.momo_provider && (
+                                  <Badge variant="outline" className="text-xs w-fit bg-primary/5">
+                                    {request.momo_provider}
+                                  </Badge>
+                                )}
+                              </div>
+                            </TableCell>
+                            <TableCell className="text-right">
+                              <div className="flex flex-col items-end gap-1">
+                                <span className="font-bold text-lg">{Math.round(request.xof_amount).toLocaleString()}</span>
+                                <span className="text-xs text-muted-foreground">XOF</span>
+                              </div>
+                            </TableCell>
+                            <TableCell className="text-center">
+                              <Badge 
+                                variant={statusColors[request.status as keyof typeof statusColors]}
+                                className="whitespace-nowrap"
+                              >
+                                {statusLabels[request.status as keyof typeof statusLabels]}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="text-right">
+                              <Dialog>
+                                <DialogTrigger asChild>
+                                  <Button 
+                                    variant="outline" 
+                                    size="sm"
+                                    onClick={() => openUpdateDialog(request)}
+                                    className="hover:bg-primary hover:text-primary-foreground transition-colors"
+                                  >
+                                    Modifier
+                                  </Button>
+                                </DialogTrigger>
+                                <DialogContent className="max-w-md">
+                                  <DialogHeader>
+                                    <DialogTitle>Mettre à jour la demande offramp</DialogTitle>
+                                    <DialogDescription>
+                                      Modifiez le statut et ajoutez des notes
+                                    </DialogDescription>
+                                  </DialogHeader>
+                                  
+                                  {selectedRequest?.id === request.id && (
+                                    <div className="space-y-4">
+                                      <div className="bg-muted/50 p-3 rounded-lg mb-4">
+                                        <p className="text-xs font-semibold mb-2">📋 Flux Offramp:</p>
+                                        <div className="space-y-1 text-xs text-muted-foreground">
+                                          <div>1️⃣ En attente paiement crypto</div>
+                                          <div>2️⃣ Crypto reçue</div>
+                                          <div>3️⃣ En cours de traitement</div>
+                                          <div>4️⃣ Mobile Money envoyé ✓</div>
+                                        </div>
+                                      </div>
+
+                                      <div className="space-y-2">
+                                        <Label>Statut</Label>
+                                        <Select 
+                                          value={updateData.status} 
+                                          onValueChange={(value) => setUpdateData({ ...updateData, status: value })}
+                                        >
+                                          <SelectTrigger>
+                                            <SelectValue placeholder="Choisir un statut" />
+                                          </SelectTrigger>
+                                          <SelectContent>
+                                            {offrampStatuses.map((status) => (
+                                              <SelectItem key={status.value} value={status.value}>
+                                                {status.label}
+                                              </SelectItem>
+                                            ))}
+                                          </SelectContent>
+                                        </Select>
+                                      </div>
+
+                                      <div className="space-y-2">
+                                        <Label>Hash de transaction</Label>
+                                        <Input
+                                          placeholder="0x..."
+                                          value={updateData.transaction_hash}
+                                          onChange={(e) => setUpdateData({ ...updateData, transaction_hash: e.target.value })}
+                                        />
+                                      </div>
+
+                                      <div className="space-y-2">
+                                        <Label>Notes</Label>
+                                        <Textarea
+                                          placeholder="Ajouter des notes..."
+                                          value={updateData.notes}
+                                          onChange={(e) => setUpdateData({ ...updateData, notes: e.target.value })}
+                                        />
+                                      </div>
+
+                                      <Button 
+                                        onClick={updateRequestStatus} 
+                                        disabled={loading}
+                                        className="w-full"
+                                      >
+                                        {loading ? (
+                                          <>
+                                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                            Mise à jour...
+                                          </>
+                                        ) : (
+                                          'Mettre à jour'
+                                        )}
+                                      </Button>
+                                    </div>
+                                  )}
+                                </DialogContent>
+                              </Dialog>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+
+                  {/* Vue Mobile - Cartes */}
+                  <div className="lg:hidden space-y-3">
                     {displayedOfframpRequests.map((request) => (
-                      <TableRow key={request.id}>
-                        <TableCell>
-                          <Badge variant="outline" className="font-mono text-xs">
-                            {request.reference_id}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-xs">
-                          {new Date(request.created_at).toLocaleDateString('fr-FR')}
-                          <br />
-                          {new Date(request.created_at).toLocaleTimeString('fr-FR', { 
-                            hour: '2-digit', 
-                            minute: '2-digit' 
-                          })}
-                        </TableCell>
-                        <TableCell>
-                          <div className="font-medium">{request.amount} {request.token}</div>
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant="outline">{request.token}</Badge>
-                        </TableCell>
-                        <TableCell>
-                          <div className="text-sm">{request.momo_number}</div>
-                          {request.momo_provider && (
-                            <Badge variant="secondary" className="text-xs">
-                              {request.momo_provider}
+                      <div 
+                        key={request.id} 
+                        className="p-4 rounded-xl border border-border/50 bg-card hover:shadow-md transition-all"
+                      >
+                        <div className="flex items-start justify-between mb-3">
+                          <div>
+                            <Badge variant="outline" className="font-mono text-xs mb-1">
+                              {request.reference_id}
                             </Badge>
-                          )}
-                        </TableCell>
-                        <TableCell className="font-medium">
-                          {Math.round(request.xof_amount).toLocaleString()} XOF
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant={statusColors[request.status as keyof typeof statusColors]}>
+                            <p className="text-xs text-muted-foreground">
+                              {new Date(request.created_at).toLocaleDateString('fr-FR')} à {new Date(request.created_at).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                            </p>
+                          </div>
+                          <Badge 
+                            variant={statusColors[request.status as keyof typeof statusColors]}
+                            className="text-xs"
+                          >
                             {statusLabels[request.status as keyof typeof statusLabels]}
                           </Badge>
-                        </TableCell>
-                        <TableCell>
+                        </div>
+                        
+                        <div className="grid grid-cols-2 gap-3 mb-3">
+                          <div>
+                            <p className="text-xs text-muted-foreground mb-1">Token</p>
+                            <Badge variant="secondary" className="text-xs">{request.token}</Badge>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-xs text-muted-foreground mb-1">Montant</p>
+                            <p className="font-bold text-lg">{Math.round(request.xof_amount).toLocaleString()} <span className="text-xs font-normal text-muted-foreground">XOF</span></p>
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-center justify-between pt-3 border-t border-border/30">
+                          <div>
+                            <p className="font-medium text-sm">{request.momo_number}</p>
+                            {request.momo_provider && (
+                              <Badge variant="outline" className="text-xs mt-1">{request.momo_provider}</Badge>
+                            )}
+                          </div>
                           <Dialog>
                             <DialogTrigger asChild>
                               <Button 
@@ -1248,94 +1392,47 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                             </DialogTrigger>
                             <DialogContent className="max-w-md">
                               <DialogHeader>
-                                <DialogTitle>Mettre à jour la demande offramp</DialogTitle>
-                                <DialogDescription>
-                                  Modifiez le statut et ajoutez des notes
-                                </DialogDescription>
+                                <DialogTitle>Modifier la demande</DialogTitle>
                               </DialogHeader>
-                              
                               {selectedRequest?.id === request.id && (
                                 <div className="space-y-4">
-                                  {/* Status flow explanation */}
-                                  <div className="bg-muted/50 p-3 rounded-lg mb-4">
-                                    <p className="text-xs font-semibold mb-2">📋 Flux Offramp (Crypto → Mobile Money):</p>
-                                    <div className="space-y-1 text-xs text-muted-foreground">
-                                      <div>1️⃣ En attente paiement crypto → Client envoie crypto</div>
-                                      <div>2️⃣ Crypto reçue → Paiement confirmé on-chain</div>
-                                      <div>3️⃣ En cours de traitement → Transfert Mobile Money en cours</div>
-                                      <div>4️⃣ Mobile Money envoyé → Transaction terminée ✓</div>
-                                    </div>
-                                  </div>
-
-                                  <div className="space-y-2">
-                                    <Label>Statut actuel: {getStatusInfo(request.status, false).label}</Label>
-                                    <Select 
-                                      value={updateData.status} 
-                                      onValueChange={(value) => setUpdateData({ ...updateData, status: value })}
-                                    >
-                                      <SelectTrigger>
-                                        <SelectValue placeholder="Choisir un statut" />
-                                      </SelectTrigger>
-                                      <SelectContent>
-                                        {offrampStatuses.map((status) => (
-                                          <SelectItem key={status.value} value={status.value}>
-                                            <div className="flex flex-col">
-                                              <span className="font-medium">{status.label}</span>
-                                              <span className="text-xs text-muted-foreground">{status.description}</span>
-                                            </div>
-                                          </SelectItem>
-                                        ))}
-                                      </SelectContent>
-                                    </Select>
-                                  </div>
-
-                                  <div className="space-y-2">
-                                    <Label>Hash de transaction (optionnel)</Label>
-                                    <Input
-                                      placeholder="0x..."
-                                      value={updateData.transaction_hash}
-                                      onChange={(e) => setUpdateData({ ...updateData, transaction_hash: e.target.value })}
-                                    />
-                                  </div>
-
-                                  <div className="space-y-2">
-                                    <Label>Notes</Label>
-                                    <Textarea
-                                      placeholder="Ajouter des notes..."
-                                      value={updateData.notes}
-                                      onChange={(e) => setUpdateData({ ...updateData, notes: e.target.value })}
-                                    />
-                                  </div>
-
-                                  <Button 
-                                    onClick={updateRequestStatus} 
-                                    disabled={loading}
-                                    className="w-full"
+                                  <Select 
+                                    value={updateData.status} 
+                                    onValueChange={(value) => setUpdateData({ ...updateData, status: value })}
                                   >
-                                    {loading ? (
-                                      <>
-                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                        Mise à jour...
-                                      </>
-                                    ) : (
-                                      'Mettre à jour'
-                                    )}
+                                    <SelectTrigger>
+                                      <SelectValue placeholder="Statut" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      {offrampStatuses.map((status) => (
+                                        <SelectItem key={status.value} value={status.value}>
+                                          {status.label}
+                                        </SelectItem>
+                                      ))}
+                                    </SelectContent>
+                                  </Select>
+                                  <Input
+                                    placeholder="Hash de transaction"
+                                    value={updateData.transaction_hash}
+                                    onChange={(e) => setUpdateData({ ...updateData, transaction_hash: e.target.value })}
+                                  />
+                                  <Textarea
+                                    placeholder="Notes..."
+                                    value={updateData.notes}
+                                    onChange={(e) => setUpdateData({ ...updateData, notes: e.target.value })}
+                                  />
+                                  <Button onClick={updateRequestStatus} disabled={loading} className="w-full">
+                                    {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Mettre à jour'}
                                   </Button>
                                 </div>
                               )}
                             </DialogContent>
                           </Dialog>
-                        </TableCell>
-                      </TableRow>
+                        </div>
+                      </div>
                     ))}
-                  </TableBody>
-                </Table>
-              </div>
-              
-              {requests.length === 0 && !loading && (
-                <div className="text-center py-8 text-muted-foreground">
-                  Aucune demande offramp trouvée
-                </div>
+                  </div>
+                </>
               )}
             </CardContent>
           </Card>
@@ -1360,60 +1457,212 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Référence</TableHead>
-                      <TableHead>Date</TableHead>
-                      <TableHead>XOF</TableHead>
-                      <TableHead>Crypto</TableHead>
-                      <TableHead>Mobile Money</TableHead>
-                      <TableHead>Destination</TableHead>
-                      <TableHead>Statut</TableHead>
-                      <TableHead>Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
+              {displayedOnrampRequests.length === 0 ? (
+                <div className="text-center py-12 text-muted-foreground">
+                  <ArrowDownUp className="h-12 w-12 mx-auto mb-4 opacity-30" />
+                  <p>Aucune demande onramp trouvée</p>
+                </div>
+              ) : (
+                <>
+                  {/* Vue Desktop - Tableau */}
+                  <div className="hidden lg:block overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow className="bg-muted/30">
+                          <TableHead className="font-semibold">Transaction</TableHead>
+                          <TableHead className="font-semibold">Source</TableHead>
+                          <TableHead className="font-semibold">Destination</TableHead>
+                          <TableHead className="font-semibold text-right">Montant</TableHead>
+                          <TableHead className="font-semibold text-center">Statut</TableHead>
+                          <TableHead className="font-semibold text-right">Actions</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {displayedOnrampRequests.map((request) => (
+                          <TableRow key={request.id} className="hover:bg-muted/20 transition-colors">
+                            <TableCell>
+                              <div className="flex flex-col gap-1">
+                                <Badge variant="outline" className="font-mono text-xs w-fit">
+                                  {request.reference_id}
+                                </Badge>
+                                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                  <span>{new Date(request.created_at).toLocaleDateString('fr-FR')}</span>
+                                  <span>•</span>
+                                  <span>{new Date(request.created_at).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</span>
+                                </div>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex flex-col gap-1">
+                                <span className="font-medium">{request.momo_number}</span>
+                                {request.momo_provider && (
+                                  <Badge variant="outline" className="text-xs w-fit bg-primary/5">
+                                    {request.momo_provider}
+                                  </Badge>
+                                )}
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex flex-col gap-1">
+                                <Badge variant="secondary" className="text-xs w-fit">{request.token}</Badge>
+                                <span className="text-xs font-mono text-muted-foreground">
+                                  {request.recipient_address.slice(0, 8)}...{request.recipient_address.slice(-6)}
+                                </span>
+                              </div>
+                            </TableCell>
+                            <TableCell className="text-right">
+                              <div className="flex flex-col items-end gap-1">
+                                <span className="font-bold text-lg">{Math.round(request.xof_amount).toLocaleString()}</span>
+                                <span className="text-xs text-muted-foreground">XOF → {request.crypto_amount?.toLocaleString(undefined, { maximumFractionDigits: 6 })} {request.token}</span>
+                              </div>
+                            </TableCell>
+                            <TableCell className="text-center">
+                              <Badge 
+                                variant={statusColors[request.status as keyof typeof statusColors] || 'secondary'}
+                                className="whitespace-nowrap"
+                              >
+                                {statusLabels[request.status as keyof typeof statusLabels] || request.status}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="text-right">
+                              <Dialog>
+                                <DialogTrigger asChild>
+                                  <Button 
+                                    variant="outline" 
+                                    size="sm"
+                                    onClick={() => openOnrampUpdateDialog(request)}
+                                    className="hover:bg-primary hover:text-primary-foreground transition-colors"
+                                  >
+                                    Modifier
+                                  </Button>
+                                </DialogTrigger>
+                                <DialogContent className="max-w-md">
+                                  <DialogHeader>
+                                    <DialogTitle>Mettre à jour la demande onramp</DialogTitle>
+                                    <DialogDescription>
+                                      Modifiez le statut et ajoutez des notes
+                                    </DialogDescription>
+                                  </DialogHeader>
+                                  
+                                  {selectedOnrampRequest?.id === request.id && (
+                                    <div className="space-y-4">
+                                      <div className="bg-muted/50 p-3 rounded-lg mb-4">
+                                        <p className="text-xs font-semibold mb-2">📋 Flux Onramp:</p>
+                                        <div className="space-y-1 text-xs text-muted-foreground">
+                                          <div>1️⃣ En attente paiement Mobile Money</div>
+                                          <div>2️⃣ Mobile Money reçu</div>
+                                          <div>3️⃣ En cours de traitement</div>
+                                          <div>4️⃣ Crypto envoyée ✓</div>
+                                        </div>
+                                      </div>
+
+                                      <div className="space-y-2">
+                                        <Label>Statut</Label>
+                                        <Select 
+                                          value={onrampUpdateData.status} 
+                                          onValueChange={(value) => setOnrampUpdateData({ ...onrampUpdateData, status: value })}
+                                        >
+                                          <SelectTrigger>
+                                            <SelectValue placeholder="Choisir un statut" />
+                                          </SelectTrigger>
+                                          <SelectContent>
+                                            {onrampStatuses.map((status) => (
+                                              <SelectItem key={status.value} value={status.value}>
+                                                {status.label}
+                                              </SelectItem>
+                                            ))}
+                                          </SelectContent>
+                                        </Select>
+                                      </div>
+
+                                      <div className="space-y-2">
+                                        <Label>Hash de transaction</Label>
+                                        <Input
+                                          placeholder="0x..."
+                                          value={onrampUpdateData.transaction_hash}
+                                          onChange={(e) => setOnrampUpdateData({ ...onrampUpdateData, transaction_hash: e.target.value })}
+                                        />
+                                      </div>
+
+                                      <div className="space-y-2">
+                                        <Label>Notes</Label>
+                                        <Textarea
+                                          placeholder="Ajouter des notes..."
+                                          value={onrampUpdateData.notes}
+                                          onChange={(e) => setOnrampUpdateData({ ...onrampUpdateData, notes: e.target.value })}
+                                        />
+                                      </div>
+
+                                      <Button 
+                                        onClick={updateOnrampRequestStatus} 
+                                        disabled={loading}
+                                        className="w-full"
+                                      >
+                                        {loading ? (
+                                          <>
+                                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                            Mise à jour...
+                                          </>
+                                        ) : (
+                                          'Mettre à jour'
+                                        )}
+                                      </Button>
+                                    </div>
+                                  )}
+                                </DialogContent>
+                              </Dialog>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+
+                  {/* Vue Mobile - Cartes */}
+                  <div className="lg:hidden space-y-3">
                     {displayedOnrampRequests.map((request) => (
-                      <TableRow key={request.id}>
-                        <TableCell>
-                          <Badge variant="outline" className="font-mono text-xs">
-                            {request.reference_id}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-xs">
-                          {new Date(request.created_at).toLocaleDateString('fr-FR')}
-                          <br />
-                          {new Date(request.created_at).toLocaleTimeString('fr-FR', { 
-                            hour: '2-digit', 
-                            minute: '2-digit' 
-                          })}
-                        </TableCell>
-                        <TableCell className="font-medium">
-                          {Math.round(request.xof_amount).toLocaleString()} XOF
-                        </TableCell>
-                        <TableCell>
-                          <div className="font-medium">{request.crypto_amount} {request.token}</div>
-                          <Badge variant="outline" className="text-xs">{request.token}</Badge>
-                        </TableCell>
-                        <TableCell>
-                          <div className="text-sm">{request.momo_number}</div>
-                          {request.momo_provider && (
-                            <Badge variant="secondary" className="text-xs">
-                              {request.momo_provider}
+                      <div 
+                        key={request.id} 
+                        className="p-4 rounded-xl border border-border/50 bg-card hover:shadow-md transition-all"
+                      >
+                        <div className="flex items-start justify-between mb-3">
+                          <div>
+                            <Badge variant="outline" className="font-mono text-xs mb-1">
+                              {request.reference_id}
                             </Badge>
-                          )}
-                        </TableCell>
-                        <TableCell className="text-xs">
-                          {request.recipient_address.slice(0, 6)}...{request.recipient_address.slice(-4)}
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant={statusColors[request.status as keyof typeof statusColors] || 'secondary'}>
+                            <p className="text-xs text-muted-foreground">
+                              {new Date(request.created_at).toLocaleDateString('fr-FR')} à {new Date(request.created_at).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                            </p>
+                          </div>
+                          <Badge 
+                            variant={statusColors[request.status as keyof typeof statusColors] || 'secondary'}
+                            className="text-xs"
+                          >
                             {statusLabels[request.status as keyof typeof statusLabels] || request.status}
                           </Badge>
-                        </TableCell>
-                        <TableCell>
+                        </div>
+                        
+                        <div className="grid grid-cols-2 gap-3 mb-3">
+                          <div>
+                            <p className="text-xs text-muted-foreground mb-1">Vers</p>
+                            <Badge variant="secondary" className="text-xs">{request.token}</Badge>
+                            <p className="text-xs font-mono text-muted-foreground mt-1">
+                              {request.recipient_address.slice(0, 6)}...{request.recipient_address.slice(-4)}
+                            </p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-xs text-muted-foreground mb-1">Montant</p>
+                            <p className="font-bold text-lg">{Math.round(request.xof_amount).toLocaleString()} <span className="text-xs font-normal text-muted-foreground">XOF</span></p>
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-center justify-between pt-3 border-t border-border/30">
+                          <div>
+                            <p className="font-medium text-sm">{request.momo_number}</p>
+                            {request.momo_provider && (
+                              <Badge variant="outline" className="text-xs mt-1">{request.momo_provider}</Badge>
+                            )}
+                          </div>
                           <Dialog>
                             <DialogTrigger asChild>
                               <Button 
@@ -1426,94 +1675,47 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                             </DialogTrigger>
                             <DialogContent className="max-w-md">
                               <DialogHeader>
-                                <DialogTitle>Mettre à jour la demande onramp</DialogTitle>
-                                <DialogDescription>
-                                  Modifiez le statut et ajoutez des notes
-                                </DialogDescription>
+                                <DialogTitle>Modifier la demande</DialogTitle>
                               </DialogHeader>
-                              
                               {selectedOnrampRequest?.id === request.id && (
                                 <div className="space-y-4">
-                                  {/* Status flow explanation */}
-                                  <div className="bg-muted/50 p-3 rounded-lg mb-4">
-                                    <p className="text-xs font-semibold mb-2">📋 Flux Onramp (Mobile Money → Crypto):</p>
-                                    <div className="space-y-1 text-xs text-muted-foreground">
-                                      <div>1️⃣ En attente paiement Mobile Money → Client envoie Mobile Money</div>
-                                      <div>2️⃣ Mobile Money reçu → Paiement confirmé</div>
-                                      <div>3️⃣ En cours de traitement → Transfert crypto en cours</div>
-                                      <div>4️⃣ Crypto envoyée → Transaction terminée ✓</div>
-                                    </div>
-                                  </div>
-
-                                  <div className="space-y-2">
-                                    <Label>Statut actuel: {getStatusInfo(request.status, true).label}</Label>
-                                    <Select 
-                                      value={onrampUpdateData.status} 
-                                      onValueChange={(value) => setOnrampUpdateData({ ...onrampUpdateData, status: value })}
-                                    >
-                                      <SelectTrigger>
-                                        <SelectValue placeholder="Choisir un statut" />
-                                      </SelectTrigger>
-                                      <SelectContent>
-                                        {onrampStatuses.map((status) => (
-                                          <SelectItem key={status.value} value={status.value}>
-                                            <div className="flex flex-col">
-                                              <span className="font-medium">{status.label}</span>
-                                              <span className="text-xs text-muted-foreground">{status.description}</span>
-                                            </div>
-                                          </SelectItem>
-                                        ))}
-                                      </SelectContent>
-                                    </Select>
-                                  </div>
-
-                                  <div className="space-y-2">
-                                    <Label>Hash de transaction (optionnel)</Label>
-                                    <Input
-                                      placeholder="0x..."
-                                      value={onrampUpdateData.transaction_hash}
-                                      onChange={(e) => setOnrampUpdateData({ ...onrampUpdateData, transaction_hash: e.target.value })}
-                                    />
-                                  </div>
-
-                                  <div className="space-y-2">
-                                    <Label>Notes</Label>
-                                    <Textarea
-                                      placeholder="Ajouter des notes..."
-                                      value={onrampUpdateData.notes}
-                                      onChange={(e) => setOnrampUpdateData({ ...onrampUpdateData, notes: e.target.value })}
-                                    />
-                                  </div>
-
-                                  <Button 
-                                    onClick={updateOnrampRequestStatus} 
-                                    disabled={loading}
-                                    className="w-full"
+                                  <Select 
+                                    value={onrampUpdateData.status} 
+                                    onValueChange={(value) => setOnrampUpdateData({ ...onrampUpdateData, status: value })}
                                   >
-                                    {loading ? (
-                                      <>
-                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                        Mise à jour...
-                                      </>
-                                    ) : (
-                                      'Mettre à jour'
-                                    )}
+                                    <SelectTrigger>
+                                      <SelectValue placeholder="Statut" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      {onrampStatuses.map((status) => (
+                                        <SelectItem key={status.value} value={status.value}>
+                                          {status.label}
+                                        </SelectItem>
+                                      ))}
+                                    </SelectContent>
+                                  </Select>
+                                  <Input
+                                    placeholder="Hash de transaction"
+                                    value={onrampUpdateData.transaction_hash}
+                                    onChange={(e) => setOnrampUpdateData({ ...onrampUpdateData, transaction_hash: e.target.value })}
+                                  />
+                                  <Textarea
+                                    placeholder="Notes..."
+                                    value={onrampUpdateData.notes}
+                                    onChange={(e) => setOnrampUpdateData({ ...onrampUpdateData, notes: e.target.value })}
+                                  />
+                                  <Button onClick={updateOnrampRequestStatus} disabled={loading} className="w-full">
+                                    {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Mettre à jour'}
                                   </Button>
                                 </div>
                               )}
                             </DialogContent>
                           </Dialog>
-                        </TableCell>
-                      </TableRow>
+                        </div>
+                      </div>
                     ))}
-                  </TableBody>
-                </Table>
-              </div>
-              
-              {onrampRequests.length === 0 && !loading && (
-                <div className="text-center py-8 text-muted-foreground">
-                  Aucune demande onramp trouvée
-                </div>
+                  </div>
+                </>
               )}
             </CardContent>
           </Card>
