@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { LogOut, User } from 'lucide-react';
+import { ArrowRightLeft, LogOut, User, Menu } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 import AdminDashboard from '@/components/AdminDashboard';
 import { AdminSidebar } from '@/components/AdminSidebar';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
@@ -113,43 +114,35 @@ const Admin = () => {
         <AdminSidebar />
         
         <div className="flex-1 flex flex-col w-full">
-          {/* Header amélioré */}
-          <header className="border-b border-border/50 bg-background/80 backdrop-blur-xl sticky top-0 z-40">
-            <div className="px-4 lg:px-8 py-4">
+          {/* Header */}
+          <header className="border-b bg-background/95 backdrop-blur-sm sticky top-0 z-40">
+            <div className="px-4 lg:px-8 py-3">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <SidebarTrigger className="lg:hidden h-10 w-10 rounded-xl border border-border/50 hover:bg-accent transition-colors" />
-                  
-                  {/* Breadcrumb */}
-                  <div className="hidden sm:flex items-center gap-2 text-sm">
-                    <span className="text-muted-foreground">Admin</span>
-                    <span className="text-muted-foreground">/</span>
-                    <span className="font-medium text-foreground capitalize">
-                      {getCurrentSection() === 'dashboard' ? 'Vue d\'ensemble' : getCurrentSection()}
-                    </span>
+                <div className="flex items-center gap-3">
+                  <SidebarTrigger className="lg:hidden" />
+                  <div className="hidden lg:block h-8 w-8 bg-primary rounded-lg flex items-center justify-center">
+                    <ArrowRightLeft className="h-5 w-5 text-primary-foreground" />
+                  </div>
+                  <div>
+                    <h1 className="text-lg lg:text-xl font-bold">CryptoMomo Admin</h1>
+                    <p className="text-xs text-muted-foreground hidden sm:block">Tableau de bord administrateur</p>
                   </div>
                 </div>
                 
                 <div className="flex items-center gap-3">
-                  {/* User info card */}
-                  <div className="hidden md:flex items-center gap-3 px-4 py-2 rounded-xl bg-muted/50 border border-border/50">
-                    <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center">
-                      <User className="h-4 w-4 text-primary-foreground" />
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="text-sm font-medium">{adminUser.username}</span>
-                      <span className="text-xs text-muted-foreground">Administrateur</span>
-                    </div>
+                  <div className="hidden md:flex items-center gap-2">
+                    <User className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm text-muted-foreground">{adminUser.username}</span>
+                    <Badge variant="outline" className="text-xs">Admin</Badge>
                   </div>
                   
-                  {/* Logout button */}
                   <Button 
                     variant="outline" 
                     size="sm" 
                     onClick={handleLogout}
-                    className="h-10 px-4 rounded-xl border-border/50 hover:bg-destructive/10 hover:text-destructive hover:border-destructive/50 transition-all duration-200"
+                    className="flex items-center gap-2"
                   >
-                    <LogOut className="h-4 w-4 mr-2" />
+                    <LogOut className="h-4 w-4" />
                     <span className="hidden sm:inline">Déconnexion</span>
                   </Button>
                 </div>
@@ -157,9 +150,9 @@ const Admin = () => {
             </div>
           </header>
 
-          {/* Main Content avec animations */}
+          {/* Main Content */}
           <main className="flex-1 overflow-auto">
-            <div className="px-4 lg:px-8 py-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="px-4 lg:px-8 py-6">
               <AdminDashboard section={getCurrentSection()} />
             </div>
           </main>
