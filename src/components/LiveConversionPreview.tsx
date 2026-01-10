@@ -61,7 +61,7 @@ const LiveConversionPreview: React.FC<LiveConversionPreviewProps> = ({
         <div className="flex-1 text-right">
           <p className="text-xs text-muted-foreground mb-1">Vous recevez</p>
           <p className={`text-xl font-bold transition-all duration-300 ${hasAmount ? 'text-primary' : 'text-muted-foreground'}`}>
-            {hasAmount ? Math.round(toAmount).toLocaleString() : '0'} {toCurrency}
+            {hasAmount ? toAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 6 }) : '0'} {toCurrency}
           </p>
         </div>
       </div>
