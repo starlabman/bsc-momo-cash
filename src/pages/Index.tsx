@@ -7,10 +7,12 @@ import Footer from '@/components/Footer';
 import Header from '@/components/Header';
 import TestimonialsSection from '@/components/TestimonialsSection';
 import TransactionHistory from '@/components/TransactionHistory';
+import FloatingParticles from '@/components/FloatingParticles';
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/3">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 relative overflow-hidden">
+      <FloatingParticles />
       <Header />
 
       {/* Main Content */}
