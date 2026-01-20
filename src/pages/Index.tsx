@@ -48,42 +48,58 @@ const Index = () => {
           </div>
 
           {/* Conversion Forms */}
-          <div className="max-w-6xl mx-auto">
-            <Tabs defaultValue="crypto-to-momo" className="w-full animate-zoom-in">
-              <TabsList className="grid w-full grid-cols-2 mb-10 bg-muted/20 backdrop-blur-sm border border-primary/10 h-14">
+          <div className="max-w-6xl mx-auto animate-fade-in opacity-0 [animation-delay:1.2s] [animation-fill-mode:forwards]">
+            <Tabs defaultValue="crypto-to-momo" className="w-full">
+              <TabsList className="grid w-full grid-cols-2 mb-10 bg-muted/30 backdrop-blur-md border border-primary/20 h-16 p-1.5 rounded-2xl shadow-lg">
                 <TabsTrigger 
                   value="crypto-to-momo" 
-                  className="flex items-center gap-3 hover-lift text-base font-medium h-12 data-[state=active]:bg-gradient-primary data-[state=active]:text-white"
+                  className="flex items-center justify-center gap-3 text-base font-semibold h-full rounded-xl transition-all duration-500 ease-out
+                    data-[state=inactive]:text-muted-foreground data-[state=inactive]:hover:text-foreground data-[state=inactive]:hover:bg-muted/50
+                    data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:via-violet-500 data-[state=active]:to-primary 
+                    data-[state=active]:text-white data-[state=active]:shadow-xl data-[state=active]:shadow-primary/30 data-[state=active]:scale-[1.02]"
                 >
-                  <ArrowRightLeft className="h-5 w-5" />
-                  Crypto → Mobile Money
+                  <ArrowRightLeft className="h-5 w-5 transition-transform duration-300 group-hover:rotate-180" />
+                  <span className="hidden sm:inline">Crypto → Mobile Money</span>
+                  <span className="sm:hidden">Crypto → MoMo</span>
                 </TabsTrigger>
                 <TabsTrigger 
                   value="momo-to-crypto" 
-                  className="flex items-center gap-3 hover-lift text-base font-medium h-12 data-[state=active]:bg-gradient-primary data-[state=active]:text-white"
+                  className="flex items-center justify-center gap-3 text-base font-semibold h-full rounded-xl transition-all duration-500 ease-out
+                    data-[state=inactive]:text-muted-foreground data-[state=inactive]:hover:text-foreground data-[state=inactive]:hover:bg-muted/50
+                    data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500 data-[state=active]:via-amber-500 data-[state=active]:to-orange-400 
+                    data-[state=active]:text-white data-[state=active]:shadow-xl data-[state=active]:shadow-orange-500/30 data-[state=active]:scale-[1.02]"
                 >
-                  <ArrowDownUp className="h-5 w-5" />
-                  Mobile Money → Crypto
+                  <ArrowDownUp className="h-5 w-5 transition-transform duration-300" />
+                  <span className="hidden sm:inline">Mobile Money → Crypto</span>
+                  <span className="sm:hidden">MoMo → Crypto</span>
                 </TabsTrigger>
               </TabsList>
               
-              <TabsContent value="crypto-to-momo" className="animate-fade-in">
+              <TabsContent 
+                value="crypto-to-momo" 
+                className="mt-0 data-[state=active]:animate-fade-in focus-visible:outline-none focus-visible:ring-0"
+              >
                 <OfframpForm />
               </TabsContent>
               
-              <TabsContent value="momo-to-crypto" className="animate-fade-in">
+              <TabsContent 
+                value="momo-to-crypto" 
+                className="mt-0 data-[state=active]:animate-fade-in focus-visible:outline-none focus-visible:ring-0"
+              >
                 <OnrampForm />
               </TabsContent>
             </Tabs>
           </div>
 
           {/* Transaction History Section */}
-          <div className="max-w-4xl mx-auto">
+          <div className="max-w-4xl mx-auto animate-fade-in opacity-0 [animation-delay:1.4s] [animation-fill-mode:forwards]">
             <TransactionHistory />
           </div>
 
           {/* Testimonials Section */}
-          <TestimonialsSection />
+          <div className="animate-fade-in opacity-0 [animation-delay:1.6s] [animation-fill-mode:forwards]">
+            <TestimonialsSection />
+          </div>
         </div>
       </main>
 
