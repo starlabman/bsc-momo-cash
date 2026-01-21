@@ -69,6 +69,15 @@
   }
 }
 
+@keyframes border-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 /* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
 All colors MUST be HSL.
 */
@@ -202,6 +211,40 @@ All colors MUST be HSL.
     background: rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  /* Premium animated border (works great with glassmorphism) */
+  .animated-border {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .animated-border::before {
+    content: "";
+    position: absolute;
+    inset: -60%;
+    z-index: -2;
+    background: conic-gradient(
+      from 0deg,
+      hsl(var(--primary) / 0.00),
+      hsl(var(--primary) / 0.35),
+      hsl(var(--accent) / 0.30),
+      hsl(var(--primary) / 0.35),
+      hsl(var(--primary) / 0.00)
+    );
+    animation: border-spin 10s linear infinite;
+    filter: blur(14px);
+    opacity: 0.9;
+  }
+
+  .animated-border::after {
+    content: "";
+    position: absolute;
+    inset: 1px;
+    z-index: -1;
+    border-radius: inherit;
+    background: hsl(var(--background) / 0.35);
+    backdrop-filter: blur(18px);
   }
   
   .glass-button {
