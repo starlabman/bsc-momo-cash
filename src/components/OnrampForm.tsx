@@ -417,13 +417,13 @@ const OnrampForm = () => {
         onRefresh={fetchExchangeRate}
       />
 
-      <Card className="animated-border shadow-glass border border-border/50 bg-background/30 backdrop-blur-xl overflow-hidden">
+      <Card className="shadow-card border-primary/10 bg-gradient-card overflow-hidden">
         <CardHeader className="pb-4">
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
                 <div className="w-8 h-8 rounded-lg bg-gradient-primary flex items-center justify-center">
-                  <DollarSign className="h-4 w-4 text-primary-foreground" />
+                  <DollarSign className="h-4 w-4 text-white" />
                 </div>
                 Mobile Money → Crypto
               </CardTitle>
