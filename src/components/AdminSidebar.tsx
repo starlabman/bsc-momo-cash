@@ -1,4 +1,5 @@
 import { LayoutDashboard, ArrowRightLeft, ArrowDownUp, BarChart3 } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
 import {
   Sidebar,
   SidebarContent,
@@ -8,7 +9,10 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarHeader,
+  SidebarSeparator,
 } from '@/components/ui/sidebar';
+import { cn } from '@/lib/utils';
 
 const navigationItems = [
   { 
@@ -38,8 +42,25 @@ const navigationItems = [
 ];
 
 export function AdminSidebar() {
+  const location = useLocation();
+  const active = (location.hash || '#dashboard').replace('#', '');
+
   return (
     <Sidebar>
+      <SidebarHeader className="px-3 py-4">
+        <div className="flex items-center gap-3">
+          <div className="h-9 w-9 rounded-xl bg-primary/10 ring-1 ring-border flex items-center justify-center">
+            <ArrowRightLeft className="h-4 w-4 text-primary" />
+          </div>
+          <div className="leading-tight">
+            <p className="text-sm font-semibold">Administration</p>
+            <p className="text-xs text-muted-foreground">Gestion des transactions</p>
+          </div>
+        </div>
+      </SidebarHeader>
+
+      <SidebarSeparator />
+
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Navigation</SidebarGroupLabel>
@@ -50,9 +71,14 @@ export function AdminSidebar() {
                   <SidebarMenuButton asChild>
                     <a 
                       href={item.url}
-                      className="hover:bg-accent/50 transition-colors"
+                      className={cn(
+                        "rounded-lg px-2 py-2 transition-colors",
+                        "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+                        active === item.section &&
+                          "bg-sidebar-accent text-sidebar-accent-foreground ring-1 ring-sidebar-border"
+                      )}
                     >
-                      <item.icon className="h-5 w-5" />
+                      <item.icon className="h-4 w-4" />
                       <span>{item.title}</span>
                     </a>
                   </SidebarMenuButton>
