@@ -9,6 +9,15 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from '@/components/ui/pagination';
 import { Loader2, RefreshCw, Settings, TrendingUp, Users, Clock, CheckCircle, XCircle, ArrowRightLeft, ArrowDownUp, Search, X } from 'lucide-react';
 import AdminFilters from './AdminFilters';
 import { supabase } from '@/integrations/supabase/client';
@@ -159,6 +168,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
   const [isSearching, setIsSearching] = useState(false);
   const [filteredOfframpRequests, setFilteredOfframpRequests] = useState<OfframpRequest[]>([]);
   const [filteredOnrampRequests, setFilteredOnrampRequests] = useState<OnrampRequest[]>([]);
+
+  const PAGE_SIZE = 20;
+  const [offrampPage, setOfframpPage] = useState(1);
+  const [onrampPage, setOnrampPage] = useState(1);
 
   // Update filtered requests when main requests change
   useEffect(() => {
@@ -445,6 +458,118 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
   // Determine which requests to display (search results > filters > all)
   const displayedOfframpRequests = searchResults ? searchResults.offramp : filteredOfframpRequests;
   const displayedOnrampRequests = searchResults ? searchResults.onramp : filteredOnrampRequests;
+
+  // Reset pagination when data source changes (search / filters)
+  useEffect(() => {
+    setOfframpPage(1);
+  }, [searchResults, filteredOfframpRequests.length]);
+
+  useEffect(() => {
+    setOnrampPage(1);
+  }, [searchResults, filteredOnrampRequests.length]);
+
+  const clampPage = (page: number, totalPages: number) => {
+    if (totalPages <= 1) return 1;
+    return Math.min(Math.max(1, page), totalPages);
+  };
+
+  const getPageItems = (currentPage: number, totalPages: number): Array<number | 'ellipsis'> => {
+    if (totalPages <= 7) {
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
+    }
+
+    const items: Array<number | 'ellipsis'> = [1];
+    const left = Math.max(2, currentPage - 1);
+    const right = Math.min(totalPages - 1, currentPage + 1);
+
+    if (left > 2) items.push('ellipsis');
+    for (let p = left; p <= right; p += 1) items.push(p);
+    if (right < totalPages - 1) items.push('ellipsis');
+    items.push(totalPages);
+    return items;
+  };
+
+  const renderPagination = (
+    currentPage: number,
+    setPage: (p: number) => void,
+    totalItems: number
+  ) => {
+    const totalPages = Math.max(1, Math.ceil(totalItems / PAGE_SIZE));
+    const safePage = clampPage(currentPage, totalPages);
+    if (totalPages <= 1) return null;
+
+    const items = getPageItems(safePage, totalPages);
+
+    return (
+      <div className="mt-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <p className="text-xs text-muted-foreground">
+          Page <span className="font-medium text-foreground">{safePage}</span> sur{' '}
+          <span className="font-medium text-foreground">{totalPages}</span> • {totalItems} élément(s)
+        </p>
+
+        <Pagination className="justify-end sm:justify-center">
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setPage(clampPage(safePage - 1, totalPages));
+                }}
+                aria-disabled={safePage === 1}
+                className={safePage === 1 ? 'pointer-events-none opacity-50' : undefined}
+              />
+            </PaginationItem>
+
+            {items.map((it, idx) => (
+              <PaginationItem key={`${it}-${idx}`}>
+                {it === 'ellipsis' ? (
+                  <PaginationEllipsis />
+                ) : (
+                  <PaginationLink
+                    href="#"
+                    isActive={it === safePage}
+                    size="icon"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setPage(it);
+                    }}
+                  >
+                    {it}
+                  </PaginationLink>
+                )}
+              </PaginationItem>
+            ))}
+
+            <PaginationItem>
+              <PaginationNext
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setPage(clampPage(safePage + 1, totalPages));
+                }}
+                aria-disabled={safePage === totalPages}
+                className={safePage === totalPages ? 'pointer-events-none opacity-50' : undefined}
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
+      </div>
+    );
+  };
+
+  const offrampTotalPages = Math.max(1, Math.ceil(displayedOfframpRequests.length / PAGE_SIZE));
+  const onrampTotalPages = Math.max(1, Math.ceil(displayedOnrampRequests.length / PAGE_SIZE));
+
+  const pagedOfframpRequests = displayedOfframpRequests.slice(
+    (clampPage(offrampPage, offrampTotalPages) - 1) * PAGE_SIZE,
+    clampPage(offrampPage, offrampTotalPages) * PAGE_SIZE
+  );
+
+  const pagedOnrampRequests = displayedOnrampRequests.slice(
+    (clampPage(onrampPage, onrampTotalPages) - 1) * PAGE_SIZE,
+    clampPage(onrampPage, onrampTotalPages) * PAGE_SIZE
+  );
 
   return (
     <div className="space-y-8">
@@ -1198,7 +1323,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {displayedOfframpRequests.map((request) => (
+                    {pagedOfframpRequests.map((request) => (
                       <TableRow key={request.id}>
                         <TableCell>
                           <Badge variant="outline" className="font-mono text-xs">
@@ -1331,6 +1456,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                   </TableBody>
                 </Table>
               </div>
+
+               {renderPagination(offrampPage, setOfframpPage, displayedOfframpRequests.length)}
               
               {requests.length === 0 && !loading && (
                 <div className="text-center py-8 text-muted-foreground">
@@ -1375,7 +1502,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {displayedOnrampRequests.map((request) => (
+                    {pagedOnrampRequests.map((request) => (
                       <TableRow key={request.id}>
                         <TableCell>
                           <Badge variant="outline" className="font-mono text-xs">
@@ -1509,6 +1636,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                   </TableBody>
                 </Table>
               </div>
+
+               {renderPagination(onrampPage, setOnrampPage, displayedOnrampRequests.length)}
               
               {onrampRequests.length === 0 && !loading && (
                 <div className="text-center py-8 text-muted-foreground">
