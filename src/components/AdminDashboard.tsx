@@ -9,6 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   Pagination,
   PaginationContent,
@@ -577,7 +578,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
       <div className="flex flex-col gap-4 animate-slide-in-down">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-2xl lg:text-3xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+            <h2 className="text-2xl lg:text-3xl font-semibold tracking-tight">
               {sectionTitles[section].title}
             </h2>
             <p className="text-sm text-muted-foreground mt-1">{sectionTitles[section].subtitle}</p>
@@ -588,7 +589,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
               fetchOnrampRequests();
             }} 
             disabled={loading}
-            className="gap-2 shadow-lg hover:shadow-xl transition-shadow"
+            className="gap-2"
           >
             <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
             <span className="hidden sm:inline">Actualiser</span>
@@ -596,7 +597,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
         </div>
 
         {/* Search Bar */}
-        <Card className="border-primary/20 bg-primary/5">
+        <Card className="shadow-sm">
           <CardContent className="pt-4">
             <div className="flex flex-col sm:flex-row gap-3">
               <div className="relative flex-1">
@@ -1293,7 +1294,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
         {/* Section Offramp */}
         {(section === 'dashboard' || section === 'offramp') && (
         <div id="offramp" className="scroll-mt-20">
-          <Card className="shadow-lg">
+          <Card className="shadow-sm">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg lg:text-xl">
                 <ArrowRightLeft className="h-5 w-5" />
@@ -1310,27 +1311,42 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
             <CardContent>
               <div className="overflow-x-auto">
                 <Table>
-                  <TableHeader>
+                  <TableHeader className="sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/75">
                     <TableRow>
-                      <TableHead>Référence</TableHead>
-                      <TableHead>Date</TableHead>
-                      <TableHead>Montant</TableHead>
-                      <TableHead>Token</TableHead>
-                      <TableHead>Mobile Money</TableHead>
-                      <TableHead>XOF</TableHead>
-                      <TableHead>Statut</TableHead>
-                      <TableHead>Actions</TableHead>
+                      <TableHead className="h-11 text-xs font-medium">Référence</TableHead>
+                      <TableHead className="h-11 text-xs font-medium">Date</TableHead>
+                      <TableHead className="h-11 text-xs font-medium">Montant</TableHead>
+                      <TableHead className="h-11 text-xs font-medium">Token</TableHead>
+                      <TableHead className="h-11 text-xs font-medium">Mobile Money</TableHead>
+                      <TableHead className="h-11 text-xs font-medium">XOF</TableHead>
+                      <TableHead className="h-11 text-xs font-medium">Statut</TableHead>
+                      <TableHead className="h-11 text-xs font-medium">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {pagedOfframpRequests.map((request) => (
-                      <TableRow key={request.id}>
-                        <TableCell>
+                    {loading && pagedOfframpRequests.length === 0 && (
+                      Array.from({ length: 6 }).map((_, i) => (
+                        <TableRow key={`offramp-skel-${i}`} className="even:bg-muted/20">
+                          <TableCell className="py-3"><Skeleton className="h-5 w-28" /></TableCell>
+                          <TableCell className="py-3"><Skeleton className="h-5 w-24" /></TableCell>
+                          <TableCell className="py-3"><Skeleton className="h-5 w-28" /></TableCell>
+                          <TableCell className="py-3"><Skeleton className="h-5 w-14" /></TableCell>
+                          <TableCell className="py-3"><Skeleton className="h-5 w-32" /></TableCell>
+                          <TableCell className="py-3"><Skeleton className="h-5 w-20" /></TableCell>
+                          <TableCell className="py-3"><Skeleton className="h-5 w-28" /></TableCell>
+                          <TableCell className="py-3"><Skeleton className="h-8 w-20" /></TableCell>
+                        </TableRow>
+                      ))
+                    )}
+
+                    {!loading && pagedOfframpRequests.map((request) => (
+                      <TableRow key={request.id} className="even:bg-muted/20">
+                        <TableCell className="py-3">
                           <Badge variant="outline" className="font-mono text-xs">
                             {request.reference_id}
                           </Badge>
                         </TableCell>
-                        <TableCell className="text-xs">
+                        <TableCell className="py-3 text-xs">
                           {new Date(request.created_at).toLocaleDateString('fr-FR')}
                           <br />
                           {new Date(request.created_at).toLocaleTimeString('fr-FR', { 
@@ -1338,13 +1354,13 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                             minute: '2-digit' 
                           })}
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="py-3">
                           <div className="font-medium">{request.amount} {request.token}</div>
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="py-3">
                           <Badge variant="outline">{request.token}</Badge>
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="py-3">
                           <div className="text-sm">{request.momo_number}</div>
                           {request.momo_provider && (
                             <Badge variant="secondary" className="text-xs">
@@ -1352,15 +1368,15 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                             </Badge>
                           )}
                         </TableCell>
-                        <TableCell className="font-medium">
+                        <TableCell className="py-3 font-medium">
                           {Math.round(request.xof_amount).toLocaleString()} XOF
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="py-3">
                           <Badge variant={statusColors[request.status as keyof typeof statusColors]}>
                             {statusLabels[request.status as keyof typeof statusLabels]}
                           </Badge>
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="py-3">
                           <Dialog>
                             <DialogTrigger asChild>
                               <Button 
@@ -1459,9 +1475,12 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
 
                {renderPagination(offrampPage, setOfframpPage, displayedOfframpRequests.length)}
               
-              {requests.length === 0 && !loading && (
-                <div className="text-center py-8 text-muted-foreground">
-                  Aucune demande offramp trouvée
+              {displayedOfframpRequests.length === 0 && !loading && (
+                <div className="rounded-lg border border-dashed p-8 text-center">
+                  <p className="text-sm font-medium">Aucune demande offramp</p>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    {searchResults ? "Aucun résultat pour cette recherche." : "Aucune transaction ne correspond aux filtres actuels."}
+                  </p>
                 </div>
               )}
             </CardContent>
@@ -1472,7 +1491,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
         {/* Section Onramp */}
         {(section === 'dashboard' || section === 'onramp') && (
         <div id="onramp" className="scroll-mt-20">
-          <Card className="shadow-lg">
+          <Card className="shadow-sm">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg lg:text-xl">
                 <ArrowDownUp className="h-5 w-5" />
@@ -1489,27 +1508,42 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
             <CardContent>
               <div className="overflow-x-auto">
                 <Table>
-                  <TableHeader>
+                  <TableHeader className="sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/75">
                     <TableRow>
-                      <TableHead>Référence</TableHead>
-                      <TableHead>Date</TableHead>
-                      <TableHead>XOF</TableHead>
-                      <TableHead>Crypto</TableHead>
-                      <TableHead>Mobile Money</TableHead>
-                      <TableHead>Destination</TableHead>
-                      <TableHead>Statut</TableHead>
-                      <TableHead>Actions</TableHead>
+                      <TableHead className="h-11 text-xs font-medium">Référence</TableHead>
+                      <TableHead className="h-11 text-xs font-medium">Date</TableHead>
+                      <TableHead className="h-11 text-xs font-medium">XOF</TableHead>
+                      <TableHead className="h-11 text-xs font-medium">Crypto</TableHead>
+                      <TableHead className="h-11 text-xs font-medium">Mobile Money</TableHead>
+                      <TableHead className="h-11 text-xs font-medium">Destination</TableHead>
+                      <TableHead className="h-11 text-xs font-medium">Statut</TableHead>
+                      <TableHead className="h-11 text-xs font-medium">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {pagedOnrampRequests.map((request) => (
-                      <TableRow key={request.id}>
-                        <TableCell>
+                    {loading && pagedOnrampRequests.length === 0 && (
+                      Array.from({ length: 6 }).map((_, i) => (
+                        <TableRow key={`onramp-skel-${i}`} className="even:bg-muted/20">
+                          <TableCell className="py-3"><Skeleton className="h-5 w-28" /></TableCell>
+                          <TableCell className="py-3"><Skeleton className="h-5 w-24" /></TableCell>
+                          <TableCell className="py-3"><Skeleton className="h-5 w-20" /></TableCell>
+                          <TableCell className="py-3"><Skeleton className="h-5 w-28" /></TableCell>
+                          <TableCell className="py-3"><Skeleton className="h-5 w-32" /></TableCell>
+                          <TableCell className="py-3"><Skeleton className="h-5 w-24" /></TableCell>
+                          <TableCell className="py-3"><Skeleton className="h-5 w-28" /></TableCell>
+                          <TableCell className="py-3"><Skeleton className="h-8 w-20" /></TableCell>
+                        </TableRow>
+                      ))
+                    )}
+
+                    {!loading && pagedOnrampRequests.map((request) => (
+                      <TableRow key={request.id} className="even:bg-muted/20">
+                        <TableCell className="py-3">
                           <Badge variant="outline" className="font-mono text-xs">
                             {request.reference_id}
                           </Badge>
                         </TableCell>
-                        <TableCell className="text-xs">
+                        <TableCell className="py-3 text-xs">
                           {new Date(request.created_at).toLocaleDateString('fr-FR')}
                           <br />
                           {new Date(request.created_at).toLocaleTimeString('fr-FR', { 
@@ -1517,14 +1551,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                             minute: '2-digit' 
                           })}
                         </TableCell>
-                        <TableCell className="font-medium">
+                        <TableCell className="py-3 font-medium">
                           {Math.round(request.xof_amount).toLocaleString()} XOF
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="py-3">
                           <div className="font-medium">{request.crypto_amount} {request.token}</div>
                           <Badge variant="outline" className="text-xs">{request.token}</Badge>
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="py-3">
                           <div className="text-sm">{request.momo_number}</div>
                           {request.momo_provider && (
                             <Badge variant="secondary" className="text-xs">
@@ -1532,15 +1566,15 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                             </Badge>
                           )}
                         </TableCell>
-                        <TableCell className="text-xs">
+                        <TableCell className="py-3 text-xs">
                           {request.recipient_address.slice(0, 6)}...{request.recipient_address.slice(-4)}
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="py-3">
                           <Badge variant={statusColors[request.status as keyof typeof statusColors] || 'secondary'}>
                             {statusLabels[request.status as keyof typeof statusLabels] || request.status}
                           </Badge>
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="py-3">
                           <Dialog>
                             <DialogTrigger asChild>
                               <Button 
@@ -1639,9 +1673,12 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
 
                {renderPagination(onrampPage, setOnrampPage, displayedOnrampRequests.length)}
               
-              {onrampRequests.length === 0 && !loading && (
-                <div className="text-center py-8 text-muted-foreground">
-                  Aucune demande onramp trouvée
+              {displayedOnrampRequests.length === 0 && !loading && (
+                <div className="rounded-lg border border-dashed p-8 text-center">
+                  <p className="text-sm font-medium">Aucune demande onramp</p>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    {searchResults ? "Aucun résultat pour cette recherche." : "Aucune transaction ne correspond aux filtres actuels."}
+                  </p>
                 </div>
               )}
             </CardContent>

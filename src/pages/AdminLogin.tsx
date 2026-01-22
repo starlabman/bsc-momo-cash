@@ -71,7 +71,7 @@ const AdminLogin = () => {
         </div>
 
         {/* Login Card */}
-        <Card className="border-primary/20">
+        <Card className="shadow-lg">
           <CardHeader className="space-y-1 text-center">
             <div className="mx-auto mb-4 h-12 w-12 bg-primary/10 rounded-full flex items-center justify-center">
               <Shield className="h-6 w-6 text-primary" />
