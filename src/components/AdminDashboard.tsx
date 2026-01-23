@@ -19,7 +19,26 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination';
-import { Loader2, RefreshCw, Settings, TrendingUp, Users, Clock, CheckCircle, XCircle, ArrowRightLeft, ArrowDownUp, Search, X } from 'lucide-react';
+import {
+  ArrowDownUp,
+  ArrowRightLeft,
+  BarChart3,
+  CheckCircle,
+  Clock,
+  Coins,
+  Globe,
+  Hash,
+  Loader2,
+  RefreshCw,
+  Search,
+  Settings,
+  TrendingDown,
+  TrendingUp,
+  Trophy,
+  Users,
+  X,
+  XCircle,
+} from 'lucide-react';
 import AdminFilters from './AdminFilters';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -140,6 +159,32 @@ interface CountryStats {
   most_active_country: any;
   least_active_country: any;
 }
+
+const isFallbackFlag = (flag: string | null | undefined) => {
+  if (!flag) return true;
+  const trimmed = flag.trim();
+  return trimmed === '' || trimmed === '🏴';
+};
+
+const FlagOrFallback = ({ flag, code }: { flag: string | null | undefined; code: string }) => {
+  if (isFallbackFlag(flag)) {
+    return (
+      <span
+        className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-muted text-[10px] font-semibold text-muted-foreground ring-1 ring-border"
+        aria-label={`Pays ${code}`}
+        title={code}
+      >
+        {code?.slice(0, 2)?.toUpperCase() || '--'}
+      </span>
+    );
+  }
+
+  return (
+    <span className="text-2xl leading-none" aria-hidden>
+      {flag}
+    </span>
+  );
+};
 
 const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }) => {
   const { toast } = useToast();
@@ -839,63 +884,63 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
         <Card className="shadow-lg hover:shadow-xl transition-shadow">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg lg:text-xl">
-              <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <rect x="3" y="3" width="7" height="7" />
-                <rect x="14" y="3" width="7" height="7" />
-                <rect x="14" y="14" width="7" height="7" />
-                <rect x="3" y="14" width="7" height="7" />
-              </svg>
+              <BarChart3 className="h-5 w-5" />
               Statistiques par Réseau Blockchain
             </CardTitle>
             <CardDescription>Utilisation et volume des différents réseaux blockchain</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
-              <div className="text-center p-3 bg-violet-50 dark:bg-violet-950 rounded-lg">
-                <svg className="h-5 w-5 text-violet-600 dark:text-violet-400 mx-auto mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <rect x="3" y="3" width="7" height="7" />
-                  <rect x="14" y="3" width="7" height="7" />
-                  <rect x="14" y="14" width="7" height="7" />
-                  <rect x="3" y="14" width="7" height="7" />
-                </svg>
-                <p className="text-2xl font-bold text-violet-600 dark:text-violet-400">{blockchainStats.total_events}</p>
-                <p className="text-xs text-muted-foreground mt-1">Total événements</p>
+            <div className="grid grid-cols-2 gap-4 mb-6 md:grid-cols-5">
+              <div className="rounded-lg border bg-card p-3 text-center">
+                <div className="mx-auto mb-2 flex h-9 w-9 items-center justify-center rounded-full bg-muted text-muted-foreground">
+                  <Hash className="h-4 w-4" />
+                </div>
+                <p className="text-2xl font-bold">{blockchainStats.total_events}</p>
+                <p className="mt-1 text-xs text-muted-foreground">Total événements</p>
               </div>
 
-              <div className="text-center p-3 bg-green-50 dark:bg-green-950 rounded-lg">
-                <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400 mx-auto mb-2" />
-                <p className="text-2xl font-bold text-green-600 dark:text-green-400">{blockchainStats.processed_events}</p>
-                <p className="text-xs text-muted-foreground mt-1">Traités</p>
+              <div className="rounded-lg border bg-card p-3 text-center">
+                <div className="mx-auto mb-2 flex h-9 w-9 items-center justify-center rounded-full bg-muted text-muted-foreground">
+                  <CheckCircle className="h-4 w-4" />
+                </div>
+                <p className="text-2xl font-bold">{blockchainStats.processed_events}</p>
+                <p className="mt-1 text-xs text-muted-foreground">Traités</p>
               </div>
 
-              <div className="text-center p-3 bg-yellow-50 dark:bg-yellow-950 rounded-lg">
-                <Clock className="h-5 w-5 text-yellow-600 dark:text-yellow-400 mx-auto mb-2" />
-                <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{blockchainStats.pending_events}</p>
-                <p className="text-xs text-muted-foreground mt-1">En attente</p>
+              <div className="rounded-lg border bg-card p-3 text-center">
+                <div className="mx-auto mb-2 flex h-9 w-9 items-center justify-center rounded-full bg-muted text-muted-foreground">
+                  <Clock className="h-4 w-4" />
+                </div>
+                <p className="text-2xl font-bold">{blockchainStats.pending_events}</p>
+                <p className="mt-1 text-xs text-muted-foreground">En attente</p>
               </div>
 
-              <div className="text-center p-3 bg-blue-50 dark:bg-blue-950 rounded-lg">
-                <TrendingUp className="h-5 w-5 text-blue-600 dark:text-blue-400 mx-auto mb-2" />
-                <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+              <div className="rounded-lg border bg-card p-3 text-center">
+                <div className="mx-auto mb-2 flex h-9 w-9 items-center justify-center rounded-full bg-muted text-muted-foreground">
+                  <TrendingUp className="h-4 w-4" />
+                </div>
+                <p className="text-2xl font-bold">
                   {blockchainStats.total_volume.toLocaleString('fr-FR', { maximumFractionDigits: 2 })}
                 </p>
-                <p className="text-xs text-muted-foreground mt-1">Volume total</p>
+                <p className="mt-1 text-xs text-muted-foreground">Volume total</p>
               </div>
 
-              <div className="text-center p-3 bg-purple-50 dark:bg-purple-950 rounded-lg">
-                <svg className="h-5 w-5 text-purple-600 dark:text-purple-400 mx-auto mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <circle cx="12" cy="12" r="10" />
-                  <path d="M12 6v6l4 2" />
-                </svg>
-                <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">{blockchainStats.unique_networks}</p>
-                <p className="text-xs text-muted-foreground mt-1">Réseaux actifs</p>
+              <div className="rounded-lg border bg-card p-3 text-center">
+                <div className="mx-auto mb-2 flex h-9 w-9 items-center justify-center rounded-full bg-muted text-muted-foreground">
+                  <BarChart3 className="h-4 w-4" />
+                </div>
+                <p className="text-2xl font-bold">{blockchainStats.unique_networks}</p>
+                <p className="mt-1 text-xs text-muted-foreground">Réseaux actifs</p>
               </div>
             </div>
 
             {/* Network Usage Details */}
             {blockchainStats.volume_by_network && blockchainStats.volume_by_network.length > 0 && (
               <div className="mb-6">
-                <h4 className="text-lg font-semibold mb-4">📊 Utilisation par Réseau Blockchain</h4>
+                <h4 className="mb-4 flex items-center gap-2 text-lg font-semibold">
+                  <BarChart3 className="h-4 w-4 text-muted-foreground" />
+                  Utilisation par réseau
+                </h4>
                 <div className="space-y-3">
                   {blockchainStats.volume_by_network.map((item: any, index: number) => {
                     const isHighest = blockchainStats.highest_volume_network?.network === item.network;
@@ -904,62 +949,67 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                     return (
                       <div 
                         key={item.network} 
-                        className={`p-4 rounded-lg border-2 transition-all ${
-                          isHighest ? 'border-green-500 bg-green-50 dark:bg-green-950/50' : 
-                          isLowest ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/50' : 
-                          'border-muted bg-muted/30'
-                        }`}
+                        className={
+                          "rounded-lg border bg-card p-4 transition-all " +
+                          (isHighest
+                            ? "ring-1 ring-primary/25"
+                            : isLowest
+                              ? "ring-1 ring-destructive/20"
+                              : "")
+                        }
                       >
                         <div className="flex justify-between items-start mb-3">
                           <div className="flex items-center gap-2">
                             <span className="font-bold text-xl">{item.network}</span>
                             {isHighest && (
-                              <Badge className="bg-green-600 hover:bg-green-700 text-white">
-                                🏆 Plus utilisé
+                              <Badge>
+                                <span className="inline-flex items-center gap-1">
+                                  <Trophy className="h-3.5 w-3.5" />
+                                  Plus utilisé
+                                </span>
                               </Badge>
                             )}
                             {isLowest && (
-                              <Badge className="bg-orange-600 hover:bg-orange-700 text-white">
-                                Moins utilisé
+                              <Badge variant="destructive">
+                                <span className="inline-flex items-center gap-1">
+                                  <TrendingDown className="h-3.5 w-3.5" />
+                                  Moins utilisé
+                                </span>
                               </Badge>
                             )}
                           </div>
                           <div className="text-right">
-                            <span className="text-3xl font-bold text-primary">{item.percentage.toFixed(1)}%</span>
+                            <span className="text-3xl font-bold">{item.percentage.toFixed(1)}%</span>
                             <p className="text-xs text-muted-foreground">du total</p>
                           </div>
                         </div>
                         
                         <div className="grid grid-cols-3 gap-4 mb-3">
-                          <div className="p-2 bg-background/50 rounded">
+                          <div className="rounded-md bg-muted/40 p-2">
                             <p className="text-xs text-muted-foreground">Transactions</p>
-                            <p className="text-xl font-bold text-blue-600 dark:text-blue-400">{item.count}</p>
+                            <p className="text-xl font-bold">{item.count}</p>
                           </div>
-                          <div className="p-2 bg-background/50 rounded">
+                          <div className="rounded-md bg-muted/40 p-2">
                             <p className="text-xs text-muted-foreground">Volume</p>
-                            <p className="text-xl font-bold text-green-600 dark:text-green-400">
+                            <p className="text-xl font-bold">
                               {item.volume.toLocaleString('fr-FR', { maximumFractionDigits: 2 })}
                             </p>
                           </div>
-                          <div className="p-2 bg-background/50 rounded">
+                          <div className="rounded-md bg-muted/40 p-2">
                             <p className="text-xs text-muted-foreground">Tokens</p>
-                            <p className="text-xl font-bold text-purple-600 dark:text-purple-400">{item.unique_tokens}</p>
+                            <p className="text-xl font-bold">{item.unique_tokens}</p>
                           </div>
                         </div>
                         
                         {/* Progress bar */}
-                        <div className="relative w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 overflow-hidden">
+                        <div className="relative h-2.5 w-full overflow-hidden rounded-full bg-muted">
                           <div 
-                            className={`h-3 rounded-full transition-all duration-500 ${
-                              isHighest ? 'bg-gradient-to-r from-green-500 to-green-600' : 
-                              isLowest ? 'bg-gradient-to-r from-orange-500 to-orange-600' : 
-                              'bg-gradient-to-r from-blue-500 to-blue-600'
-                            }`}
+                            className={
+                              "h-full rounded-full transition-all duration-500 " +
+                              (isLowest ? "bg-destructive" : "bg-primary")
+                            }
                             style={{ width: `${item.percentage}%` }}
                           ></div>
-                          <span className="absolute inset-0 flex items-center justify-center text-xs font-semibold text-white">
-                            {item.percentage.toFixed(1)}%
-                          </span>
                         </div>
                       </div>
                     );
@@ -971,14 +1021,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
             {/* Highest and lowest volume networks - Summary */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
               {blockchainStats.highest_volume_network && (
-                <div className="p-5 bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950 dark:to-green-900 rounded-lg border-2 border-green-500">
-                  <div className="flex items-center gap-2 mb-3">
-                    <span className="text-2xl">🏆</span>
-                    <p className="text-sm font-bold text-green-700 dark:text-green-300">
-                      RÉSEAU LE PLUS UTILISÉ
-                    </p>
+                <div className="rounded-lg border bg-card p-5 ring-1 ring-primary/25">
+                  <div className="mb-3 flex items-center gap-2">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-primary ring-1 ring-border">
+                      <Trophy className="h-4 w-4" />
+                    </div>
+                    <p className="text-sm font-semibold">Réseau le plus utilisé</p>
                   </div>
-                  <p className="text-3xl font-bold text-green-600 dark:text-green-400 mb-2">
+                  <p className="mb-2 text-3xl font-bold">
                     {blockchainStats.highest_volume_network.network}
                   </p>
                   <div className="space-y-1 text-sm">
@@ -994,7 +1044,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Part de marché:</span>
-                      <span className="font-bold text-green-600 dark:text-green-400">
+                      <span className="font-bold">
                         {blockchainStats.highest_volume_network.percentage.toFixed(1)}%
                       </span>
                     </div>
@@ -1003,14 +1053,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
               )}
               
               {blockchainStats.lowest_volume_network && (
-                <div className="p-5 bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-950 dark:to-orange-900 rounded-lg border-2 border-orange-500">
-                  <div className="flex items-center gap-2 mb-3">
-                    <span className="text-2xl">📉</span>
-                    <p className="text-sm font-bold text-orange-700 dark:text-orange-300">
-                      RÉSEAU MOINS UTILISÉ
-                    </p>
+                <div className="rounded-lg border bg-card p-5 ring-1 ring-destructive/20">
+                  <div className="mb-3 flex items-center gap-2">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-destructive/10 text-destructive ring-1 ring-border">
+                      <TrendingDown className="h-4 w-4" />
+                    </div>
+                    <p className="text-sm font-semibold">Réseau moins utilisé</p>
                   </div>
-                  <p className="text-3xl font-bold text-orange-600 dark:text-orange-400 mb-2">
+                  <p className="mb-2 text-3xl font-bold">
                     {blockchainStats.lowest_volume_network.network}
                   </p>
                   <div className="space-y-1 text-sm">
@@ -1026,7 +1076,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Part de marché:</span>
-                      <span className="font-bold text-orange-600 dark:text-orange-400">
+                      <span className="font-bold text-destructive">
                         {blockchainStats.lowest_volume_network.percentage.toFixed(1)}%
                       </span>
                     </div>
@@ -1037,21 +1087,21 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
 
             {/* Volume comparison */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-              <div className="p-4 bg-gradient-to-br from-indigo-50 to-indigo-100 dark:from-indigo-950 dark:to-indigo-900 rounded-lg">
+              <div className="rounded-lg border bg-card p-4">
                 <p className="text-sm text-muted-foreground mb-2">Volume Offramp (XOF)</p>
-                <p className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
+                <p className="text-2xl font-bold">
                   {stats?.total_volume_xof?.toLocaleString('fr-FR', { maximumFractionDigits: 0 }) || '0'} XOF
                 </p>
               </div>
-              <div className="p-4 bg-gradient-to-br from-cyan-50 to-cyan-100 dark:from-cyan-950 dark:to-cyan-900 rounded-lg">
+              <div className="rounded-lg border bg-card p-4">
                 <p className="text-sm text-muted-foreground mb-2">Volume Offramp (USD)</p>
-                <p className="text-2xl font-bold text-cyan-600 dark:text-cyan-400">
+                <p className="text-2xl font-bold">
                   ${stats?.total_volume_usd?.toLocaleString('fr-FR', { maximumFractionDigits: 2 }) || '0'}
                 </p>
               </div>
-              <div className="p-4 bg-gradient-to-br from-teal-50 to-teal-100 dark:from-teal-950 dark:to-teal-900 rounded-lg">
+              <div className="rounded-lg border bg-card p-4">
                 <p className="text-sm text-muted-foreground mb-2">Total Volume Blockchain</p>
-                <p className="text-2xl font-bold text-teal-600 dark:text-teal-400">
+                <p className="text-2xl font-bold">
                   {blockchainStats.total_volume.toLocaleString('fr-FR', { maximumFractionDigits: 2 })}
                 </p>
               </div>
@@ -1059,14 +1109,13 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
 
             {/* Summary card for supported networks */}
             {blockchainStats.supported_networks && (
-              <div className="mt-6 p-4 bg-gradient-to-br from-indigo-50 to-indigo-100 dark:from-indigo-950 dark:to-indigo-900 rounded-lg border-2 border-indigo-300 dark:border-indigo-700">
+              <div className="mt-6 rounded-lg border bg-card p-4">
                 <div className="flex items-center gap-3">
-                  <svg className="h-8 w-8 text-indigo-600 dark:text-indigo-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <circle cx="12" cy="12" r="10" />
-                    <path d="M12 6v6l4 2" />
-                  </svg>
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted text-muted-foreground">
+                    <Coins className="h-5 w-5" />
+                  </div>
                   <div>
-                    <p className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
+                    <p className="text-2xl font-bold">
                       {blockchainStats.supported_networks} Réseaux Blockchain
                     </p>
                     <p className="text-sm text-muted-foreground">
@@ -1085,54 +1134,58 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="12" cy="12" r="10" />
-                <path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z" />
-              </svg>
+              <Globe className="h-5 w-5" />
               Statistiques par Pays
             </CardTitle>
             <CardDescription>Utilisation de CryptoMomo dans différents pays</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-              <div className="text-center p-3 bg-blue-50 dark:bg-blue-950 rounded-lg">
-                <svg className="h-5 w-5 text-blue-600 dark:text-blue-400 mx-auto mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <circle cx="12" cy="12" r="10" />
-                </svg>
-                <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{countryStats.total_countries}</p>
-                <p className="text-xs text-muted-foreground mt-1">Pays actifs</p>
+              <div className="rounded-lg border bg-card p-3 text-center">
+                <div className="mx-auto mb-2 flex h-9 w-9 items-center justify-center rounded-full bg-muted text-muted-foreground">
+                  <Globe className="h-4 w-4" />
+                </div>
+                <p className="text-2xl font-bold">{countryStats.total_countries}</p>
+                <p className="mt-1 text-xs text-muted-foreground">Pays actifs</p>
               </div>
 
               {countryStats.most_active_country && (
                 <>
-                  <div className="text-center p-3 bg-green-50 dark:bg-green-950 rounded-lg">
-                    <span className="text-3xl mx-auto mb-2 block">{countryStats.most_active_country.flag_emoji}</span>
-                    <p className="text-2xl font-bold text-green-600 dark:text-green-400">{countryStats.most_active_country.total_transactions}</p>
-                    <p className="text-xs text-muted-foreground mt-1">Plus actif: {countryStats.most_active_country.country_name}</p>
+                  <div className="rounded-lg border bg-card p-3 text-center">
+                    <div className="mx-auto mb-2 flex h-9 w-9 items-center justify-center">
+                      <FlagOrFallback flag={countryStats.most_active_country.flag_emoji} code={countryStats.most_active_country.country_code} />
+                    </div>
+                    <p className="text-2xl font-bold">{countryStats.most_active_country.total_transactions}</p>
+                    <p className="mt-1 text-xs text-muted-foreground">Plus actif: {countryStats.most_active_country.country_name}</p>
                   </div>
 
-                  <div className="text-center p-3 bg-purple-50 dark:bg-purple-950 rounded-lg">
-                    <TrendingUp className="h-5 w-5 text-purple-600 dark:text-purple-400 mx-auto mb-2" />
-                    <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+                  <div className="rounded-lg border bg-card p-3 text-center">
+                    <div className="mx-auto mb-2 flex h-9 w-9 items-center justify-center rounded-full bg-muted text-muted-foreground">
+                      <TrendingUp className="h-4 w-4" />
+                    </div>
+                    <p className="text-2xl font-bold">
                       ${countryStats.most_active_country.total_volume_usd.toLocaleString('fr-FR', { maximumFractionDigits: 0 })}
                     </p>
-                    <p className="text-xs text-muted-foreground mt-1">Volume total USD</p>
+                    <p className="mt-1 text-xs text-muted-foreground">Volume total USD</p>
                   </div>
                 </>
               )}
 
-              <div className="text-center p-3 bg-amber-50 dark:bg-amber-950 rounded-lg">
-                <Users className="h-5 w-5 text-amber-600 dark:text-amber-400 mx-auto mb-2" />
-                <p className="text-2xl font-bold text-amber-600 dark:text-amber-400">
-                  {countryStats.by_country.reduce((sum, c) => sum + c.total_transactions, 0)}
-                </p>
-                <p className="text-xs text-muted-foreground mt-1">Total transactions</p>
+              <div className="rounded-lg border bg-card p-3 text-center">
+                <div className="mx-auto mb-2 flex h-9 w-9 items-center justify-center rounded-full bg-muted text-muted-foreground">
+                  <Users className="h-4 w-4" />
+                </div>
+                <p className="text-2xl font-bold">{countryStats.by_country.reduce((sum, c) => sum + c.total_transactions, 0)}</p>
+                <p className="mt-1 text-xs text-muted-foreground">Total transactions</p>
               </div>
             </div>
 
             {/* Country Usage Details */}
             <div className="mb-6">
-              <h4 className="text-lg font-semibold mb-4">🌍 Utilisation par Pays</h4>
+              <h4 className="mb-4 flex items-center gap-2 text-lg font-semibold">
+                <Globe className="h-4 w-4 text-muted-foreground" />
+                Utilisation par pays
+              </h4>
               <div className="space-y-3">
                 {countryStats.by_country.map((country: any, index: number) => {
                   const isMostActive = countryStats.most_active_country?.country_id === country.country_id;
@@ -1141,24 +1194,37 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                   return (
                     <div 
                       key={country.country_id} 
-                      className={`p-4 rounded-lg border-2 transition-all ${
-                        isMostActive ? 'border-green-500 bg-green-50 dark:bg-green-950/50' : 
-                        isLeastActive ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/50' : 
-                        'border-muted bg-muted/30'
-                      }`}
+                      className={
+                        "rounded-lg border bg-card p-4 transition-all " +
+                        (isMostActive
+                          ? "ring-1 ring-primary/25"
+                          : isLeastActive
+                            ? "ring-1 ring-destructive/20"
+                            : "")
+                      }
                     >
                       <div className="flex justify-between items-start mb-3">
                         <div className="flex items-center gap-2">
-                          <span className="text-2xl">{country.flag_emoji}</span>
+                          <FlagOrFallback flag={country.flag_emoji} code={country.country_code} />
                           <div>
                             <span className="font-bold text-xl">{country.country_name}</span>
                             <span className="ml-2 text-sm text-muted-foreground">({country.country_code})</span>
                           </div>
                           {isMostActive && (
-                            <Badge className="bg-green-500 hover:bg-green-600">🏆 Plus actif</Badge>
+                            <Badge>
+                              <span className="inline-flex items-center gap-1">
+                                <Trophy className="h-3.5 w-3.5" />
+                                Plus actif
+                              </span>
+                            </Badge>
                           )}
                           {isLeastActive && countryStats.by_country.length > 1 && (
-                            <Badge variant="outline" className="border-orange-500 text-orange-600">📉 Moins actif</Badge>
+                            <Badge variant="destructive">
+                              <span className="inline-flex items-center gap-1">
+                                <TrendingDown className="h-3.5 w-3.5" />
+                                Moins actif
+                              </span>
+                            </Badge>
                           )}
                         </div>
                         <Badge variant="secondary" className="text-sm">
@@ -1169,49 +1235,45 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                       <div className="grid grid-cols-2 md:grid-cols-6 gap-3 mb-3">
                         <div className="text-center">
                           <p className="text-xs text-muted-foreground">Total Transactions</p>
-                          <p className="text-lg font-bold text-blue-600 dark:text-blue-400">{country.total_transactions}</p>
+                          <p className="text-lg font-bold">{country.total_transactions}</p>
                         </div>
                         <div className="text-center">
                           <p className="text-xs text-muted-foreground">Offramp</p>
-                          <p className="text-lg font-bold text-purple-600 dark:text-purple-400">{country.offramp_count}</p>
+                          <p className="text-lg font-bold">{country.offramp_count}</p>
                         </div>
                         <div className="text-center">
                           <p className="text-xs text-muted-foreground">Onramp</p>
-                          <p className="text-lg font-bold text-indigo-600 dark:text-indigo-400">{country.onramp_count}</p>
+                          <p className="text-lg font-bold">{country.onramp_count}</p>
                         </div>
                         <div className="text-center">
                           <p className="text-xs text-muted-foreground">Volume USD</p>
-                          <p className="text-lg font-bold text-green-600 dark:text-green-400">
+                          <p className="text-lg font-bold">
                             ${country.total_volume_usd.toLocaleString('fr-FR', { maximumFractionDigits: 0 })}
                           </p>
                         </div>
                         <div className="text-center">
                           <p className="text-xs text-muted-foreground">Volume XOF</p>
-                          <p className="text-lg font-bold text-emerald-600 dark:text-emerald-400">
+                          <p className="text-lg font-bold">
                             {country.total_volume_xof.toLocaleString('fr-FR', { maximumFractionDigits: 0 })}
                           </p>
                         </div>
                         <div className="text-center">
                           <p className="text-xs text-muted-foreground">Avg/Transaction</p>
-                          <p className="text-lg font-bold text-cyan-600 dark:text-cyan-400">
+                          <p className="text-lg font-bold">
                             ${country.total_transactions > 0 ? (country.total_volume_usd / country.total_transactions).toFixed(0) : 0}
                           </p>
                         </div>
                       </div>
                       
                       {/* Progress bar */}
-                      <div className="relative w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 overflow-hidden">
+                      <div className="relative h-2.5 w-full overflow-hidden rounded-full bg-muted">
                         <div 
-                          className={`h-3 rounded-full transition-all duration-500 ${
-                            isMostActive ? 'bg-gradient-to-r from-green-500 to-green-600' : 
-                            isLeastActive ? 'bg-gradient-to-r from-orange-500 to-orange-600' : 
-                            'bg-gradient-to-r from-blue-500 to-blue-600'
-                          }`}
+                          className={
+                            "h-full rounded-full transition-all duration-500 " +
+                            (isLeastActive ? "bg-destructive" : "bg-primary")
+                          }
                           style={{ width: `${country.percentage}%` }}
                         ></div>
-                        <span className="absolute inset-0 flex items-center justify-center text-xs font-semibold text-white">
-                          {country.percentage.toFixed(1)}%
-                        </span>
                       </div>
                     </div>
                   );
@@ -1222,12 +1284,12 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
             {/* Country comparison - Most vs Least Active */}
             {countryStats.most_active_country && countryStats.least_active_country && countryStats.by_country.length > 1 && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="p-5 bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950 dark:to-green-900 rounded-lg border-2 border-green-500">
+                <div className="rounded-lg border bg-card p-5 ring-1 ring-primary/25">
                   <div className="flex items-center gap-2 mb-3">
-                    <span className="text-3xl">{countryStats.most_active_country.flag_emoji}</span>
+                    <FlagOrFallback flag={countryStats.most_active_country.flag_emoji} code={countryStats.most_active_country.country_code} />
                     <div>
-                      <p className="text-sm font-bold text-green-700 dark:text-green-300">PAYS LE PLUS ACTIF</p>
-                      <p className="text-2xl font-bold text-green-600 dark:text-green-400">
+                      <p className="text-sm font-semibold">Pays le plus actif</p>
+                      <p className="text-2xl font-bold">
                         {countryStats.most_active_country.country_name}
                       </p>
                     </div>
@@ -1245,19 +1307,19 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Part de marché:</span>
-                      <span className="font-bold text-green-600 dark:text-green-400">
+                      <span className="font-bold">
                         {countryStats.most_active_country.percentage.toFixed(1)}%
                       </span>
                     </div>
                   </div>
                 </div>
                 
-                <div className="p-5 bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-950 dark:to-orange-900 rounded-lg border-2 border-orange-500">
+                <div className="rounded-lg border bg-card p-5 ring-1 ring-destructive/20">
                   <div className="flex items-center gap-2 mb-3">
-                    <span className="text-3xl">{countryStats.least_active_country.flag_emoji}</span>
+                    <FlagOrFallback flag={countryStats.least_active_country.flag_emoji} code={countryStats.least_active_country.country_code} />
                     <div>
-                      <p className="text-sm font-bold text-orange-700 dark:text-orange-300">PAYS MOINS ACTIF</p>
-                      <p className="text-2xl font-bold text-orange-600 dark:text-orange-400">
+                      <p className="text-sm font-semibold">Pays moins actif</p>
+                      <p className="text-2xl font-bold">
                         {countryStats.least_active_country.country_name}
                       </p>
                     </div>
@@ -1275,7 +1337,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Part de marché:</span>
-                      <span className="font-bold text-orange-600 dark:text-orange-400">
+                      <span className="font-bold text-destructive">
                         {countryStats.least_active_country.percentage.toFixed(1)}%
                       </span>
                     </div>
