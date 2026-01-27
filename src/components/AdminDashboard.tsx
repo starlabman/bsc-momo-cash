@@ -258,13 +258,13 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
   };
 
   const statusColors = {
-    'pending_payment': 'secondary',
-    'pending_momo_payment': 'secondary',
-    'received': 'default',
-    'momo_payment_received': 'default',
-    'processing': 'outline',
-    'paid': 'default',
-    'completed': 'default',
+    'pending_payment': 'warning',
+    'pending_momo_payment': 'warning',
+    'received': 'info',
+    'momo_payment_received': 'info',
+    'processing': 'secondary',
+    'paid': 'success',
+    'completed': 'success',
     'failed': 'destructive'
   } as const;
 
@@ -710,31 +710,35 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
           <div className="space-y-6">
             {/* Volumes totaux */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
-              <Card className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900 border-blue-200 dark:border-blue-800 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
+              <Card className="border bg-card shadow-sm hover:shadow-md transition-all duration-300">
                 <CardHeader>
                   <CardTitle className="text-xl flex items-center gap-2">
-                    <TrendingUp className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-primary">
+                      <TrendingUp className="h-5 w-5" />
+                    </div>
                     Volume Total USD
                   </CardTitle>
                   <CardDescription>Total des transactions en USD</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-3xl lg:text-4xl font-bold text-blue-600 dark:text-blue-400">
+                  <p className="text-3xl lg:text-4xl font-bold text-primary">
                     ${stats.total_volume_usd.toLocaleString('fr-FR', { maximumFractionDigits: 2 })}
                   </p>
                 </CardContent>
               </Card>
 
-              <Card className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950 dark:to-green-900 border-green-200 dark:border-green-800 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
+              <Card className="border bg-card shadow-sm hover:shadow-md transition-all duration-300">
                 <CardHeader>
                   <CardTitle className="text-xl flex items-center gap-2">
-                    <TrendingUp className="h-5 w-5 text-green-600 dark:text-green-400" />
+                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-accent/20 text-accent-foreground">
+                      <TrendingUp className="h-5 w-5" />
+                    </div>
                     Volume Total XOF
                   </CardTitle>
                   <CardDescription>Total des transactions en XOF</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-3xl lg:text-4xl font-bold text-green-600 dark:text-green-400">
+                  <p className="text-3xl lg:text-4xl font-bold text-foreground">
                     {stats.total_volume_xof.toLocaleString('fr-FR', { maximumFractionDigits: 0 })} XOF
                   </p>
                 </CardContent>
@@ -751,39 +755,51 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 lg:gap-4">
-                <div className="text-center p-3 bg-yellow-50 dark:bg-yellow-950 rounded-lg hover:scale-105 transition-transform">
-                  <Clock className="h-5 w-5 text-yellow-600 dark:text-yellow-400 mx-auto mb-2" />
-                  <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{stats.pending_payment}</p>
+                <div className="text-center p-3 rounded-lg border bg-card hover:bg-muted/50 transition-colors">
+                  <div className="mx-auto mb-2 flex h-9 w-9 items-center justify-center rounded-full bg-secondary text-secondary-foreground">
+                    <Clock className="h-4 w-4" />
+                  </div>
+                  <p className="text-2xl font-bold">{stats.pending_payment}</p>
                   <p className="text-xs text-muted-foreground mt-1">En attente</p>
                 </div>
                 
-                <div className="text-center p-3 bg-blue-50 dark:bg-blue-950 rounded-lg hover:scale-105 transition-transform">
-                  <TrendingUp className="h-5 w-5 text-blue-600 dark:text-blue-400 mx-auto mb-2" />
-                  <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{stats.received}</p>
+                <div className="text-center p-3 rounded-lg border bg-card hover:bg-muted/50 transition-colors">
+                  <div className="mx-auto mb-2 flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-primary">
+                    <TrendingUp className="h-4 w-4" />
+                  </div>
+                  <p className="text-2xl font-bold">{stats.received}</p>
                   <p className="text-xs text-muted-foreground mt-1">Reçu</p>
                 </div>
 
-                <div className="text-center p-3 bg-orange-50 dark:bg-orange-950 rounded-lg hover:scale-105 transition-transform">
-                  <Settings className="h-5 w-5 text-orange-600 dark:text-orange-400 mx-auto mb-2" />
-                  <p className="text-2xl font-bold text-orange-600 dark:text-orange-400">{stats.processing}</p>
+                <div className="text-center p-3 rounded-lg border bg-card hover:bg-muted/50 transition-colors">
+                  <div className="mx-auto mb-2 flex h-9 w-9 items-center justify-center rounded-full bg-muted text-muted-foreground">
+                    <Settings className="h-4 w-4" />
+                  </div>
+                  <p className="text-2xl font-bold">{stats.processing}</p>
                   <p className="text-xs text-muted-foreground mt-1">En cours</p>
                 </div>
 
-                <div className="text-center p-3 bg-green-50 dark:bg-green-950 rounded-lg hover:scale-105 transition-transform">
-                  <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400 mx-auto mb-2" />
-                  <p className="text-2xl font-bold text-green-600 dark:text-green-400">{stats.paid}</p>
+                <div className="text-center p-3 rounded-lg border bg-card hover:bg-muted/50 transition-colors">
+                  <div className="mx-auto mb-2 flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-primary">
+                    <CheckCircle className="h-4 w-4" />
+                  </div>
+                  <p className="text-2xl font-bold">{stats.paid}</p>
                   <p className="text-xs text-muted-foreground mt-1">Payé</p>
                 </div>
 
-                <div className="text-center p-3 bg-red-50 dark:bg-red-950 rounded-lg hover:scale-105 transition-transform">
-                  <XCircle className="h-5 w-5 text-red-600 dark:text-red-400 mx-auto mb-2" />
-                  <p className="text-2xl font-bold text-red-600 dark:text-red-400">{stats.failed}</p>
+                <div className="text-center p-3 rounded-lg border bg-card hover:bg-muted/50 transition-colors">
+                  <div className="mx-auto mb-2 flex h-9 w-9 items-center justify-center rounded-full bg-destructive/10 text-destructive">
+                    <XCircle className="h-4 w-4" />
+                  </div>
+                  <p className="text-2xl font-bold">{stats.failed}</p>
                   <p className="text-xs text-muted-foreground mt-1">Échoué</p>
                 </div>
 
-                <div className="text-center p-3 bg-purple-50 dark:bg-purple-950 rounded-lg hover:scale-105 transition-transform">
-                  <Users className="h-5 w-5 text-purple-600 dark:text-purple-400 mx-auto mb-2" />
-                  <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">{stats.total_offramp || 0}</p>
+                <div className="text-center p-3 rounded-lg border bg-card hover:bg-muted/50 transition-colors">
+                  <div className="mx-auto mb-2 flex h-9 w-9 items-center justify-center rounded-full bg-muted text-muted-foreground">
+                    <Users className="h-4 w-4" />
+                  </div>
+                  <p className="text-2xl font-bold">{stats.total_offramp || 0}</p>
                   <p className="text-xs text-muted-foreground mt-1">Total</p>
                 </div>
               </div>
@@ -800,27 +816,35 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="text-center p-3 bg-amber-50 dark:bg-amber-950 rounded-lg">
-                  <Clock className="h-5 w-5 text-amber-600 dark:text-amber-400 mx-auto mb-2" />
-                  <p className="text-2xl font-bold text-amber-600 dark:text-amber-400">{stats.pending_onramp || 0}</p>
+                <div className="text-center p-3 rounded-lg border bg-card hover:bg-muted/50 transition-colors">
+                  <div className="mx-auto mb-2 flex h-9 w-9 items-center justify-center rounded-full bg-secondary text-secondary-foreground">
+                    <Clock className="h-4 w-4" />
+                  </div>
+                  <p className="text-2xl font-bold">{stats.pending_onramp || 0}</p>
                   <p className="text-xs text-muted-foreground mt-1">En attente paiement</p>
                 </div>
 
-                <div className="text-center p-3 bg-emerald-50 dark:bg-emerald-950 rounded-lg">
-                  <CheckCircle className="h-5 w-5 text-emerald-600 dark:text-emerald-400 mx-auto mb-2" />
-                  <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{stats.completed_onramp || 0}</p>
+                <div className="text-center p-3 rounded-lg border bg-card hover:bg-muted/50 transition-colors">
+                  <div className="mx-auto mb-2 flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-primary">
+                    <CheckCircle className="h-4 w-4" />
+                  </div>
+                  <p className="text-2xl font-bold">{stats.completed_onramp || 0}</p>
                   <p className="text-xs text-muted-foreground mt-1">Complété</p>
                 </div>
 
-                <div className="text-center p-3 bg-indigo-50 dark:bg-indigo-950 rounded-lg">
-                  <Users className="h-5 w-5 text-indigo-600 dark:text-indigo-400 mx-auto mb-2" />
-                  <p className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">{stats.total_onramp || 0}</p>
+                <div className="text-center p-3 rounded-lg border bg-card hover:bg-muted/50 transition-colors">
+                  <div className="mx-auto mb-2 flex h-9 w-9 items-center justify-center rounded-full bg-muted text-muted-foreground">
+                    <Users className="h-4 w-4" />
+                  </div>
+                  <p className="text-2xl font-bold">{stats.total_onramp || 0}</p>
                   <p className="text-xs text-muted-foreground mt-1">Total</p>
                 </div>
 
-                <div className="text-center p-3 bg-cyan-50 dark:bg-cyan-950 rounded-lg">
-                  <TrendingUp className="h-5 w-5 text-cyan-600 dark:text-cyan-400 mx-auto mb-2" />
-                  <p className="text-2xl font-bold text-cyan-600 dark:text-cyan-400">
+                <div className="text-center p-3 rounded-lg border bg-card hover:bg-muted/50 transition-colors">
+                  <div className="mx-auto mb-2 flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-primary">
+                    <TrendingUp className="h-4 w-4" />
+                  </div>
+                  <p className="text-2xl font-bold">
                     {stats.total_onramp && stats.completed_onramp ? 
                       Math.round((stats.completed_onramp / stats.total_onramp) * 100) : 0}%
                   </p>
@@ -851,7 +875,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                 <CardTitle className="text-sm">Taux de réussite Offramp</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-3xl font-bold text-green-600 dark:text-green-400">
+                <p className="text-3xl font-bold text-primary">
                   {stats.total_offramp ? 
                     Math.round((stats.paid / stats.total_offramp) * 100) : 0}%
                 </p>
@@ -866,7 +890,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                 <CardTitle className="text-sm">Montant moyen par transaction</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">
+                <p className="text-3xl font-bold text-foreground">
                   ${stats.total_offramp ? 
                     (stats.total_volume_usd / stats.total_offramp).toFixed(2) : 0}
                 </p>
