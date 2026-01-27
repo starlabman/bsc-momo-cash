@@ -138,26 +138,41 @@ interface BlockchainStats {
   } | null;
 }
 
+interface NetworkBreakdown {
+  network: string;
+  count: number;
+  volume_usd: number;
+  offramp_count: number;
+  onramp_count: number;
+  percentage: number;
+}
+
+interface CountryStatItem {
+  country_id: string;
+  country_name: string;
+  country_code: string;
+  flag_emoji: string;
+  offramp_count: number;
+  onramp_count: number;
+  offramp_volume_usd: number;
+  offramp_volume_xof: number;
+  onramp_volume_usd: number;
+  onramp_volume_xof: number;
+  total_transactions: number;
+  total_volume_usd: number;
+  total_volume_xof: number;
+  percentage: number;
+  networks_breakdown: NetworkBreakdown[];
+  unique_networks: number;
+  tokens_used: string[];
+  preferred_network: string | null;
+}
+
 interface CountryStats {
-  by_country: Array<{
-    country_id: string;
-    country_name: string;
-    country_code: string;
-    flag_emoji: string;
-    offramp_count: number;
-    onramp_count: number;
-    offramp_volume_usd: number;
-    offramp_volume_xof: number;
-    onramp_volume_usd: number;
-    onramp_volume_xof: number;
-    total_transactions: number;
-    total_volume_usd: number;
-    total_volume_xof: number;
-    percentage: number;
-  }>;
+  by_country: CountryStatItem[];
   total_countries: number;
-  most_active_country: any;
-  least_active_country: any;
+  most_active_country: CountryStatItem | null;
+  least_active_country: CountryStatItem | null;
 }
 
 const isFallbackFlag = (flag: string | null | undefined) => {
@@ -1129,17 +1144,18 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
         </Card>
       )}
 
-      {/* Statistiques par Pays */}
+      {/* Statistiques détaillées par Pays */}
       {countryStats && countryStats.by_country && countryStats.by_country.length > 0 && (
-        <Card>
+        <Card className="shadow-lg hover:shadow-xl transition-shadow">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2 text-lg lg:text-xl">
               <Globe className="h-5 w-5" />
-              Statistiques par Pays
+              Statistiques détaillées par Pays
             </CardTitle>
-            <CardDescription>Utilisation de CryptoMomo dans différents pays</CardDescription>
+            <CardDescription>Utilisation par pays avec répartition blockchain, offramp et onramp</CardDescription>
           </CardHeader>
           <CardContent>
+            {/* Summary tiles */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
               <div className="rounded-lg border bg-card p-3 text-center">
                 <div className="mx-auto mb-2 flex h-9 w-9 items-center justify-center rounded-full bg-muted text-muted-foreground">
@@ -1180,22 +1196,22 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
               </div>
             </div>
 
-            {/* Country Usage Details */}
+            {/* Detailed Country Cards */}
             <div className="mb-6">
               <h4 className="mb-4 flex items-center gap-2 text-lg font-semibold">
-                <Globe className="h-4 w-4 text-muted-foreground" />
-                Utilisation par pays
+                <BarChart3 className="h-4 w-4 text-muted-foreground" />
+                Détails par pays
               </h4>
-              <div className="space-y-3">
-                {countryStats.by_country.map((country: any, index: number) => {
+              <div className="space-y-4">
+                {countryStats.by_country.map((country) => {
                   const isMostActive = countryStats.most_active_country?.country_id === country.country_id;
-                  const isLeastActive = countryStats.least_active_country?.country_id === country.country_id;
+                  const isLeastActive = countryStats.least_active_country?.country_id === country.country_id && countryStats.by_country.length > 1;
                   
                   return (
                     <div 
                       key={country.country_id} 
                       className={
-                        "rounded-lg border bg-card p-4 transition-all " +
+                        "rounded-lg border bg-card p-5 transition-all " +
                         (isMostActive
                           ? "ring-1 ring-primary/25"
                           : isLeastActive
@@ -1203,8 +1219,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                             : "")
                       }
                     >
-                      <div className="flex justify-between items-start mb-3">
-                        <div className="flex items-center gap-2">
+                      {/* Country header */}
+                      <div className="flex justify-between items-start mb-4">
+                        <div className="flex items-center gap-3">
                           <FlagOrFallback flag={country.flag_emoji} code={country.country_code} />
                           <div>
                             <span className="font-bold text-xl">{country.country_name}</span>
@@ -1218,7 +1235,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                               </span>
                             </Badge>
                           )}
-                          {isLeastActive && countryStats.by_country.length > 1 && (
+                          {isLeastActive && (
                             <Badge variant="destructive">
                               <span className="inline-flex items-center gap-1">
                                 <TrendingDown className="h-3.5 w-3.5" />
@@ -1227,46 +1244,104 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                             </Badge>
                           )}
                         </div>
-                        <Badge variant="secondary" className="text-sm">
-                          {country.percentage.toFixed(1)}% du total
-                        </Badge>
+                        <div className="text-right">
+                          <Badge variant="secondary" className="text-sm">
+                            {country.percentage.toFixed(1)}% du total
+                          </Badge>
+                          {country.preferred_network && (
+                            <p className="text-xs text-muted-foreground mt-1">
+                              Réseau préféré: <span className="font-medium">{country.preferred_network}</span>
+                            </p>
+                          )}
+                        </div>
                       </div>
                       
-                      <div className="grid grid-cols-2 md:grid-cols-6 gap-3 mb-3">
-                        <div className="text-center">
-                          <p className="text-xs text-muted-foreground">Total Transactions</p>
+                      {/* Transaction stats grid */}
+                      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3 mb-4">
+                        <div className="text-center rounded-lg bg-muted/30 p-2">
+                          <p className="text-xs text-muted-foreground">Total</p>
                           <p className="text-lg font-bold">{country.total_transactions}</p>
                         </div>
-                        <div className="text-center">
+                        <div className="text-center rounded-lg bg-muted/30 p-2">
                           <p className="text-xs text-muted-foreground">Offramp</p>
                           <p className="text-lg font-bold">{country.offramp_count}</p>
                         </div>
-                        <div className="text-center">
+                        <div className="text-center rounded-lg bg-muted/30 p-2">
                           <p className="text-xs text-muted-foreground">Onramp</p>
                           <p className="text-lg font-bold">{country.onramp_count}</p>
                         </div>
-                        <div className="text-center">
+                        <div className="text-center rounded-lg bg-muted/30 p-2">
                           <p className="text-xs text-muted-foreground">Volume USD</p>
                           <p className="text-lg font-bold">
                             ${country.total_volume_usd.toLocaleString('fr-FR', { maximumFractionDigits: 0 })}
                           </p>
                         </div>
-                        <div className="text-center">
+                        <div className="text-center rounded-lg bg-muted/30 p-2">
                           <p className="text-xs text-muted-foreground">Volume XOF</p>
                           <p className="text-lg font-bold">
                             {country.total_volume_xof.toLocaleString('fr-FR', { maximumFractionDigits: 0 })}
                           </p>
                         </div>
-                        <div className="text-center">
-                          <p className="text-xs text-muted-foreground">Avg/Transaction</p>
+                        <div className="text-center rounded-lg bg-muted/30 p-2">
+                          <p className="text-xs text-muted-foreground">Réseaux</p>
+                          <p className="text-lg font-bold">{country.unique_networks}</p>
+                        </div>
+                        <div className="text-center rounded-lg bg-muted/30 p-2">
+                          <p className="text-xs text-muted-foreground">Moy./TX</p>
                           <p className="text-lg font-bold">
                             ${country.total_transactions > 0 ? (country.total_volume_usd / country.total_transactions).toFixed(0) : 0}
                           </p>
                         </div>
                       </div>
+
+                      {/* Networks breakdown */}
+                      {country.networks_breakdown && country.networks_breakdown.length > 0 && (
+                        <div className="mt-4">
+                          <p className="text-sm font-medium mb-2 flex items-center gap-2">
+                            <Coins className="h-4 w-4 text-muted-foreground" />
+                            Répartition par Blockchain
+                          </p>
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+                            {country.networks_breakdown.map((net, idx) => (
+                              <div 
+                                key={net.network} 
+                                className="flex items-center justify-between rounded-lg border bg-card p-2"
+                              >
+                                <div className="flex items-center gap-2">
+                                  <div className="flex h-7 w-7 items-center justify-center rounded-full bg-muted text-xs font-bold">
+                                    {idx + 1}
+                                  </div>
+                                  <div>
+                                    <p className="text-sm font-semibold">{net.network}</p>
+                                    <p className="text-xs text-muted-foreground">
+                                      {net.offramp_count} off · {net.onramp_count} on
+                                    </p>
+                                  </div>
+                                </div>
+                                <div className="text-right">
+                                  <p className="text-sm font-bold">{net.count} TX</p>
+                                  <p className="text-xs text-muted-foreground">{net.percentage.toFixed(1)}%</p>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      
+                      {/* Tokens used */}
+                      {country.tokens_used && country.tokens_used.length > 0 && (
+                        <div className="mt-3 flex items-center gap-2 flex-wrap">
+                          <span className="text-xs text-muted-foreground">Tokens utilisés:</span>
+                          {country.tokens_used.map((token) => (
+                            <Badge key={token} variant="outline" className="text-xs">
+                              {token}
+                            </Badge>
+                          ))}
+                        </div>
+                      )}
                       
                       {/* Progress bar */}
-                      <div className="relative h-2.5 w-full overflow-hidden rounded-full bg-muted">
+                      <div className="relative h-2.5 w-full overflow-hidden rounded-full bg-muted mt-4">
                         <div 
                           className={
                             "h-full rounded-full transition-all duration-500 " +
@@ -1300,6 +1375,12 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                       <span className="font-bold">{countryStats.most_active_country.total_transactions}</span>
                     </div>
                     <div className="flex justify-between">
+                      <span className="text-muted-foreground">Offramp / Onramp:</span>
+                      <span className="font-bold">
+                        {countryStats.most_active_country.offramp_count} / {countryStats.most_active_country.onramp_count}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
                       <span className="text-muted-foreground">Volume USD:</span>
                       <span className="font-bold">
                         ${countryStats.most_active_country.total_volume_usd.toLocaleString('fr-FR', { maximumFractionDigits: 0 })}
@@ -1311,6 +1392,12 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                         {countryStats.most_active_country.percentage.toFixed(1)}%
                       </span>
                     </div>
+                    {countryStats.most_active_country.preferred_network && (
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Réseau préféré:</span>
+                        <span className="font-bold">{countryStats.most_active_country.preferred_network}</span>
+                      </div>
+                    )}
                   </div>
                 </div>
                 
@@ -1330,6 +1417,12 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                       <span className="font-bold">{countryStats.least_active_country.total_transactions}</span>
                     </div>
                     <div className="flex justify-between">
+                      <span className="text-muted-foreground">Offramp / Onramp:</span>
+                      <span className="font-bold">
+                        {countryStats.least_active_country.offramp_count} / {countryStats.least_active_country.onramp_count}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
                       <span className="text-muted-foreground">Volume USD:</span>
                       <span className="font-bold">
                         ${countryStats.least_active_country.total_volume_usd.toLocaleString('fr-FR', { maximumFractionDigits: 0 })}
@@ -1341,6 +1434,12 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                         {countryStats.least_active_country.percentage.toFixed(1)}%
                       </span>
                     </div>
+                    {countryStats.least_active_country.preferred_network && (
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Réseau préféré:</span>
+                        <span className="font-bold">{countryStats.least_active_country.preferred_network}</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

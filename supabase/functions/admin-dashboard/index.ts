@@ -349,19 +349,23 @@ serve(async (req) => {
         console.error('Error fetching countries:', countriesError);
       }
 
-      // Calculate stats by country for both offramp and onramp
-      const { data: allOfframpRequests, error: allOfframpError } = await adminSupabase
+      // Calculate stats by country for both offramp and onramp WITH blockchain details
+      const { data: allOfframpRequestsFull, error: allOfframpError } = await adminSupabase
         .from('offramp_requests')
-        .select('country_id, usd_amount, xof_amount, status');
+        .select('country_id, usd_amount, xof_amount, status, token');
 
-      const { data: allOnrampRequests, error: allOnrampError } = await adminSupabase
+      const { data: allOnrampRequestsFull, error: allOnrampError } = await adminSupabase
         .from('onramp_requests')
-        .select('country_id, usd_amount, xof_amount, status');
+        .select('country_id, usd_amount, xof_amount, status, token');
 
       const countryStatsMap = new Map();
       
+      // Helper function to extract network from token (e.g., "USDT-BSC" -> "BSC")
+      const extractNetwork = (token: string) => token?.includes('-') ? token.split('-')[1] : 'BSC';
+      const extractTokenSymbol = (token: string) => token?.includes('-') ? token.split('-')[0] : token;
+      
       // Process offramp requests
-      allOfframpRequests?.forEach(req => {
+      allOfframpRequestsFull?.forEach((req: any) => {
         const countryId = req.country_id || 'unknown';
         if (!countryStatsMap.has(countryId)) {
           countryStatsMap.set(countryId, {
@@ -371,7 +375,9 @@ serve(async (req) => {
             offramp_volume_xof: 0,
             onramp_volume_usd: 0,
             onramp_volume_xof: 0,
-            total_transactions: 0
+            total_transactions: 0,
+            networks_used: new Map(), // Map<network, {count, volume_usd, offramp_count, onramp_count}>
+            tokens_used: new Set()
           });
         }
         const stats = countryStatsMap.get(countryId);
@@ -379,10 +385,24 @@ serve(async (req) => {
         stats.offramp_volume_usd += parseFloat(req.usd_amount || 0);
         stats.offramp_volume_xof += parseFloat(req.xof_amount || 0);
         stats.total_transactions += 1;
+        
+        // Track network usage
+        const network = extractNetwork(req.token);
+        if (!stats.networks_used.has(network)) {
+          stats.networks_used.set(network, { count: 0, volume_usd: 0, offramp_count: 0, onramp_count: 0 });
+        }
+        const networkStats = stats.networks_used.get(network);
+        networkStats.count += 1;
+        networkStats.volume_usd += parseFloat(req.usd_amount || 0);
+        networkStats.offramp_count += 1;
+        
+        // Track tokens
+        const tokenSymbol = extractTokenSymbol(req.token);
+        if (tokenSymbol) stats.tokens_used.add(tokenSymbol);
       });
 
       // Process onramp requests
-      allOnrampRequests?.forEach(req => {
+      allOnrampRequestsFull?.forEach((req: any) => {
         const countryId = req.country_id || 'unknown';
         if (!countryStatsMap.has(countryId)) {
           countryStatsMap.set(countryId, {
@@ -392,7 +412,9 @@ serve(async (req) => {
             offramp_volume_xof: 0,
             onramp_volume_usd: 0,
             onramp_volume_xof: 0,
-            total_transactions: 0
+            total_transactions: 0,
+            networks_used: new Map(),
+            tokens_used: new Set()
           });
         }
         const stats = countryStatsMap.get(countryId);
@@ -400,24 +422,62 @@ serve(async (req) => {
         stats.onramp_volume_usd += parseFloat(req.usd_amount || 0);
         stats.onramp_volume_xof += parseFloat(req.xof_amount || 0);
         stats.total_transactions += 1;
+        
+        // Track network usage
+        const network = extractNetwork(req.token);
+        if (!stats.networks_used.has(network)) {
+          stats.networks_used.set(network, { count: 0, volume_usd: 0, offramp_count: 0, onramp_count: 0 });
+        }
+        const networkStats = stats.networks_used.get(network);
+        networkStats.count += 1;
+        networkStats.volume_usd += parseFloat(req.usd_amount || 0);
+        networkStats.onramp_count += 1;
+        
+        // Track tokens
+        const tokenSymbol = extractTokenSymbol(req.token);
+        if (tokenSymbol) stats.tokens_used.add(tokenSymbol);
       });
 
-      // Map country IDs to country details
-      const countryStats = Array.from(countryStatsMap.entries()).map(([countryId, stats]) => {
-        const country = countries?.find(c => c.id === countryId);
+      // Map country IDs to country details with blockchain breakdown
+      const countryStats = Array.from(countryStatsMap.entries()).map(([countryId, stats]: [string, any]) => {
+        const country = countries?.find((c: any) => c.id === countryId);
+        
+        // Convert networks Map to sorted array
+        const totalNetworkVolume = Array.from(stats.networks_used.values()).reduce((sum: number, n: any) => sum + n.volume_usd, 0);
+        const networks_breakdown = Array.from(stats.networks_used.entries())
+          .map(([network, netStats]: [string, any]) => ({
+            network,
+            count: netStats.count,
+            volume_usd: netStats.volume_usd,
+            offramp_count: netStats.offramp_count,
+            onramp_count: netStats.onramp_count,
+            percentage: totalNetworkVolume > 0 ? (netStats.volume_usd / totalNetworkVolume) * 100 : 0
+          }))
+          .sort((a, b) => b.volume_usd - a.volume_usd);
+        
         return {
           country_id: countryId,
           country_name: country?.name || 'Unknown',
           country_code: country?.code || 'N/A',
-          flag_emoji: country?.flag_emoji || '🏴',
-          ...stats,
+          flag_emoji: country?.flag_emoji || '',
+          offramp_count: stats.offramp_count,
+          onramp_count: stats.onramp_count,
+          offramp_volume_usd: stats.offramp_volume_usd,
+          offramp_volume_xof: stats.offramp_volume_xof,
+          onramp_volume_usd: stats.onramp_volume_usd,
+          onramp_volume_xof: stats.onramp_volume_xof,
+          total_transactions: stats.total_transactions,
           total_volume_usd: stats.offramp_volume_usd + stats.onramp_volume_usd,
-          total_volume_xof: stats.offramp_volume_xof + stats.onramp_volume_xof
+          total_volume_xof: stats.offramp_volume_xof + stats.onramp_volume_xof,
+          networks_breakdown,
+          unique_networks: stats.networks_used.size,
+          tokens_used: Array.from(stats.tokens_used),
+          preferred_network: networks_breakdown[0]?.network || null
         };
       }).sort((a, b) => b.total_transactions - a.total_transactions);
 
       const totalCountryTransactions = countryStats.reduce((sum, c) => sum + c.total_transactions, 0);
-      countryStats.forEach(c => {
+      countryStats.forEach((c: any) => {
         c.percentage = totalCountryTransactions > 0 ? (c.total_transactions / totalCountryTransactions) * 100 : 0;
       });
 
