@@ -4,10 +4,11 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ArrowRightLeft, Shield, AlertCircle } from 'lucide-react';
+import { Shield, AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import FloatingParticles from '@/components/FloatingParticles';
 
 const AdminLogin = () => {
   const [username, setUsername] = useState('');
@@ -55,16 +56,21 @@ const AdminLogin = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 flex items-center justify-center p-4">
-      <div className="w-full max-w-md space-y-6">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Floating particles background */}
+      <FloatingParticles />
+      
+      <div className="w-full max-w-md space-y-6 relative z-10">
         {/* Header */}
         <div className="text-center space-y-2">
           <div className="flex items-center justify-center gap-3">
-            <div className="h-10 w-10 bg-primary rounded-lg flex items-center justify-center">
-              <ArrowRightLeft className="h-6 w-6 text-primary-foreground" />
-            </div>
+            <img 
+              src="/sikapay-favicon.png" 
+              alt="SikaPay Logo" 
+              className="h-10 w-10 rounded-lg"
+            />
             <div>
-              <h1 className="text-2xl font-bold">CryptoMomo</h1>
+              <h1 className="text-2xl font-bold">SikaPay</h1>
               <p className="text-sm text-muted-foreground">Administration</p>
             </div>
           </div>
