@@ -1717,7 +1717,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                         </TableCell>
                         <TableCell className="py-3">
                           <div className="font-medium">{request.crypto_amount} {request.token}</div>
-                          <Badge variant="outline" className="text-xs">{request.token}</Badge>
                         </TableCell>
                         <TableCell className="py-3">
                           <div className="text-sm">{request.momo_number}</div>
