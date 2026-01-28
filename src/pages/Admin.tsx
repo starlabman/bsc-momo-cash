@@ -124,7 +124,7 @@ const Admin = () => {
                     <ArrowRightLeft className="h-5 w-5 text-primary-foreground" />
                   </div>
                   <div>
-                    <h1 className="text-lg lg:text-xl font-bold">CryptoMomo Admin</h1>
+                    <h1 className="text-lg lg:text-xl font-bold">SikaPay Admin</h1>
                     <p className="text-xs text-muted-foreground hidden sm:block">Tableau de bord administrateur</p>
                   </div>
                 </div>
