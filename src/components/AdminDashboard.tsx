@@ -40,6 +40,7 @@ import {
   XCircle,
 } from 'lucide-react';
 import AdminFilters from './AdminFilters';
+import BlockchainTokenBadge from './BlockchainTokenBadge';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
@@ -1516,10 +1517,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                           })}
                         </TableCell>
                         <TableCell className="py-3">
-                          <div className="font-medium">{request.amount} {request.token}</div>
+                          <BlockchainTokenBadge token={request.token} showAmount amount={request.amount} />
                         </TableCell>
                         <TableCell className="py-3">
-                          <Badge variant="outline">{request.token}</Badge>
+                          <BlockchainTokenBadge token={request.token} />
                         </TableCell>
                         <TableCell className="py-3">
                           <div className="text-sm">{request.momo_number}</div>
@@ -1716,7 +1717,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                           {Math.round(request.xof_amount).toLocaleString()} XOF
                         </TableCell>
                         <TableCell className="py-3">
-                          <div className="font-medium">{request.crypto_amount} {request.token}</div>
+                          <BlockchainTokenBadge token={request.token} showAmount amount={request.crypto_amount} />
                         </TableCell>
                         <TableCell className="py-3">
                           <div className="text-sm">{request.momo_number}</div>
