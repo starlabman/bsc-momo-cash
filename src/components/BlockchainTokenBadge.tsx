@@ -15,8 +15,8 @@ const NETWORK_ICONS: Record<string, string> = {
   'POLYGON': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTYiIGN5PSIxNiIgcj0iMTYiIGZpbGw9IiM4MjQ3RTUiLz4KPHBhdGggZD0iTTEwIDEySDIyVjIwSDEwVjEyWiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+Cg==',
   'SOL': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTYiIGN5PSIxNiIgcj0iMTYiIGZpbGw9IiMxNEY0OTUiLz4KPHBhdGggZD0iTTEwIDEySDIyVjIwSDEwVjEyWiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+Cg==',
   'SOLANA': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTYiIGN5PSIxNiIgcj0iMTYiIGZpbGw9IiMxNEY0OTUiLz4KPHBhdGggZD0iTTEwIDEySDIyVjIwSDEwVjEyWiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+Cg==',
-  'TRX': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTYiIGN5PSIxNiIgcj0iMTYiIGZpbGw9IiNFQjAwMjkiLz4KPHBhdGggZD0iTTEwIDEySDIyVjIwSDEwVjEyWiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+Cg==',
-  'TRON': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTYiIGN5PSIxNiIgcj0iMTYiIGZpbGw9IiNFQjAwMjkiLz4KPHBhdGggZD0iTTEwIDEySDIyVjIwSDEwVjEyWiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+Cg==',
+  'AVAX': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTYiIGN5PSIxNiIgcj0iMTYiIGZpbGw9IiNFODQxNDIiLz4KPHBhdGggZD0iTTIxIDIySDE4TDE2IDEyTDE0IDIySDExTDE2IDhMMjEgMjJaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K',
+  'AVALANCHE': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTYiIGN5PSIxNiIgcj0iMTYiIGZpbGw9IiNFODQxNDIiLz4KPHBhdGggZD0iTTIxIDIySDE4TDE2IDEyTDE0IDIySDExTDE2IDhMMjEgMjJaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K',
   'LISK': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTYiIGN5PSIxNiIgcj0iMTYiIGZpbGw9IiMwMDMzRkYiLz4KPHBhdGggZD0iTTEwIDEySDIyVjIwSDEwVjEyWiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+Cg==',
   'LSK': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTYiIGN5PSIxNiIgcj0iMTYiIGZpbGw9IiMwMDMzRkYiLz4KPHBhdGggZD0iTTEwIDEySDIyVjIwSDEwVjEyWiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+Cg==',
 };
@@ -35,8 +35,8 @@ const NETWORK_COLORS: Record<string, string> = {
   'POLYGON': 'bg-purple-500/10 text-purple-600 border-purple-500/20',
   'SOL': 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20',
   'SOLANA': 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20',
-  'TRX': 'bg-red-600/10 text-red-700 border-red-600/20',
-  'TRON': 'bg-red-600/10 text-red-700 border-red-600/20',
+  'AVAX': 'bg-red-500/10 text-red-600 border-red-500/20',
+  'AVALANCHE': 'bg-red-500/10 text-red-600 border-red-500/20',
   'LISK': 'bg-blue-600/10 text-blue-700 border-blue-600/20',
   'LSK': 'bg-blue-600/10 text-blue-700 border-blue-600/20',
 };

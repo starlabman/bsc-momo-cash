@@ -61,16 +61,16 @@ const BlockchainIcons: Record<string, React.ReactNode> = {
       <circle cx="16" cy="16" r="8" fill="#fff"/>
     </svg>
   ),
-  tron: (
-    <svg viewBox="0 0 32 32" className="w-full h-full">
-      <circle cx="16" cy="16" r="16" fill="#EF0027"/>
-      <path fill="#fff" d="M16 6l10 6v8l-10 6-10-6v-8l10-6z"/>
-    </svg>
-  ),
   polygon: (
     <svg viewBox="0 0 32 32" className="w-full h-full">
       <circle cx="16" cy="16" r="16" fill="#8247E5"/>
       <path fill="#fff" d="M21 13l-3-2-5 3v6l5 3 3-2v-4l-3 2-2-1v-3l2-1 3 2v-3z"/>
+    </svg>
+  ),
+  avalanche: (
+    <svg viewBox="0 0 32 32" className="w-full h-full">
+      <circle cx="16" cy="16" r="16" fill="#E84142"/>
+      <path fill="#fff" d="M21 22H18L16 12L14 22H11L16 8L21 22Z"/>
     </svg>
   ),
 };

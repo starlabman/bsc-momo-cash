@@ -166,6 +166,27 @@ export const SUPPORTED_NETWORKS: BlockchainNetwork[] = [
         decimals: 6
       }
     ]
+  },
+  {
+    id: 'avalanche',
+    name: 'Avalanche',
+    symbol: 'AVAX',
+    icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTYiIGN5PSIxNiIgcj0iMTYiIGZpbGw9IiNFODQxNDIiLz4KPHBhdGggZD0iTTIxIDIySDE4TDE2IDEyTDE0IDIySDExTDE2IDhMMjEgMjJaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K',
+    rpcUrl: 'https://api.avax.network/ext/bc/C/rpc',
+    chainId: 43114,
+    blockExplorer: 'https://snowtrace.io',
+    tokens: [
+      {
+        symbol: 'USDC',
+        address: '0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E',
+        decimals: 6
+      },
+      {
+        symbol: 'USDT',
+        address: '0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7',
+        decimals: 6
+      }
+    ]
   }
 ];
 
