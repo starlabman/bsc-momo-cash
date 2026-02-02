@@ -73,6 +73,12 @@ const BlockchainIcons: Record<string, React.ReactNode> = {
       <path fill="#fff" d="M21 22H18L16 12L14 22H11L16 8L21 22Z"/>
     </svg>
   ),
+  lisk: (
+    <svg viewBox="0 0 32 32" className="w-full h-full">
+      <circle cx="16" cy="16" r="16" fill="#0033FF"/>
+      <path fill="#fff" d="M16 6L24 26H18L16 20L14 26H8L16 6Z"/>
+    </svg>
+  ),
 };
 
 // Country flags as emojis
