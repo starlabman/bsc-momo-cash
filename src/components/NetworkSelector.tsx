@@ -187,6 +187,27 @@ export const SUPPORTED_NETWORKS: BlockchainNetwork[] = [
         decimals: 6
       }
     ]
+  },
+  {
+    id: 'lisk',
+    name: 'Lisk',
+    symbol: 'LSK',
+    icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTYiIGN5PSIxNiIgcj0iMTYiIGZpbGw9IiMwMDMzRkYiLz4KPHBhdGggZD0iTTE2IDZMMjQgMjZIMThMMTYgMjBMMTQgMjZIOEwxNiA2WiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+Cg==',
+    rpcUrl: 'https://rpc.api.lisk.com',
+    chainId: 1135,
+    blockExplorer: 'https://blockscout.lisk.com',
+    tokens: [
+      {
+        symbol: 'USDC',
+        address: '0xF242275d3a6527d877f2c927a82D9b057609cc71',
+        decimals: 6
+      },
+      {
+        symbol: 'USDT',
+        address: '0x05D032ac25d322df992303dCa074EE7392C117b9',
+        decimals: 6
+      }
+    ]
   }
 ];
 

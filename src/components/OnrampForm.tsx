@@ -139,7 +139,7 @@ const OnrampForm = () => {
       if (formData.network === 'base' || formData.network === 'bsc' || 
           formData.network === 'ethereum' || formData.network === 'arbitrum' || 
           formData.network === 'optimism' || formData.network === 'polygon' ||
-          formData.network === 'avalanche') {
+          formData.network === 'avalanche' || formData.network === 'lisk') {
         addressValid = /^0x[a-fA-F0-9]{40}$/.test(formData.recipientAddress);
       } else if (formData.network === 'solana') {
         addressValid = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(formData.recipientAddress);
