@@ -22,12 +22,14 @@ const Footer = () => {
           <div className="space-y-4">
             <h3 className="font-semibold text-foreground">Réseaux supportés</h3>
             <div className="flex flex-wrap gap-2">
+              <Badge variant="outline" className="text-xs">Base</Badge>
               <Badge variant="outline" className="text-xs">BSC</Badge>
               <Badge variant="outline" className="text-xs">Ethereum</Badge>
-              <Badge variant="outline" className="text-xs">Tron</Badge>
-              <Badge variant="outline" className="text-xs">Solana</Badge>
               <Badge variant="outline" className="text-xs">Arbitrum</Badge>
               <Badge variant="outline" className="text-xs">Optimism</Badge>
+              <Badge variant="outline" className="text-xs">Polygon</Badge>
+              <Badge variant="outline" className="text-xs">Solana</Badge>
+              <Badge variant="outline" className="text-xs">Avalanche</Badge>
               <Badge variant="outline" className="text-xs">Lisk</Badge>
             </div>
           </div>

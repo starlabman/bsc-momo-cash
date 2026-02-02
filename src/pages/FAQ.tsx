@@ -29,7 +29,7 @@ const FAQ = () => {
     },
     {
       question: "Quels tokens et réseaux sont supportés ?",
-      answer: "SikaPay supporte plusieurs stablecoins (USDT, USDC) sur différents réseaux blockchain : BSC (BNB Smart Chain), Ethereum, Tron, Polygon, et Solana. D'autres tokens et réseaux peuvent être ajoutés à l'avenir."
+      answer: "SikaPay supporte les stablecoins USDT et USDC sur 9 réseaux blockchain : Base, BSC (BNB Smart Chain), Ethereum, Arbitrum, Optimism, Polygon, Solana, Avalanche et Lisk. D'autres tokens et réseaux peuvent être ajoutés à l'avenir."
     },
     {
       question: "Quels opérateurs Mobile Money sont acceptés ?",
