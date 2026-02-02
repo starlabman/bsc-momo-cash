@@ -25,7 +25,7 @@ const About = () => {
     {
       icon: Globe,
       title: "Multi-Blockchain",
-      description: "Support de plusieurs réseaux : BSC, Ethereum, Tron, Solana et plus encore."
+      description: "Support de 9 réseaux : Base, BSC, Ethereum, Arbitrum, Optimism, Polygon, Solana, Avalanche et Lisk."
     },
     {
       icon: Users,
