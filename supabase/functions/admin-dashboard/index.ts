@@ -230,7 +230,7 @@ serve(async (req) => {
       console.log('Attempting to fetch blockchain stats...');
       
       // Define all supported networks
-      const supportedNetworks = ['BSC', 'Ethereum', 'Tron', 'Solana', 'Arbitrum', 'Optimism', 'Lisk', 'Base'];
+      const supportedNetworks = ['Base', 'BSC', 'Ethereum', 'Arbitrum', 'Optimism', 'Polygon', 'Solana', 'Avalanche', 'Lisk'];
       
       // Get all offramp and onramp requests to analyze network usage
       const { data: allOfframpForNetwork, error: offrampNetError } = await adminSupabase

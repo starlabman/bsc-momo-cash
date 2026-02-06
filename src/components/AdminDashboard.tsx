@@ -300,6 +300,57 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
     fetchOnrampRequests();
   }, []);
 
+  // Real-time subscriptions for live updates
+  useEffect(() => {
+    console.log('Setting up realtime subscriptions for admin dashboard...');
+    
+    const channel = supabase
+      .channel('admin-dashboard-realtime')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'offramp_requests' },
+        (payload) => {
+          console.log('Realtime offramp update:', payload.eventType, payload);
+          if (payload.eventType === 'INSERT') {
+            setRequests(prev => [payload.new as OfframpRequest, ...prev]);
+            // Refresh stats on new transaction
+            fetchRequests();
+          } else if (payload.eventType === 'UPDATE') {
+            setRequests(prev => prev.map(r => 
+              r.id === (payload.new as OfframpRequest).id ? { ...r, ...payload.new as OfframpRequest } : r
+            ));
+          } else if (payload.eventType === 'DELETE') {
+            setRequests(prev => prev.filter(r => r.id !== (payload.old as any).id));
+          }
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'onramp_requests' },
+        (payload) => {
+          console.log('Realtime onramp update:', payload.eventType, payload);
+          if (payload.eventType === 'INSERT') {
+            setOnrampRequests(prev => [payload.new as OnrampRequest, ...prev]);
+            fetchOnrampRequests();
+          } else if (payload.eventType === 'UPDATE') {
+            setOnrampRequests(prev => prev.map(r => 
+              r.id === (payload.new as OnrampRequest).id ? { ...r, ...payload.new as OnrampRequest } : r
+            ));
+          } else if (payload.eventType === 'DELETE') {
+            setOnrampRequests(prev => prev.filter(r => r.id !== (payload.old as any).id));
+          }
+        }
+      )
+      .subscribe((status) => {
+        console.log('Realtime subscription status:', status);
+      });
+
+    return () => {
+      console.log('Cleaning up realtime subscriptions...');
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
   const fetchRequests = async () => {
     setLoading(true);
     try {
@@ -1135,7 +1186,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                       {blockchainStats.supported_networks} Réseaux Blockchain
                     </p>
                     <p className="text-sm text-muted-foreground">
-                      BSC, Ethereum, Tron, Solana, Arbitrum, Optimism, Lisk, Base
+                      Base, BSC, Ethereum, Arbitrum, Optimism, Polygon, Solana, Avalanche, Lisk
                     </p>
                   </div>
                 </div>
