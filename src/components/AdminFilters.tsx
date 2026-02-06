@@ -120,7 +120,7 @@ const AdminFilters: React.FC<AdminFiltersProps> = ({
     { value: 'failed', label: 'Échoué' }
   ];
 
-  const networks = ['BSC', 'Ethereum', 'Polygon', 'Arbitrum', 'Base', 'Optimism'];
+  const networks = ['Base', 'BSC', 'Ethereum', 'Arbitrum', 'Optimism', 'Polygon', 'Solana', 'Avalanche', 'Lisk'];
   const momoProviders = ['Orange Money', 'MTN Money', 'Wave', 'Moov Money', 'Free Money'];
 
   // Fetch countries
