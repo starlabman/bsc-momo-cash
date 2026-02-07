@@ -26,3 +26,12 @@ verify_jwt = false
 
 [functions.admin-audit-log]
 verify_jwt = false
+
+[functions.search-transactions]
+verify_jwt = false
+
+[functions.blockchain-monitor]
+verify_jwt = false
+
+[functions.blockchain-webhook]
+verify_jwt = false
