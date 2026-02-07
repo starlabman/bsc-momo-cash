@@ -78,9 +78,12 @@ export type Database = {
         Row: {
           amount: number
           block_number: number | null
+          confirmed: boolean | null
           created_at: string
           from_address: string
           id: string
+          matched_at: string | null
+          matched_request_type: string | null
           network: string
           offramp_request_id: string | null
           processed: boolean
@@ -88,13 +91,17 @@ export type Database = {
           token_address: string
           token_symbol: string
           transaction_hash: string
+          webhook_source: string | null
         }
         Insert: {
           amount: number
           block_number?: number | null
+          confirmed?: boolean | null
           created_at?: string
           from_address: string
           id?: string
+          matched_at?: string | null
+          matched_request_type?: string | null
           network?: string
           offramp_request_id?: string | null
           processed?: boolean
@@ -102,13 +109,17 @@ export type Database = {
           token_address: string
           token_symbol: string
           transaction_hash: string
+          webhook_source?: string | null
         }
         Update: {
           amount?: number
           block_number?: number | null
+          confirmed?: boolean | null
           created_at?: string
           from_address?: string
           id?: string
+          matched_at?: string | null
+          matched_request_type?: string | null
           network?: string
           offramp_request_id?: string | null
           processed?: boolean
@@ -116,6 +127,7 @@ export type Database = {
           token_address?: string
           token_symbol?: string
           transaction_hash?: string
+          webhook_source?: string | null
         }
         Relationships: [
           {
@@ -126,6 +138,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      blockchain_scan_state: {
+        Row: {
+          created_at: string
+          error_count: number
+          id: string
+          is_scanning: boolean
+          last_error: string | null
+          last_scan_at: string | null
+          last_scanned_block: number
+          network: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          error_count?: number
+          id?: string
+          is_scanning?: boolean
+          last_error?: string | null
+          last_scan_at?: string | null
+          last_scanned_block?: number
+          network: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          error_count?: number
+          id?: string
+          is_scanning?: boolean
+          last_error?: string | null
+          last_scan_at?: string | null
+          last_scanned_block?: number
+          network?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       countries: {
         Row: {

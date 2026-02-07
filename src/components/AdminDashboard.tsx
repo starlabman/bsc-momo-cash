@@ -29,6 +29,7 @@ import {
   Globe,
   Hash,
   Loader2,
+  Radio,
   RefreshCw,
   Search,
   Settings,
@@ -36,8 +37,10 @@ import {
   TrendingUp,
   Trophy,
   Users,
+  Wifi,
   X,
   XCircle,
+  Zap,
 } from 'lucide-react';
 import AdminFilters from './AdminFilters';
 import BlockchainTokenBadge from './BlockchainTokenBadge';
@@ -210,6 +213,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [blockchainStats, setBlockchainStats] = useState<BlockchainStats | null>(null);
   const [countryStats, setCountryStats] = useState<CountryStats | null>(null);
+  const [liveBlockchainEvents, setLiveBlockchainEvents] = useState<any[]>([]);
+  const [realtimeConnected, setRealtimeConnected] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState<OfframpRequest | null>(null);
   const [selectedOnrampRequest, setSelectedOnrampRequest] = useState<OnrampRequest | null>(null);
   const [updateData, setUpdateData] = useState({
@@ -313,7 +318,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
           console.log('Realtime offramp update:', payload.eventType, payload);
           if (payload.eventType === 'INSERT') {
             setRequests(prev => [payload.new as OfframpRequest, ...prev]);
-            // Refresh stats on new transaction
             fetchRequests();
           } else if (payload.eventType === 'UPDATE') {
             setRequests(prev => prev.map(r => 
@@ -341,8 +345,28 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
           }
         }
       )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'blockchain_events' },
+        (payload) => {
+          console.log('Realtime blockchain event:', payload.eventType, payload);
+          if (payload.eventType === 'INSERT') {
+            const newEvent = payload.new as any;
+            setLiveBlockchainEvents(prev => [newEvent, ...prev].slice(0, 50));
+            toast({
+              title: "⛓️ Transaction blockchain détectée",
+              description: `${newEvent.amount} ${newEvent.token_symbol} reçu sur ${newEvent.network?.toUpperCase()} via ${newEvent.webhook_source}`,
+            });
+          } else if (payload.eventType === 'UPDATE') {
+            setLiveBlockchainEvents(prev => prev.map(e => 
+              e.id === (payload.new as any).id ? { ...e, ...payload.new } : e
+            ));
+          }
+        }
+      )
       .subscribe((status) => {
         console.log('Realtime subscription status:', status);
+        setRealtimeConnected(status === 'SUBSCRIBED');
       });
 
     return () => {
@@ -946,7 +970,142 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
         </div>
       )}
 
-      {/* Statistiques Blockchain par Réseau */}
+      {/* Live Blockchain Events Feed */}
+      <Card className="shadow-lg hover:shadow-xl transition-shadow border-primary/20">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="flex items-center gap-2 text-lg lg:text-xl">
+                <Radio className="h-5 w-5 text-primary" />
+                Écoute Blockchain en Temps Réel
+                {realtimeConnected && (
+                  <Badge variant="outline" className="text-xs gap-1 border-green-500/50">
+                    <Wifi className="h-3 w-3 text-green-500" />
+                    <span className="text-green-500">LIVE</span>
+                  </Badge>
+                )}
+              </CardTitle>
+              <CardDescription>
+                Monitoring des 9 réseaux : Base, BSC, ETH, Arbitrum, Optimism, Polygon, Solana, Avalanche, Lisk
+              </CardDescription>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={async () => {
+                toast({ title: "🔄 Scan en cours...", description: "Lancement du scan blockchain sur tous les réseaux" });
+                try {
+                  const { data, error } = await supabase.functions.invoke('blockchain-monitor');
+                  if (error) throw error;
+                  toast({
+                    title: "✅ Scan terminé",
+                    description: `${data?.total_new_events || 0} nouveaux événements détectés en ${data?.duration_ms || 0}ms`,
+                  });
+                  // Refresh stats
+                  fetchRequests();
+                } catch (e) {
+                  toast({ title: "Erreur", description: "Impossible de lancer le scan", variant: "destructive" });
+                }
+              }}
+              className="gap-2"
+            >
+              <Zap className="h-4 w-4" />
+              Scanner maintenant
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent>
+          {/* Scan State Summary */}
+          <div className="grid grid-cols-3 gap-3 mb-4">
+            <div className="rounded-lg border bg-card p-3 text-center">
+              <div className="flex items-center justify-center gap-1 mb-1">
+                <Wifi className="h-4 w-4 text-primary" />
+              </div>
+              <p className="text-xl font-bold">{liveBlockchainEvents.length}</p>
+              <p className="text-xs text-muted-foreground">Événements live</p>
+            </div>
+            <div className="rounded-lg border bg-card p-3 text-center">
+              <div className="flex items-center justify-center gap-1 mb-1">
+                <Zap className="h-4 w-4 text-primary" />
+              </div>
+              <p className="text-xl font-bold">
+                {liveBlockchainEvents.filter(e => e.matched_request_type).length}
+              </p>
+              <p className="text-xs text-muted-foreground">Auto-matchés</p>
+            </div>
+            <div className="rounded-lg border bg-card p-3 text-center">
+              <div className="flex items-center justify-center gap-1 mb-1">
+                <Radio className="h-4 w-4 text-primary" />
+              </div>
+              <p className="text-xl font-bold">9</p>
+              <p className="text-xs text-muted-foreground">Réseaux surveillés</p>
+            </div>
+          </div>
+
+          {/* Live Events Table */}
+          {liveBlockchainEvents.length > 0 ? (
+            <div className="rounded-lg border overflow-hidden">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Réseau</TableHead>
+                    <TableHead>Token</TableHead>
+                    <TableHead>Montant</TableHead>
+                    <TableHead>De</TableHead>
+                    <TableHead>Source</TableHead>
+                    <TableHead>Match</TableHead>
+                    <TableHead>Date</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {liveBlockchainEvents.slice(0, 20).map((event: any, index: number) => (
+                    <TableRow key={event.id || index} className="hover:bg-muted/20 animate-slide-in-up">
+                      <TableCell>
+                        <Badge variant="outline" className="text-xs font-mono">
+                          {event.network?.toUpperCase()}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <Badge className="text-xs">{event.token_symbol}</Badge>
+                      </TableCell>
+                      <TableCell className="font-mono font-bold">
+                        {typeof event.amount === 'number' ? event.amount.toLocaleString('fr-FR', { maximumFractionDigits: 4 }) : event.amount}
+                      </TableCell>
+                      <TableCell className="font-mono text-xs text-muted-foreground max-w-[120px] truncate">
+                        {event.from_address ? `${event.from_address.slice(0, 6)}...${event.from_address.slice(-4)}` : '-'}
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant={event.webhook_source === 'polling' ? 'secondary' : 'default'} className="text-xs">
+                          {event.webhook_source || 'polling'}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        {event.matched_request_type ? (
+                          <Badge className="text-xs bg-green-500/20 text-green-500 border-green-500/30">
+                            ✓ {event.matched_request_type}
+                          </Badge>
+                        ) : (
+                          <span className="text-xs text-muted-foreground">—</span>
+                        )}
+                      </TableCell>
+                      <TableCell className="text-xs text-muted-foreground">
+                        {event.created_at ? new Date(event.created_at).toLocaleString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '-'}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          ) : (
+            <div className="text-center py-8 text-muted-foreground">
+              <Radio className="h-12 w-12 mx-auto mb-3 opacity-50 animate-pulse" />
+              <p className="font-medium">En attente de transactions blockchain...</p>
+              <p className="text-sm mt-1">Les transactions seront détectées automatiquement via le polling et les webhooks</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
       {blockchainStats && (
         <Card className="shadow-lg hover:shadow-xl transition-shadow">
           <CardHeader>

@@ -35,7 +35,7 @@ const NETWORK_CONFIG: Record<string, {
   'ethereum': {
     depositAddress: '0xf249F24182CdE7bAd264B60Ed38727Fd3674FE6A',
     tokens: {
-      'USDC': '0xA0b86a33E6135FF96e4D2bF53A4C2e86B5ae4f8c',
+      'USDC': '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
       'USDT': '0xdAC17F958D2ee523a2206206994597C13D831ec7'
     }
   },
@@ -58,6 +58,20 @@ const NETWORK_CONFIG: Record<string, {
     tokens: {
       'USDC': '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
       'USDT': '0xc2132D05D31c914a87C6611C10748AEb04B58e8F'
+    }
+  },
+  'avalanche': {
+    depositAddress: '0xf249F24182CdE7bAd264B60Ed38727Fd3674FE6A',
+    tokens: {
+      'USDC': '0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E',
+      'USDT': '0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7'
+    }
+  },
+  'lisk': {
+    depositAddress: '0xf249F24182CdE7bAd264B60Ed38727Fd3674FE6A',
+    tokens: {
+      'USDC': '0xF242275d3a6527d877f2c927a82D9b057609cc71',
+      'USDT': '0x05D032ac25d322df992303dCa074EE7392C117b9'
     }
   },
   'solana': {
