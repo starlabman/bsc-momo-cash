@@ -27,7 +27,7 @@ const Index = () => {
             </div>
             
             <div className="space-y-6 relative z-10">
-              <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight">
+              <h2 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold leading-tight">
                 <span className="inline-block animate-fade-in opacity-0 [animation-delay:0.1s] [animation-fill-mode:forwards] bg-gradient-to-r from-primary via-violet-500 to-primary bg-clip-text text-transparent">
                   Échangez Crypto
                 </span>
