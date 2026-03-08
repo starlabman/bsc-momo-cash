@@ -16,10 +16,10 @@ const Index = () => {
       <Header />
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
-        <div className="space-y-12">
+      <main className="container mx-auto px-3 sm:px-4 py-4 sm:py-8">
+        <div className="space-y-8 sm:space-y-12">
           {/* Hero Section */}
-          <div className="text-center space-y-8 py-16 md:py-24 relative">
+          <div className="text-center space-y-6 sm:space-y-8 py-10 sm:py-16 md:py-24 relative">
             {/* Background glow effects */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
               <div className="absolute top-1/2 left-1/4 w-72 h-72 bg-primary/20 rounded-full blur-[100px] animate-pulse" />
