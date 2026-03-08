@@ -4,9 +4,9 @@ import { Link } from 'react-router-dom';
 
 const Footer = () => {
   return (
-    <footer className="border-t bg-gradient-to-r from-muted/10 via-muted/20 to-muted/10 backdrop-blur-sm mt-20">
-      <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+    <footer className="border-t bg-gradient-to-r from-muted/10 via-muted/20 to-muted/10 backdrop-blur-sm mt-12 sm:mt-20">
+      <div className="container mx-auto px-3 sm:px-4 py-8 sm:py-12">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 mb-6 sm:mb-8">
           <div className="space-y-4">
             <Link to="/" className="flex items-center gap-3">
               <div className="h-8 w-8 bg-gradient-primary rounded-lg flex items-center justify-center">
