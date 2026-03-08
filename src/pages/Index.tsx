@@ -55,14 +55,14 @@ const Index = () => {
               <TabsList className="grid w-full grid-cols-2 mb-6 sm:mb-10 bg-muted/30 backdrop-blur-md border border-primary/20 h-12 sm:h-16 p-1 sm:p-1.5 rounded-xl sm:rounded-2xl shadow-lg">
                 <TabsTrigger 
                   value="crypto-to-momo" 
-                  className="flex items-center justify-center gap-3 text-base font-semibold h-full rounded-xl transition-all duration-500 ease-out
+                  className="flex items-center justify-center gap-1.5 sm:gap-3 text-xs sm:text-base font-semibold h-full rounded-lg sm:rounded-xl transition-all duration-500 ease-out
                     data-[state=inactive]:text-muted-foreground data-[state=inactive]:hover:text-foreground data-[state=inactive]:hover:bg-muted/50
                     data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:via-violet-500 data-[state=active]:to-primary 
                     data-[state=active]:text-white data-[state=active]:shadow-xl data-[state=active]:shadow-primary/30 data-[state=active]:scale-[1.02]"
                 >
-                  <ArrowRightLeft className="h-5 w-5 transition-transform duration-300 group-hover:rotate-180" />
+                  <ArrowRightLeft className="h-4 w-4 sm:h-5 sm:w-5 transition-transform duration-300 group-hover:rotate-180" />
                   <span className="hidden sm:inline">Crypto → Mobile Money</span>
-                  <span className="sm:hidden">Crypto → MoMo</span>
+                  <span className="sm:hidden text-[11px]">Crypto → MoMo</span>
                 </TabsTrigger>
                 <TabsTrigger 
                   value="momo-to-crypto" 
