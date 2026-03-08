@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Star, Quote } from 'lucide-react';
+import ScrollReveal from '@/components/ScrollReveal';
 
 interface Testimonial {
   name: string;
