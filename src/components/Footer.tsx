@@ -7,6 +7,7 @@ const Footer = () => {
   return (
     <footer className="border-t bg-gradient-to-r from-muted/10 via-muted/20 to-muted/10 backdrop-blur-sm mt-12 sm:mt-20">
       <div className="container mx-auto px-3 sm:px-4 py-8 sm:py-12">
+        <ScrollReveal>
         <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 mb-6 sm:mb-8">
           <div className="space-y-4">
             <Link to="/" className="flex items-center gap-3">
