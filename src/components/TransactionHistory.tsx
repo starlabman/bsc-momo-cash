@@ -147,11 +147,47 @@ const TransactionHistory = () => {
                     className="gap-2"
                   >
                     <RefreshCw className="h-4 w-4" />
-                    Actualiser
+                    <span className="hidden sm:inline">Actualiser</span>
                   </Button>
                 </div>
 
-                <div className="rounded-lg border border-primary/10 overflow-hidden">
+                {/* Mobile card view */}
+                <div className="space-y-3 sm:hidden">
+                  {transactions.map((tx) => (
+                    <div key={tx.id} className="p-3 rounded-lg border border-primary/10 bg-muted/10 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          {tx.type === 'onramp' ? (
+                            <ArrowUpRight className="h-4 w-4 text-green-400" />
+                          ) : (
+                            <ArrowDownLeft className="h-4 w-4 text-blue-400" />
+                          )}
+                          <span className="text-sm font-medium">
+                            {tx.type === 'onramp' ? 'Achat Crypto' : 'Vente Crypto'}
+                          </span>
+                        </div>
+                        <Badge 
+                          variant="outline" 
+                          className={`text-[10px] ${statusColors[tx.status] || 'bg-gray-500/20 text-gray-400'}`}
+                        >
+                          {statusLabels[tx.status] || tx.status}
+                        </Badge>
+                      </div>
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="font-semibold">{tx.xof_amount.toLocaleString('fr-FR')} XOF</span>
+                        <span className="text-xs text-muted-foreground">
+                          {format(new Date(tx.created_at), 'dd MMM HH:mm', { locale: fr })}
+                        </span>
+                      </div>
+                      <div className="text-xs font-mono text-muted-foreground truncate">
+                        Réf: {tx.reference_id}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Desktop table view */}
+                <div className="rounded-lg border border-primary/10 overflow-x-auto hidden sm:block">
                   <Table>
                     <TableHeader>
                       <TableRow className="bg-muted/30">
@@ -180,10 +216,10 @@ const TransactionHistory = () => {
                               )}
                             </div>
                           </TableCell>
-                          <TableCell className="text-sm text-muted-foreground">
+                          <TableCell className="text-sm text-muted-foreground whitespace-nowrap">
                             {format(new Date(tx.created_at), 'dd MMM yyyy HH:mm', { locale: fr })}
                           </TableCell>
-                          <TableCell className="font-medium">
+                          <TableCell className="font-medium whitespace-nowrap">
                             {tx.xof_amount.toLocaleString('fr-FR')} XOF
                           </TableCell>
                           <TableCell>

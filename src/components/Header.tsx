@@ -22,15 +22,15 @@ const Header = () => {
 
   return (
     <header className="border-b bg-background/90 backdrop-blur-md sticky top-0 z-50 shadow-sm">
-      <div className="container mx-auto px-4 py-4">
+      <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4">
         <div className="flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-3 hover-lift">
-            <div className="h-10 w-10 bg-gradient-primary rounded-xl flex items-center justify-center shadow-glow">
-              <ArrowRightLeft className="h-6 w-6 text-white" />
+          <Link to="/" className="flex items-center gap-2 sm:gap-3 hover-lift">
+            <div className="h-8 w-8 sm:h-10 sm:w-10 bg-gradient-primary rounded-lg sm:rounded-xl flex items-center justify-center shadow-glow">
+              <ArrowRightLeft className="h-4 w-4 sm:h-6 sm:w-6 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold bg-gradient-hero bg-clip-text text-transparent">SikaPay</h1>
-              <p className="text-xs text-muted-foreground font-medium">Crypto ↔ Mobile Money</p>
+              <h1 className="text-xl sm:text-2xl font-bold bg-gradient-hero bg-clip-text text-transparent">SikaPay</h1>
+              <p className="text-[10px] sm:text-xs text-muted-foreground font-medium hidden xs:block">Crypto ↔ Mobile Money</p>
             </div>
           </Link>
 

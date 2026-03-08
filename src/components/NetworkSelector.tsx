@@ -237,7 +237,7 @@ const NetworkSelector: React.FC<NetworkSelectorProps> = ({
           <Network className="h-5 w-5 text-primary" />
           Sélectionner le réseau
         </Label>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+        <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3">
           {SUPPORTED_NETWORKS.map((network) => (
             <Card
               key={network.id}
@@ -256,19 +256,19 @@ const NetworkSelector: React.FC<NetworkSelectorProps> = ({
                   <Check className="h-3 w-3 text-primary-foreground" />
                 </div>
               )}
-              <div className="flex flex-col items-center gap-2 text-center">
+              <div className="flex flex-col items-center gap-1.5 sm:gap-2 text-center">
                 <img 
                   src={network.icon} 
                   alt={network.name} 
-                  className="w-10 h-10 rounded-full"
+                  className="w-8 h-8 sm:w-10 sm:h-10 rounded-full"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
                     target.style.display = 'none';
                   }}
                 />
-                <div className="space-y-1">
-                  <p className="font-semibold text-sm">{network.name}</p>
-                  <Badge variant="outline" className="text-xs">
+                <div className="space-y-0.5 sm:space-y-1">
+                  <p className="font-semibold text-xs sm:text-sm leading-tight">{network.name}</p>
+                  <Badge variant="outline" className="text-[10px] sm:text-xs">
                     {network.symbol}
                   </Badge>
                 </div>

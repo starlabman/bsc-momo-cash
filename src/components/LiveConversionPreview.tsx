@@ -38,30 +38,30 @@ const LiveConversionPreview: React.FC<LiveConversionPreviewProps> = ({
   }
 
   return (
-    <div className="bg-gradient-to-r from-primary/5 via-primary/10 to-accent/5 rounded-xl p-4 border border-primary/20 transition-all duration-300">
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex-1">
-          <p className="text-xs text-muted-foreground mb-1">Vous envoyez</p>
-          <p className={`text-xl font-bold transition-all duration-300 ${hasAmount ? 'text-foreground' : 'text-muted-foreground'}`}>
-            {hasAmount ? parseFloat(fromAmount).toLocaleString() : '0'} {fromCurrency}
+    <div className="bg-gradient-to-r from-primary/5 via-primary/10 to-accent/5 rounded-xl p-3 sm:p-4 border border-primary/20 transition-all duration-300">
+      <div className="flex items-center justify-between gap-2 sm:gap-3">
+        <div className="flex-1 min-w-0">
+          <p className="text-[10px] sm:text-xs text-muted-foreground mb-0.5 sm:mb-1">Vous envoyez</p>
+          <p className={`text-base sm:text-xl font-bold transition-all duration-300 truncate ${hasAmount ? 'text-foreground' : 'text-muted-foreground'}`}>
+            {hasAmount ? parseFloat(fromAmount).toLocaleString() : '0'} <span className="text-sm sm:text-xl">{fromCurrency}</span>
           </p>
         </div>
         
-        <div className="flex flex-col items-center gap-1">
-          <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-            <ArrowRight className="h-5 w-5 text-primary" />
+        <div className="flex flex-col items-center gap-0.5 sm:gap-1 shrink-0">
+          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-primary/10 flex items-center justify-center">
+            <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
           </div>
           {rate && (
-            <Badge variant="outline" className="text-[10px] px-1.5 py-0.5">
+            <Badge variant="outline" className="text-[9px] sm:text-[10px] px-1 sm:px-1.5 py-0.5">
               1:{rate.toFixed(0)}
             </Badge>
           )}
         </div>
         
-        <div className="flex-1 text-right">
-          <p className="text-xs text-muted-foreground mb-1">Vous recevez</p>
-          <p className={`text-xl font-bold transition-all duration-300 ${hasAmount ? 'text-primary' : 'text-muted-foreground'}`}>
-            {hasAmount ? toAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 6 }) : '0'} {toCurrency}
+        <div className="flex-1 text-right min-w-0">
+          <p className="text-[10px] sm:text-xs text-muted-foreground mb-0.5 sm:mb-1">Vous recevez</p>
+          <p className={`text-base sm:text-xl font-bold transition-all duration-300 truncate ${hasAmount ? 'text-primary' : 'text-muted-foreground'}`}>
+            {hasAmount ? toAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 6 }) : '0'} <span className="text-sm sm:text-xl">{toCurrency}</span>
           </p>
         </div>
       </div>

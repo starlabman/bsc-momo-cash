@@ -16,10 +16,10 @@ const Index = () => {
       <Header />
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
-        <div className="space-y-12">
+      <main className="container mx-auto px-3 sm:px-4 py-4 sm:py-8">
+        <div className="space-y-8 sm:space-y-12">
           {/* Hero Section */}
-          <div className="text-center space-y-8 py-16 md:py-24 relative">
+          <div className="text-center space-y-6 sm:space-y-8 py-10 sm:py-16 md:py-24 relative">
             {/* Background glow effects */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
               <div className="absolute top-1/2 left-1/4 w-72 h-72 bg-primary/20 rounded-full blur-[100px] animate-pulse" />
@@ -27,7 +27,7 @@ const Index = () => {
             </div>
             
             <div className="space-y-6 relative z-10">
-              <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight">
+              <h2 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold leading-tight">
                 <span className="inline-block animate-fade-in opacity-0 [animation-delay:0.1s] [animation-fill-mode:forwards] bg-gradient-to-r from-primary via-violet-500 to-primary bg-clip-text text-transparent">
                   Échangez Crypto
                 </span>
@@ -38,7 +38,7 @@ const Index = () => {
                   Mobile Money
                 </span>
               </h2>
-              <p className="text-lg md:text-xl lg:text-2xl text-muted-foreground max-w-3xl mx-auto animate-fade-in opacity-0 [animation-delay:0.8s] [animation-fill-mode:forwards] font-medium leading-relaxed">
+              <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-muted-foreground max-w-3xl mx-auto px-2 animate-fade-in opacity-0 [animation-delay:0.8s] [animation-fill-mode:forwards] font-medium leading-relaxed">
                 Solution multi-blockchain rapide et sécurisée pour vos conversions crypto ↔ XOF
               </p>
               
@@ -52,28 +52,28 @@ const Index = () => {
           {/* Conversion Forms */}
           <div className="max-w-6xl mx-auto animate-fade-in opacity-0 [animation-delay:1.2s] [animation-fill-mode:forwards]">
             <Tabs defaultValue="crypto-to-momo" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 mb-10 bg-muted/30 backdrop-blur-md border border-primary/20 h-16 p-1.5 rounded-2xl shadow-lg">
+              <TabsList className="grid w-full grid-cols-2 mb-6 sm:mb-10 bg-muted/30 backdrop-blur-md border border-primary/20 h-12 sm:h-16 p-1 sm:p-1.5 rounded-xl sm:rounded-2xl shadow-lg">
                 <TabsTrigger 
                   value="crypto-to-momo" 
-                  className="flex items-center justify-center gap-3 text-base font-semibold h-full rounded-xl transition-all duration-500 ease-out
+                  className="flex items-center justify-center gap-1.5 sm:gap-3 text-xs sm:text-base font-semibold h-full rounded-lg sm:rounded-xl transition-all duration-500 ease-out
                     data-[state=inactive]:text-muted-foreground data-[state=inactive]:hover:text-foreground data-[state=inactive]:hover:bg-muted/50
                     data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:via-violet-500 data-[state=active]:to-primary 
                     data-[state=active]:text-white data-[state=active]:shadow-xl data-[state=active]:shadow-primary/30 data-[state=active]:scale-[1.02]"
                 >
-                  <ArrowRightLeft className="h-5 w-5 transition-transform duration-300 group-hover:rotate-180" />
+                  <ArrowRightLeft className="h-4 w-4 sm:h-5 sm:w-5 transition-transform duration-300 group-hover:rotate-180" />
                   <span className="hidden sm:inline">Crypto → Mobile Money</span>
-                  <span className="sm:hidden">Crypto → MoMo</span>
+                  <span className="sm:hidden text-[11px]">Crypto → MoMo</span>
                 </TabsTrigger>
                 <TabsTrigger 
                   value="momo-to-crypto" 
-                  className="flex items-center justify-center gap-3 text-base font-semibold h-full rounded-xl transition-all duration-500 ease-out
+                  className="flex items-center justify-center gap-1.5 sm:gap-3 text-xs sm:text-base font-semibold h-full rounded-lg sm:rounded-xl transition-all duration-500 ease-out
                     data-[state=inactive]:text-muted-foreground data-[state=inactive]:hover:text-foreground data-[state=inactive]:hover:bg-muted/50
                     data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500 data-[state=active]:via-amber-500 data-[state=active]:to-orange-400 
                     data-[state=active]:text-white data-[state=active]:shadow-xl data-[state=active]:shadow-orange-500/30 data-[state=active]:scale-[1.02]"
                 >
-                  <ArrowDownUp className="h-5 w-5 transition-transform duration-300" />
+                  <ArrowDownUp className="h-4 w-4 sm:h-5 sm:w-5 transition-transform duration-300" />
                   <span className="hidden sm:inline">Mobile Money → Crypto</span>
-                  <span className="sm:hidden">MoMo → Crypto</span>
+                  <span className="sm:hidden text-[11px]">MoMo → Crypto</span>
                 </TabsTrigger>
               </TabsList>
               

@@ -4,9 +4,9 @@ import { Link } from 'react-router-dom';
 
 const Footer = () => {
   return (
-    <footer className="border-t bg-gradient-to-r from-muted/10 via-muted/20 to-muted/10 backdrop-blur-sm mt-20">
-      <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+    <footer className="border-t bg-gradient-to-r from-muted/10 via-muted/20 to-muted/10 backdrop-blur-sm mt-12 sm:mt-20">
+      <div className="container mx-auto px-3 sm:px-4 py-8 sm:py-12">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 mb-6 sm:mb-8">
           <div className="space-y-4">
             <Link to="/" className="flex items-center gap-3">
               <div className="h-8 w-8 bg-gradient-primary rounded-lg flex items-center justify-center">
@@ -63,11 +63,11 @@ const Footer = () => {
           </div>
         </div>
         
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-8 border-t border-primary/10">
-          <div className="text-sm text-muted-foreground">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 pt-6 sm:pt-8 border-t border-primary/10">
+          <div className="text-xs sm:text-sm text-muted-foreground">
             © 2024 SikaPay. Tous droits réservés.
           </div>
-          <div className="flex items-center gap-6 text-xs text-muted-foreground">
+          <div className="flex items-center gap-3 sm:gap-6 text-[10px] sm:text-xs text-muted-foreground">
             <span className="flex items-center gap-2">
               <div className="h-2 w-2 bg-green-500 rounded-full animate-pulse"></div>
               Service en ligne
