@@ -59,9 +59,11 @@ const Header = () => {
           </div>
 
           {/* Mobile Navigation */}
-          <Sheet open={isOpen} onOpenChange={setIsOpen}>
-            <SheetTrigger asChild className="md:hidden">
-              <Button variant="ghost" size="icon">
+          <div className="flex items-center gap-1 md:hidden">
+            <ThemeToggle />
+            <Sheet open={isOpen} onOpenChange={setIsOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-9 w-9">
                 <Menu className="h-6 w-6" />
               </Button>
             </SheetTrigger>
