@@ -43,10 +43,10 @@ const testimonials: Testimonial[] = [
 
 const TestimonialsSection = () => {
   return (
-    <section className="py-16 px-4">
+    <section className="py-10 sm:py-16 px-3 sm:px-4">
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+        <div className="text-center mb-8 sm:mb-12">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4">
             Ce que nos clients disent
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
