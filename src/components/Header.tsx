@@ -22,7 +22,7 @@ const Header = () => {
 
   return (
     <header className="border-b bg-background/90 backdrop-blur-md sticky top-0 z-50 shadow-sm">
-      <div className="container mx-auto px-4 py-4">
+      <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4">
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3 hover-lift">
             <div className="h-10 w-10 bg-gradient-primary rounded-xl flex items-center justify-center shadow-glow">
