@@ -38,7 +38,7 @@ const Index = () => {
                   Mobile Money
                 </span>
               </h2>
-              <p className="text-lg md:text-xl lg:text-2xl text-muted-foreground max-w-3xl mx-auto animate-fade-in opacity-0 [animation-delay:0.8s] [animation-fill-mode:forwards] font-medium leading-relaxed">
+              <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-muted-foreground max-w-3xl mx-auto px-2 animate-fade-in opacity-0 [animation-delay:0.8s] [animation-fill-mode:forwards] font-medium leading-relaxed">
                 Solution multi-blockchain rapide et sécurisée pour vos conversions crypto ↔ XOF
               </p>
               
