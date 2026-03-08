@@ -191,7 +191,7 @@ export const CountryOperatorSelector: React.FC<CountryOperatorSelectorProps> = (
         </Label>
         
         {/* Quick select for popular countries */}
-        <div className="grid grid-cols-4 sm:grid-cols-8 gap-2 mb-2">
+        <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-1.5 sm:gap-2 mb-2">
           {countries.slice(0, 8).map((country) => (
             <button
               key={country.id}
