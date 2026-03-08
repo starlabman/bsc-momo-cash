@@ -37,7 +37,7 @@ const FormStepIndicator: React.FC<FormStepIndicatorProps> = ({ steps }) => {
             </div>
             <span
               className={cn(
-                "text-xs font-medium transition-colors",
+                "text-[10px] sm:text-xs font-medium transition-colors",
                 step.active || step.completed ? "text-foreground" : "text-muted-foreground"
               )}
             >

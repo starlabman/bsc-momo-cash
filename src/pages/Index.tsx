@@ -66,14 +66,14 @@ const Index = () => {
                 </TabsTrigger>
                 <TabsTrigger 
                   value="momo-to-crypto" 
-                  className="flex items-center justify-center gap-3 text-base font-semibold h-full rounded-xl transition-all duration-500 ease-out
+                  className="flex items-center justify-center gap-1.5 sm:gap-3 text-xs sm:text-base font-semibold h-full rounded-lg sm:rounded-xl transition-all duration-500 ease-out
                     data-[state=inactive]:text-muted-foreground data-[state=inactive]:hover:text-foreground data-[state=inactive]:hover:bg-muted/50
                     data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500 data-[state=active]:via-amber-500 data-[state=active]:to-orange-400 
                     data-[state=active]:text-white data-[state=active]:shadow-xl data-[state=active]:shadow-orange-500/30 data-[state=active]:scale-[1.02]"
                 >
-                  <ArrowDownUp className="h-5 w-5 transition-transform duration-300" />
+                  <ArrowDownUp className="h-4 w-4 sm:h-5 sm:w-5 transition-transform duration-300" />
                   <span className="hidden sm:inline">Mobile Money → Crypto</span>
-                  <span className="sm:hidden">MoMo → Crypto</span>
+                  <span className="sm:hidden text-[11px]">MoMo → Crypto</span>
                 </TabsTrigger>
               </TabsList>
               

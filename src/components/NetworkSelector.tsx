@@ -266,9 +266,9 @@ const NetworkSelector: React.FC<NetworkSelectorProps> = ({
                     target.style.display = 'none';
                   }}
                 />
-                <div className="space-y-1">
-                  <p className="font-semibold text-sm">{network.name}</p>
-                  <Badge variant="outline" className="text-xs">
+                <div className="space-y-0.5 sm:space-y-1">
+                  <p className="font-semibold text-xs sm:text-sm leading-tight">{network.name}</p>
+                  <Badge variant="outline" className="text-[10px] sm:text-xs">
                     {network.symbol}
                   </Badge>
                 </div>

@@ -251,7 +251,7 @@ export const CountryOperatorSelector: React.FC<CountryOperatorSelectorProps> = (
           <Label className="text-sm font-medium flex items-center gap-2">
             <span>📱</span> Opérateur Mobile Money
           </Label>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
             {operators.map((operator) => (
               <button
                 key={operator.id}

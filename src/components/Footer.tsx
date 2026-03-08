@@ -63,11 +63,11 @@ const Footer = () => {
           </div>
         </div>
         
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-8 border-t border-primary/10">
-          <div className="text-sm text-muted-foreground">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 pt-6 sm:pt-8 border-t border-primary/10">
+          <div className="text-xs sm:text-sm text-muted-foreground">
             © 2024 SikaPay. Tous droits réservés.
           </div>
-          <div className="flex items-center gap-6 text-xs text-muted-foreground">
+          <div className="flex items-center gap-3 sm:gap-6 text-[10px] sm:text-xs text-muted-foreground">
             <span className="flex items-center gap-2">
               <div className="h-2 w-2 bg-green-500 rounded-full animate-pulse"></div>
               Service en ligne
