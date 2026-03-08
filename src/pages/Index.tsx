@@ -52,7 +52,7 @@ const Index = () => {
           {/* Conversion Forms */}
           <div className="max-w-6xl mx-auto animate-fade-in opacity-0 [animation-delay:1.2s] [animation-fill-mode:forwards]">
             <Tabs defaultValue="crypto-to-momo" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 mb-10 bg-muted/30 backdrop-blur-md border border-primary/20 h-16 p-1.5 rounded-2xl shadow-lg">
+              <TabsList className="grid w-full grid-cols-2 mb-6 sm:mb-10 bg-muted/30 backdrop-blur-md border border-primary/20 h-12 sm:h-16 p-1 sm:p-1.5 rounded-xl sm:rounded-2xl shadow-lg">
                 <TabsTrigger 
                   value="crypto-to-momo" 
                   className="flex items-center justify-center gap-3 text-base font-semibold h-full rounded-xl transition-all duration-500 ease-out
