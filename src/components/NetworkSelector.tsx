@@ -256,11 +256,11 @@ const NetworkSelector: React.FC<NetworkSelectorProps> = ({
                   <Check className="h-3 w-3 text-primary-foreground" />
                 </div>
               )}
-              <div className="flex flex-col items-center gap-2 text-center">
+              <div className="flex flex-col items-center gap-1.5 sm:gap-2 text-center">
                 <img 
                   src={network.icon} 
                   alt={network.name} 
-                  className="w-10 h-10 rounded-full"
+                  className="w-8 h-8 sm:w-10 sm:h-10 rounded-full"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
                     target.style.display = 'none';
