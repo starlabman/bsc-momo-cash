@@ -15,13 +15,13 @@ interface FormStepIndicatorProps {
 
 const FormStepIndicator: React.FC<FormStepIndicatorProps> = ({ steps }) => {
   return (
-    <div className="flex items-center justify-between w-full mb-6">
+    <div className="flex items-center justify-between w-full mb-4 sm:mb-6">
       {steps.map((step, index) => (
         <React.Fragment key={step.id}>
-          <div className="flex flex-col items-center gap-1">
+          <div className="flex flex-col items-center gap-0.5 sm:gap-1">
             <div
               className={cn(
-                "w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300",
+                "w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center transition-all duration-300",
                 step.completed
                   ? "bg-primary text-primary-foreground"
                   : step.active
