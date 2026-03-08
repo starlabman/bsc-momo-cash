@@ -36,7 +36,7 @@ const Header = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-4">
+          <div className="hidden md:flex items-center gap-3">
             <Badge variant="outline" className="text-xs animate-glow-pulse border-primary/30 bg-primary/5">
               Multi-Blockchain
             </Badge>
@@ -55,6 +55,7 @@ const Header = () => {
             >
               Admin
             </Button>
+            <ThemeToggle />
           </div>
 
           {/* Mobile Navigation */}
