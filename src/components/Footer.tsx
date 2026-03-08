@@ -64,6 +64,7 @@ const Footer = () => {
             </ul>
           </div>
         </div>
+        </ScrollReveal>
         
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 pt-6 sm:pt-8 border-t border-primary/10">
           <div className="text-xs sm:text-sm text-muted-foreground">
