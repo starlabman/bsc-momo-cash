@@ -46,14 +46,16 @@ const TestimonialsSection = () => {
   return (
     <section className="py-10 sm:py-16 px-3 sm:px-4">
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-8 sm:mb-12">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4">
-            Ce que nos clients disent
-          </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Plus de 10 000 utilisateurs nous font confiance pour leurs conversions crypto
-          </p>
-        </div>
+        <ScrollReveal>
+          <div className="text-center mb-8 sm:mb-12">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4">
+              Ce que nos clients disent
+            </h2>
+            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+              Plus de 10 000 utilisateurs nous font confiance pour leurs conversions crypto
+            </p>
+          </div>
+        </ScrollReveal>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {testimonials.map((testimonial, index) => (
