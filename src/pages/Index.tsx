@@ -8,6 +8,7 @@ import Header from '@/components/Header';
 import TestimonialsSection from '@/components/TestimonialsSection';
 import TransactionHistory from '@/components/TransactionHistory';
 import FloatingParticles from '@/components/FloatingParticles';
+import ScrollReveal from '@/components/ScrollReveal';
 
 const Index = () => {
   return (
