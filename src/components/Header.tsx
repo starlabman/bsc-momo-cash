@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { ArrowRightLeft, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import ThemeToggle from "@/components/ThemeToggle";
 import {
   Sheet,
   SheetContent,
@@ -35,7 +36,7 @@ const Header = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-4">
+          <div className="hidden md:flex items-center gap-3">
             <Badge variant="outline" className="text-xs animate-glow-pulse border-primary/30 bg-primary/5">
               Multi-Blockchain
             </Badge>
@@ -54,12 +55,15 @@ const Header = () => {
             >
               Admin
             </Button>
+            <ThemeToggle />
           </div>
 
           {/* Mobile Navigation */}
-          <Sheet open={isOpen} onOpenChange={setIsOpen}>
-            <SheetTrigger asChild className="md:hidden">
-              <Button variant="ghost" size="icon">
+          <div className="flex items-center gap-1 md:hidden">
+            <ThemeToggle />
+            <Sheet open={isOpen} onOpenChange={setIsOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-9 w-9">
                 <Menu className="h-6 w-6" />
               </Button>
             </SheetTrigger>
@@ -92,7 +96,8 @@ const Header = () => {
                 </Button>
               </nav>
             </SheetContent>
-          </Sheet>
+            </Sheet>
+          </div>
         </div>
       </div>
     </header>

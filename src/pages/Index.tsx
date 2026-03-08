@@ -8,6 +8,7 @@ import Header from '@/components/Header';
 import TestimonialsSection from '@/components/TestimonialsSection';
 import TransactionHistory from '@/components/TransactionHistory';
 import FloatingParticles from '@/components/FloatingParticles';
+import ScrollReveal from '@/components/ScrollReveal';
 
 const Index = () => {
   return (
@@ -94,14 +95,14 @@ const Index = () => {
           </div>
 
           {/* Transaction History Section */}
-          <div className="max-w-4xl mx-auto animate-fade-in opacity-0 [animation-delay:1.4s] [animation-fill-mode:forwards]">
-            <TransactionHistory />
-          </div>
+          <ScrollReveal>
+            <div className="max-w-4xl mx-auto">
+              <TransactionHistory />
+            </div>
+          </ScrollReveal>
 
           {/* Testimonials Section */}
-          <div className="animate-fade-in opacity-0 [animation-delay:1.6s] [animation-fill-mode:forwards]">
-            <TestimonialsSection />
-          </div>
+          <TestimonialsSection />
         </div>
       </main>
 

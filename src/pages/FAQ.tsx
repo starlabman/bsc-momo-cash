@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import ScrollReveal from "@/components/ScrollReveal";
 import {
   Accordion,
   AccordionContent,
@@ -82,18 +83,19 @@ const FAQ = () => {
         <div className="container max-w-3xl mx-auto">
           <Accordion type="single" collapsible className="w-full space-y-4">
             {faqs.map((faq, index) => (
-              <AccordionItem 
-                key={index} 
-                value={`item-${index}`}
-                className="border border-border/50 rounded-lg px-6 bg-card/50"
-              >
-                <AccordionTrigger className="text-left font-medium hover:no-underline">
-                  {faq.question}
-                </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground leading-relaxed">
-                  {faq.answer}
-                </AccordionContent>
-              </AccordionItem>
+              <ScrollReveal key={index} delay={index * 60}>
+                <AccordionItem 
+                  value={`item-${index}`}
+                  className="border border-border/50 rounded-lg px-6 bg-card/50"
+                >
+                  <AccordionTrigger className="text-left font-medium hover:no-underline">
+                    {faq.question}
+                  </AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground leading-relaxed">
+                    {faq.answer}
+                  </AccordionContent>
+                </AccordionItem>
+              </ScrollReveal>
             ))}
           </Accordion>
         </div>
