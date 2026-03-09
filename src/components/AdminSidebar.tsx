@@ -1,4 +1,4 @@
-import { LayoutDashboard, ArrowRightLeft, ArrowDownUp, BarChart3 } from 'lucide-react';
+import { LayoutDashboard, ArrowRightLeft, ArrowDownUp, BarChart3, Eye } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 import {
   Sidebar,
