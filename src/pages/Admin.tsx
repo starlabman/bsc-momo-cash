@@ -9,7 +9,7 @@ import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
-type DashboardSection = 'dashboard' | 'offramp' | 'onramp' | 'stats';
+type DashboardSection = 'dashboard' | 'offramp' | 'onramp' | 'stats' | 'visibility';
 
 const Admin = () => {
   const [adminUser, setAdminUser] = useState<any>(null);
