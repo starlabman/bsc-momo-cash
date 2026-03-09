@@ -35,3 +35,6 @@ verify_jwt = false
 
 [functions.blockchain-webhook]
 verify_jwt = false
+
+[functions.toggle-blockchain-visibility]
+verify_jwt = false
