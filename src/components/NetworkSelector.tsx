@@ -255,6 +255,8 @@ const NetworkSelector: React.FC<NetworkSelectorProps> = ({
   const currentNetwork = filteredNetworks.find(n => n.id === selectedNetwork) 
     || SUPPORTED_NETWORKS.find(n => n.id === selectedNetwork);
 
+  const availableTokens = currentNetwork?.tokens || [];
+
   return (
     <div className={`space-y-6 animate-slide-in-up ${className}`}>
       {/* Network Selection */}
