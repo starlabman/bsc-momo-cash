@@ -44,6 +44,7 @@ import {
 } from 'lucide-react';
 import AdminFilters from './AdminFilters';
 import BlockchainTokenBadge from './BlockchainTokenBadge';
+import BlockchainVisibilityManager from './BlockchainVisibilityManager';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
