@@ -227,8 +227,33 @@ const NetworkSelector: React.FC<NetworkSelectorProps> = ({
   onTokenChange,
   className = ''
 }) => {
-  const currentNetwork = SUPPORTED_NETWORKS.find(n => n.id === selectedNetwork);
-  const availableTokens = currentNetwork?.tokens || [];
+  const [visibleNetworkIds, setVisibleNetworkIds] = useState<string[]>(
+    SUPPORTED_NETWORKS.map(n => n.id)
+  );
+
+  useEffect(() => {
+    const fetchVisibility = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('blockchain_visibility')
+          .select('network_id, is_visible');
+        
+        if (!error && data) {
+          const visible = (data as any[])
+            .filter(d => d.is_visible)
+            .map(d => d.network_id);
+          if (visible.length > 0) setVisibleNetworkIds(visible);
+        }
+      } catch (e) {
+        console.error('Error fetching blockchain visibility:', e);
+      }
+    };
+    fetchVisibility();
+  }, []);
+
+  const filteredNetworks = SUPPORTED_NETWORKS.filter(n => visibleNetworkIds.includes(n.id));
+  const currentNetwork = filteredNetworks.find(n => n.id === selectedNetwork) 
+    || SUPPORTED_NETWORKS.find(n => n.id === selectedNetwork);
 
   return (
     <div className={`space-y-6 animate-slide-in-up ${className}`}>
