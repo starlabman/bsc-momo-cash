@@ -47,7 +47,7 @@ import BlockchainTokenBadge from './BlockchainTokenBadge';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
-type DashboardSection = 'dashboard' | 'offramp' | 'onramp' | 'stats';
+type DashboardSection = 'dashboard' | 'offramp' | 'onramp' | 'stats' | 'visibility';
 
 interface AdminDashboardProps {
   section?: DashboardSection;
