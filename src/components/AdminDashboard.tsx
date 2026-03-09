@@ -2056,6 +2056,13 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
           </Card>
         </div>
         )}
+
+        {/* Visibilité des Blockchains */}
+        {section === 'visibility' && (
+          <div id="visibility" className="scroll-mt-20">
+            <BlockchainVisibilityManager />
+          </div>
+        )}
       </div>
     </div>
   );
