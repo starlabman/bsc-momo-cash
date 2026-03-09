@@ -39,6 +39,12 @@ const navigationItems = [
     icon: BarChart3,
     section: 'stats'
   },
+  { 
+    title: 'Visibilité Blockchains', 
+    url: '/admin#visibility', 
+    icon: Eye,
+    section: 'visibility'
+  },
 ];
 
 export function AdminSidebar() {
