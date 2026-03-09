@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
 import { Network, Check } from 'lucide-react';
 import { Card } from '@/components/ui/card';
+import { supabase } from '@/integrations/supabase/client';
 
 export interface BlockchainNetwork {
   id: string;
@@ -226,7 +227,34 @@ const NetworkSelector: React.FC<NetworkSelectorProps> = ({
   onTokenChange,
   className = ''
 }) => {
-  const currentNetwork = SUPPORTED_NETWORKS.find(n => n.id === selectedNetwork);
+  const [visibleNetworkIds, setVisibleNetworkIds] = useState<string[]>(
+    SUPPORTED_NETWORKS.map(n => n.id)
+  );
+
+  useEffect(() => {
+    const fetchVisibility = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('blockchain_visibility')
+          .select('network_id, is_visible');
+        
+        if (!error && data) {
+          const visible = (data as any[])
+            .filter(d => d.is_visible)
+            .map(d => d.network_id);
+          if (visible.length > 0) setVisibleNetworkIds(visible);
+        }
+      } catch (e) {
+        console.error('Error fetching blockchain visibility:', e);
+      }
+    };
+    fetchVisibility();
+  }, []);
+
+  const filteredNetworks = SUPPORTED_NETWORKS.filter(n => visibleNetworkIds.includes(n.id));
+  const currentNetwork = filteredNetworks.find(n => n.id === selectedNetwork) 
+    || SUPPORTED_NETWORKS.find(n => n.id === selectedNetwork);
+
   const availableTokens = currentNetwork?.tokens || [];
 
   return (
@@ -238,7 +266,7 @@ const NetworkSelector: React.FC<NetworkSelectorProps> = ({
           Sélectionner le réseau
         </Label>
         <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3">
-          {SUPPORTED_NETWORKS.map((network) => (
+          {filteredNetworks.map((network) => (
             <Card
               key={network.id}
               onClick={() => onNetworkChange(network.id)}

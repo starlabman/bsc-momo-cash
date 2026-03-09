@@ -1,4 +1,4 @@
-import { LayoutDashboard, ArrowRightLeft, ArrowDownUp, BarChart3 } from 'lucide-react';
+import { LayoutDashboard, ArrowRightLeft, ArrowDownUp, BarChart3, Eye } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 import {
   Sidebar,
@@ -38,6 +38,12 @@ const navigationItems = [
     url: '/admin#stats', 
     icon: BarChart3,
     section: 'stats'
+  },
+  { 
+    title: 'Visibilité Blockchains', 
+    url: '/admin#visibility', 
+    icon: Eye,
+    section: 'visibility'
   },
 ];
 

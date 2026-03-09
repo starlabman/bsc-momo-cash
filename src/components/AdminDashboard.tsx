@@ -44,10 +44,11 @@ import {
 } from 'lucide-react';
 import AdminFilters from './AdminFilters';
 import BlockchainTokenBadge from './BlockchainTokenBadge';
+import BlockchainVisibilityManager from './BlockchainVisibilityManager';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
-type DashboardSection = 'dashboard' | 'offramp' | 'onramp' | 'stats';
+type DashboardSection = 'dashboard' | 'offramp' | 'onramp' | 'stats' | 'visibility';
 
 interface AdminDashboardProps {
   section?: DashboardSection;
@@ -2055,6 +2056,13 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
             </CardContent>
           </Card>
         </div>
+        )}
+
+        {/* Visibilité des Blockchains */}
+        {section === 'visibility' && (
+          <div id="visibility" className="scroll-mt-20">
+            <BlockchainVisibilityManager />
+          </div>
         )}
       </div>
     </div>

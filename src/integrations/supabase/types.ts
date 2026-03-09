@@ -175,6 +175,33 @@ export type Database = {
         }
         Relationships: []
       }
+      blockchain_visibility: {
+        Row: {
+          created_at: string
+          id: string
+          is_visible: boolean
+          network_id: string
+          network_name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_visible?: boolean
+          network_id: string
+          network_name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_visible?: boolean
+          network_id?: string
+          network_name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       countries: {
         Row: {
           code: string
