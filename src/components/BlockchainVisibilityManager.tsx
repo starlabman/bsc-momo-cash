@@ -28,6 +28,7 @@ const BlockchainVisibilityManager: React.FC = () => {
   const [visibilities, setVisibilities] = useState<BlockchainVisibility[]>([]);
   const [loading, setLoading] = useState(true);
   const [togglingId, setTogglingId] = useState<string | null>(null);
+  const [pendingCounts, setPendingCounts] = useState<Record<string, number>>({});
   const [confirmDialog, setConfirmDialog] = useState<{
     open: boolean;
     networkId: string;
@@ -38,6 +39,7 @@ const BlockchainVisibilityManager: React.FC = () => {
 
   useEffect(() => {
     fetchVisibilities();
+    fetchAllPendingCounts();
   }, []);
 
   const fetchVisibilities = async () => {
@@ -53,6 +55,24 @@ const BlockchainVisibilityManager: React.FC = () => {
       console.error('Error fetching visibilities:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchAllPendingCounts = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('blockchain_events')
+        .select('network')
+        .eq('processed', false);
+
+      if (error) throw error;
+      const counts: Record<string, number> = {};
+      (data || []).forEach((e: any) => {
+        counts[e.network] = (counts[e.network] || 0) + 1;
+      });
+      setPendingCounts(counts);
+    } catch {
+      // silent
     }
   };
 
