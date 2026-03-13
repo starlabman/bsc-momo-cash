@@ -174,6 +174,7 @@ const BlockchainVisibilityManager: React.FC = () => {
             {visibilities.map((visibility) => {
               const icon = getNetworkIcon(visibility.network_id);
               const isToggling = togglingId === visibility.network_id;
+              const pending = pendingCounts[visibility.network_id] || 0;
 
               return (
                 <div
@@ -193,7 +194,14 @@ const BlockchainVisibilityManager: React.FC = () => {
                       </div>
                     )}
                     <div>
-                      <p className="text-sm font-medium">{visibility.network_name}</p>
+                      <div className="flex items-center gap-2">
+                        <p className="text-sm font-medium">{visibility.network_name}</p>
+                        {pending > 0 && (
+                          <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-4 bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30">
+                            {pending} en cours
+                          </Badge>
+                        )}
+                      </div>
                       <div className="flex items-center gap-1 text-xs text-muted-foreground">
                         {visibility.is_visible ? (
                           <>
