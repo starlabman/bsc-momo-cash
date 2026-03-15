@@ -1,4 +1,4 @@
-import { LayoutDashboard, ArrowRightLeft, ArrowDownUp, BarChart3, Eye, Globe } from 'lucide-react';
+import { LayoutDashboard, ArrowRightLeft, ArrowDownUp, BarChart3, Eye, Globe, Phone, Coins } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 import {
   Sidebar,
@@ -50,6 +50,18 @@ const navigationItems = [
     url: '/admin#countries', 
     icon: Globe,
     section: 'countries'
+  },
+  { 
+    title: 'Visibilité Opérateurs', 
+    url: '/admin#operators', 
+    icon: Phone,
+    section: 'operators'
+  },
+  { 
+    title: 'Visibilité Tokens', 
+    url: '/admin#tokens', 
+    icon: Coins,
+    section: 'tokens'
   },
 ];
 

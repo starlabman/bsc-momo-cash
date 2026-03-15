@@ -41,3 +41,9 @@ verify_jwt = false
 
 [functions.toggle-country-visibility]
 verify_jwt = false
+
+[functions.toggle-operator-visibility]
+verify_jwt = false
+
+[functions.toggle-token-visibility]
+verify_jwt = false

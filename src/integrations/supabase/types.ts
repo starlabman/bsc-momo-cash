@@ -306,6 +306,7 @@ export type Database = {
           created_at: string
           deposit_number: string | null
           id: string
+          is_visible: boolean
           name: string
           number_patterns: string[]
           updated_at: string
@@ -315,6 +316,7 @@ export type Database = {
           created_at?: string
           deposit_number?: string | null
           id?: string
+          is_visible?: boolean
           name: string
           number_patterns: string[]
           updated_at?: string
@@ -324,6 +326,7 @@ export type Database = {
           created_at?: string
           deposit_number?: string | null
           id?: string
+          is_visible?: boolean
           name?: string
           number_patterns?: string[]
           updated_at?: string
@@ -503,6 +506,33 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      token_visibility: {
+        Row: {
+          created_at: string
+          id: string
+          is_visible: boolean
+          network_id: string
+          token_symbol: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_visible?: boolean
+          network_id: string
+          token_symbol: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_visible?: boolean
+          network_id?: string
+          token_symbol?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
     }
     Views: {

@@ -127,6 +127,7 @@ export const CountryOperatorSelector: React.FC<CountryOperatorSelectorProps> = (
         .from('mobile_operators')
         .select('*')
         .eq('country_id', countryId)
+        .eq('is_visible', true)
         .order('name');
 
       if (error) throw error;

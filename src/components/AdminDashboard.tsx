@@ -46,10 +46,12 @@ import AdminFilters from './AdminFilters';
 import BlockchainTokenBadge from './BlockchainTokenBadge';
 import BlockchainVisibilityManager from './BlockchainVisibilityManager';
 import CountryVisibilityManager from './CountryVisibilityManager';
+import OperatorVisibilityManager from './OperatorVisibilityManager';
+import TokenVisibilityManager from './TokenVisibilityManager';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
-type DashboardSection = 'dashboard' | 'offramp' | 'onramp' | 'stats' | 'visibility' | 'countries';
+type DashboardSection = 'dashboard' | 'offramp' | 'onramp' | 'stats' | 'visibility' | 'countries' | 'operators' | 'tokens';
 
 interface AdminDashboardProps {
   section?: DashboardSection;
@@ -594,6 +596,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
     stats: { title: 'Statistiques', subtitle: 'Analyses et métriques détaillées' },
     visibility: { title: 'Visibilité Blockchains', subtitle: 'Gérer les réseaux affichés sur les formulaires' },
     countries: { title: 'Visibilité Pays', subtitle: 'Gérer les pays affichés sur les formulaires' },
+    operators: { title: 'Visibilité Opérateurs', subtitle: 'Gérer les opérateurs Mobile Money par pays' },
+    tokens: { title: 'Visibilité Tokens', subtitle: 'Gérer les tokens affichés par réseau blockchain' },
   };
 
   // Determine which requests to display (search results > filters > all)
@@ -2072,6 +2076,20 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
         {section === 'countries' && (
           <div id="countries" className="scroll-mt-20">
             <CountryVisibilityManager />
+          </div>
+        )}
+
+        {/* Visibilité des Opérateurs */}
+        {section === 'operators' && (
+          <div id="operators" className="scroll-mt-20">
+            <OperatorVisibilityManager />
+          </div>
+        )}
+
+        {/* Visibilité des Tokens */}
+        {section === 'tokens' && (
+          <div id="tokens" className="scroll-mt-20">
+            <TokenVisibilityManager />
           </div>
         )}
       </div>
