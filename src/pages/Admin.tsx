@@ -20,7 +20,7 @@ const Admin = () => {
 
   const getCurrentSection = (): DashboardSection => {
     const hash = location.hash.replace('#', '');
-    if (hash === 'offramp' || hash === 'onramp' || hash === 'stats' || hash === 'visibility' || hash === 'countries') {
+    if (hash === 'offramp' || hash === 'onramp' || hash === 'stats' || hash === 'visibility' || hash === 'countries' || hash === 'operators' || hash === 'tokens') {
       return hash;
     }
     return 'dashboard';

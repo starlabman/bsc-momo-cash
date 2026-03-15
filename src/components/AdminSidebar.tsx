@@ -51,6 +51,18 @@ const navigationItems = [
     icon: Globe,
     section: 'countries'
   },
+  { 
+    title: 'Visibilité Opérateurs', 
+    url: '/admin#operators', 
+    icon: Phone,
+    section: 'operators'
+  },
+  { 
+    title: 'Visibilité Tokens', 
+    url: '/admin#tokens', 
+    icon: Coins,
+    section: 'tokens'
+  },
 ];
 
 export function AdminSidebar() {
