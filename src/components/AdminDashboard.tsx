@@ -45,10 +45,11 @@ import {
 import AdminFilters from './AdminFilters';
 import BlockchainTokenBadge from './BlockchainTokenBadge';
 import BlockchainVisibilityManager from './BlockchainVisibilityManager';
+import CountryVisibilityManager from './CountryVisibilityManager';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
-type DashboardSection = 'dashboard' | 'offramp' | 'onramp' | 'stats' | 'visibility';
+type DashboardSection = 'dashboard' | 'offramp' | 'onramp' | 'stats' | 'visibility' | 'countries';
 
 interface AdminDashboardProps {
   section?: DashboardSection;
@@ -2062,6 +2063,13 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
         {section === 'visibility' && (
           <div id="visibility" className="scroll-mt-20">
             <BlockchainVisibilityManager />
+          </div>
+        )}
+
+        {/* Visibilité des Pays */}
+        {section === 'countries' && (
+          <div id="countries" className="scroll-mt-20">
+            <CountryVisibilityManager />
           </div>
         )}
       </div>
