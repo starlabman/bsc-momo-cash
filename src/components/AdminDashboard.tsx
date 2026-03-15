@@ -46,10 +46,12 @@ import AdminFilters from './AdminFilters';
 import BlockchainTokenBadge from './BlockchainTokenBadge';
 import BlockchainVisibilityManager from './BlockchainVisibilityManager';
 import CountryVisibilityManager from './CountryVisibilityManager';
+import OperatorVisibilityManager from './OperatorVisibilityManager';
+import TokenVisibilityManager from './TokenVisibilityManager';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
-type DashboardSection = 'dashboard' | 'offramp' | 'onramp' | 'stats' | 'visibility' | 'countries';
+type DashboardSection = 'dashboard' | 'offramp' | 'onramp' | 'stats' | 'visibility' | 'countries' | 'operators' | 'tokens';
 
 interface AdminDashboardProps {
   section?: DashboardSection;
