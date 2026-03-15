@@ -90,11 +90,23 @@ export const CountryOperatorSelector: React.FC<CountryOperatorSelectorProps> = (
 
   const fetchCountries = async () => {
     try {
-      const { data, error } = await supabase
-        .from('countries')
-        .select('*')
-        .order('name');
+      // Fetch visible country IDs
+      const { data: visData } = await supabase
+        .from('country_visibility')
+        .select('country_id, is_visible');
 
+      const visibleIds = visData
+        ? (visData as any[]).filter(v => v.is_visible).map(v => v.country_id)
+        : null;
+
+      let query = supabase.from('countries').select('*').order('name');
+
+      // If we have visibility data, filter by visible countries
+      if (visibleIds && visibleIds.length > 0) {
+        query = query.in('id', visibleIds);
+      }
+
+      const { data, error } = await query;
       if (error) throw error;
       setCountries(data || []);
     } catch (error) {
