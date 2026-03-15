@@ -45,6 +45,12 @@ const navigationItems = [
     icon: Eye,
     section: 'visibility'
   },
+  { 
+    title: 'Visibilité Pays', 
+    url: '/admin#countries', 
+    icon: Globe,
+    section: 'countries'
+  },
 ];
 
 export function AdminSidebar() {
