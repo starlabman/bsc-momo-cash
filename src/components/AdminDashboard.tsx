@@ -48,7 +48,7 @@ import BlockchainVisibilityManager from './BlockchainVisibilityManager';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
-type DashboardSection = 'dashboard' | 'offramp' | 'onramp' | 'stats' | 'visibility';
+type DashboardSection = 'dashboard' | 'offramp' | 'onramp' | 'stats' | 'visibility' | 'countries';
 
 interface AdminDashboardProps {
   section?: DashboardSection;
