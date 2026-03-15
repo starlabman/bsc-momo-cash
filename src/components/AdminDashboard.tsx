@@ -587,11 +587,13 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
     setSearchResults(null);
   };
 
-  const sectionTitles = {
+  const sectionTitles: Record<DashboardSection, { title: string; subtitle: string }> = {
     dashboard: { title: 'Vue d\'ensemble', subtitle: 'Aperçu des transactions et statistiques' },
     offramp: { title: 'Transactions Offramp', subtitle: 'Crypto → Mobile Money' },
     onramp: { title: 'Transactions Onramp', subtitle: 'Mobile Money → Crypto' },
-    stats: { title: 'Statistiques', subtitle: 'Analyses et métriques détaillées' }
+    stats: { title: 'Statistiques', subtitle: 'Analyses et métriques détaillées' },
+    visibility: { title: 'Visibilité Blockchains', subtitle: 'Gérer les réseaux affichés sur les formulaires' },
+    countries: { title: 'Visibilité Pays', subtitle: 'Gérer les pays affichés sur les formulaires' },
   };
 
   // Determine which requests to display (search results > filters > all)
