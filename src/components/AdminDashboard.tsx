@@ -2078,6 +2078,20 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
             <CountryVisibilityManager />
           </div>
         )}
+
+        {/* Visibilité des Opérateurs */}
+        {section === 'operators' && (
+          <div id="operators" className="scroll-mt-20">
+            <OperatorVisibilityManager />
+          </div>
+        )}
+
+        {/* Visibilité des Tokens */}
+        {section === 'tokens' && (
+          <div id="tokens" className="scroll-mt-20">
+            <TokenVisibilityManager />
+          </div>
+        )}
       </div>
     </div>
   );
