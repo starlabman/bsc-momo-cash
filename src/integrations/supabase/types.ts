@@ -232,6 +232,44 @@ export type Database = {
         }
         Relationships: []
       }
+      country_visibility: {
+        Row: {
+          country_code: string
+          country_id: string
+          country_name: string
+          created_at: string
+          id: string
+          is_visible: boolean
+          updated_at: string
+        }
+        Insert: {
+          country_code: string
+          country_id: string
+          country_name: string
+          created_at?: string
+          id?: string
+          is_visible?: boolean
+          updated_at?: string
+        }
+        Update: {
+          country_code?: string
+          country_id?: string
+          country_name?: string
+          created_at?: string
+          id?: string
+          is_visible?: boolean
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "country_visibility_country_id_fkey"
+            columns: ["country_id"]
+            isOneToOne: true
+            referencedRelation: "countries"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       exchange_rates: {
         Row: {
           base_currency: string
