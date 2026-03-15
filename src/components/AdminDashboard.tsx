@@ -596,6 +596,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
     stats: { title: 'Statistiques', subtitle: 'Analyses et métriques détaillées' },
     visibility: { title: 'Visibilité Blockchains', subtitle: 'Gérer les réseaux affichés sur les formulaires' },
     countries: { title: 'Visibilité Pays', subtitle: 'Gérer les pays affichés sur les formulaires' },
+    operators: { title: 'Visibilité Opérateurs', subtitle: 'Gérer les opérateurs Mobile Money par pays' },
+    tokens: { title: 'Visibilité Tokens', subtitle: 'Gérer les tokens affichés par réseau blockchain' },
   };
 
   // Determine which requests to display (search results > filters > all)
