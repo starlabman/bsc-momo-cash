@@ -230,22 +230,32 @@ const NetworkSelector: React.FC<NetworkSelectorProps> = ({
   const [visibleNetworkIds, setVisibleNetworkIds] = useState<string[]>(
     SUPPORTED_NETWORKS.map(n => n.id)
   );
+  const [hiddenTokens, setHiddenTokens] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     const fetchVisibility = async () => {
       try {
-        const { data, error } = await supabase
-          .from('blockchain_visibility')
-          .select('network_id, is_visible');
+        const [netRes, tokenRes] = await Promise.all([
+          supabase.from('blockchain_visibility').select('network_id, is_visible'),
+          supabase.from('token_visibility').select('network_id, token_symbol, is_visible'),
+        ]);
         
-        if (!error && data) {
-          const visible = (data as any[])
+        if (!netRes.error && netRes.data) {
+          const visible = (netRes.data as any[])
             .filter(d => d.is_visible)
             .map(d => d.network_id);
           if (visible.length > 0) setVisibleNetworkIds(visible);
         }
+
+        if (!tokenRes.error && tokenRes.data) {
+          const hidden = new Set<string>();
+          (tokenRes.data as any[]).forEach(t => {
+            if (!t.is_visible) hidden.add(`${t.network_id}-${t.token_symbol}`);
+          });
+          setHiddenTokens(hidden);
+        }
       } catch (e) {
-        console.error('Error fetching blockchain visibility:', e);
+        console.error('Error fetching visibility:', e);
       }
     };
     fetchVisibility();
@@ -255,7 +265,9 @@ const NetworkSelector: React.FC<NetworkSelectorProps> = ({
   const currentNetwork = filteredNetworks.find(n => n.id === selectedNetwork) 
     || SUPPORTED_NETWORKS.find(n => n.id === selectedNetwork);
 
-  const availableTokens = currentNetwork?.tokens || [];
+  const availableTokens = (currentNetwork?.tokens || []).filter(
+    t => !hiddenTokens.has(`${currentNetwork?.id}-${t.symbol}`)
+  );
 
   return (
     <div className={`space-y-6 animate-slide-in-up ${className}`}>
