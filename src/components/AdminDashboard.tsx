@@ -2065,6 +2065,13 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
             <BlockchainVisibilityManager />
           </div>
         )}
+
+        {/* Visibilité des Pays */}
+        {section === 'countries' && (
+          <div id="countries" className="scroll-mt-20">
+            <CountryVisibilityManager />
+          </div>
+        )}
       </div>
     </div>
   );
