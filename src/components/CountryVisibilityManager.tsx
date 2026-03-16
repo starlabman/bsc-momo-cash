@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Eye, EyeOff, Globe } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Loader2, Eye, EyeOff, Globe, ToggleLeft, ToggleRight } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
@@ -18,6 +19,7 @@ const CountryVisibilityManager: React.FC = () => {
   const [visibilities, setVisibilities] = useState<CountryVisibility[]>([]);
   const [loading, setLoading] = useState(true);
   const [togglingId, setTogglingId] = useState<string | null>(null);
+  const [bulkLoading, setBulkLoading] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -58,7 +60,9 @@ const CountryVisibilityManager: React.FC = () => {
 
       toast({
         title: !currentVisible ? 'Pays activé' : 'Pays désactivé',
-        description: `Le pays sera ${!currentVisible ? 'visible' : 'masqué'} sur les formulaires.`,
+        description: !currentVisible
+          ? 'Le pays est maintenant visible.'
+          : 'Le pays et ses opérateurs liés ont été désactivés.',
       });
     } catch (error: any) {
       toast({
@@ -71,7 +75,40 @@ const CountryVisibilityManager: React.FC = () => {
     }
   };
 
+  const handleBulkToggle = async (enableAll: boolean) => {
+    setBulkLoading(true);
+    const token = localStorage.getItem('admin_token');
+
+    try {
+      const { data, error } = await supabase.functions.invoke('toggle-country-visibility', {
+        body: { token, bulk_action: enableAll ? 'enable_all' : 'disable_all' }
+      });
+
+      if (error) throw error;
+      if (!data?.success) throw new Error(data?.error || 'Erreur');
+
+      setVisibilities(prev => prev.map(v => ({ ...v, is_visible: enableAll })));
+
+      toast({
+        title: enableAll ? 'Tous les pays activés' : 'Tous les pays désactivés',
+        description: enableAll
+          ? 'Tous les pays sont maintenant visibles.'
+          : 'Tous les pays et leurs opérateurs liés ont été désactivés.',
+      });
+    } catch (error: any) {
+      toast({
+        title: 'Erreur',
+        description: error.message || 'Impossible de modifier la visibilité',
+        variant: 'destructive',
+      });
+    } finally {
+      setBulkLoading(false);
+    }
+  };
+
   const visibleCount = visibilities.filter(v => v.is_visible).length;
+  const allVisible = visibleCount === visibilities.length;
+  const noneVisible = visibleCount === 0;
 
   if (loading) {
     return (
@@ -93,12 +130,32 @@ const CountryVisibilityManager: React.FC = () => {
               Visibilité des Pays
             </CardTitle>
             <CardDescription>
-              Activez ou désactivez les pays affichés dans les formulaires
+              Désactiver un pays désactive aussi ses opérateurs liés
             </CardDescription>
           </div>
           <Badge variant="outline">
             {visibleCount}/{visibilities.length} actifs
           </Badge>
+        </div>
+        <div className="flex gap-2 pt-2">
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={bulkLoading || allVisible}
+            onClick={() => handleBulkToggle(true)}
+          >
+            {bulkLoading ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <ToggleRight className="h-4 w-4 mr-1" />}
+            Tout activer
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={bulkLoading || noneVisible}
+            onClick={() => handleBulkToggle(false)}
+          >
+            {bulkLoading ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <ToggleLeft className="h-4 w-4 mr-1" />}
+            Tout désactiver
+          </Button>
         </div>
       </CardHeader>
       <CardContent>

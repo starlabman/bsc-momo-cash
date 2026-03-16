@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Eye, EyeOff, Coins, Network } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Loader2, Eye, EyeOff, Coins, ToggleLeft, ToggleRight } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { SUPPORTED_NETWORKS } from '@/components/NetworkSelector';
@@ -18,6 +19,7 @@ const TokenVisibilityManager: React.FC = () => {
   const [tokens, setTokens] = useState<TokenVisibility[]>([]);
   const [loading, setLoading] = useState(true);
   const [togglingKey, setTogglingKey] = useState<string | null>(null);
+  const [bulkLoading, setBulkLoading] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -77,9 +79,38 @@ const TokenVisibilityManager: React.FC = () => {
     }
   };
 
-  const visibleCount = tokens.filter(t => t.is_visible).length;
+  const handleBulkToggle = async (enableAll: boolean) => {
+    setBulkLoading(true);
+    const token = localStorage.getItem('admin_token');
 
-  // Group by network
+    try {
+      const { data, error } = await supabase.functions.invoke('toggle-token-visibility', {
+        body: { token, bulk_action: enableAll ? 'enable_all' : 'disable_all' }
+      });
+
+      if (error) throw error;
+      if (!data?.success) throw new Error(data?.error || 'Erreur');
+
+      setTokens(prev => prev.map(t => ({ ...t, is_visible: enableAll })));
+
+      toast({
+        title: enableAll ? 'Tous les tokens activés' : 'Tous les tokens désactivés',
+      });
+    } catch (error: any) {
+      toast({
+        title: 'Erreur',
+        description: error.message || 'Impossible de modifier la visibilité',
+        variant: 'destructive',
+      });
+    } finally {
+      setBulkLoading(false);
+    }
+  };
+
+  const visibleCount = tokens.filter(t => t.is_visible).length;
+  const allVisible = visibleCount === tokens.length;
+  const noneVisible = visibleCount === 0;
+
   const groupedByNetwork = SUPPORTED_NETWORKS.map(network => ({
     ...network,
     tokens: tokens.filter(t => t.network_id === network.id),
@@ -111,6 +142,26 @@ const TokenVisibilityManager: React.FC = () => {
           <Badge variant="outline">
             {visibleCount}/{tokens.length} actifs
           </Badge>
+        </div>
+        <div className="flex gap-2 pt-2">
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={bulkLoading || allVisible}
+            onClick={() => handleBulkToggle(true)}
+          >
+            {bulkLoading ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <ToggleRight className="h-4 w-4 mr-1" />}
+            Tout activer
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={bulkLoading || noneVisible}
+            onClick={() => handleBulkToggle(false)}
+          >
+            {bulkLoading ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <ToggleLeft className="h-4 w-4 mr-1" />}
+            Tout désactiver
+          </Button>
         </div>
       </CardHeader>
       <CardContent className="space-y-6">
