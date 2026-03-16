@@ -17,7 +17,7 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    const { token, operator_id, is_visible } = await req.json();
+    const { token, operator_id, is_visible, bulk_action, country_id: bulk_country_id } = await req.json();
 
     if (!token) {
       return new Response(JSON.stringify({ error: 'Token requis' }), {
@@ -29,6 +29,22 @@ serve(async (req) => {
     if (!validToken) {
       return new Response(JSON.stringify({ error: 'Token invalide' }), {
         status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Bulk toggle all operators
+    if (bulk_action === 'enable_all' || bulk_action === 'disable_all') {
+      const newVisible = bulk_action === 'enable_all';
+
+      const { error } = await supabase
+        .from('mobile_operators')
+        .update({ is_visible: newVisible })
+        .neq('id', '00000000-0000-0000-0000-000000000000');
+
+      if (error) throw error;
+
+      return new Response(JSON.stringify({ success: true, bulk: true }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 

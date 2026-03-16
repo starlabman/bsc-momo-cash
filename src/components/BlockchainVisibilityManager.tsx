@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Eye, EyeOff, Network, AlertTriangle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Loader2, Eye, EyeOff, Network, AlertTriangle, ToggleLeft, ToggleRight } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { SUPPORTED_NETWORKS } from '@/components/NetworkSelector';
@@ -28,6 +29,7 @@ const BlockchainVisibilityManager: React.FC = () => {
   const [visibilities, setVisibilities] = useState<BlockchainVisibility[]>([]);
   const [loading, setLoading] = useState(true);
   const [togglingId, setTogglingId] = useState<string | null>(null);
+  const [bulkLoading, setBulkLoading] = useState(false);
   const [pendingCounts, setPendingCounts] = useState<Record<string, number>>({});
   const [confirmDialog, setConfirmDialog] = useState<{
     open: boolean;
@@ -92,7 +94,6 @@ const BlockchainVisibilityManager: React.FC = () => {
   };
 
   const handleToggle = async (networkId: string, networkName: string, currentVisible: boolean) => {
-    // If disabling, check for pending transactions first
     if (currentVisible) {
       const pendingCount = await checkPendingTransactions(networkId);
       if (pendingCount > 0) {
@@ -121,7 +122,9 @@ const BlockchainVisibilityManager: React.FC = () => {
 
       toast({
         title: !currentVisible ? 'Réseau activé' : 'Réseau désactivé',
-        description: `Le réseau sera ${!currentVisible ? 'visible' : 'masqué'} sur la page d'accueil.`,
+        description: !currentVisible
+          ? 'Le réseau est maintenant visible.'
+          : 'Le réseau et ses tokens liés ont été désactivés.',
       });
     } catch (error: any) {
       toast({
@@ -134,11 +137,44 @@ const BlockchainVisibilityManager: React.FC = () => {
     }
   };
 
+  const handleBulkToggle = async (enableAll: boolean) => {
+    setBulkLoading(true);
+    const token = localStorage.getItem('admin_token');
+
+    try {
+      const { data, error } = await supabase.functions.invoke('toggle-blockchain-visibility', {
+        body: { token, bulk_action: enableAll ? 'enable_all' : 'disable_all' }
+      });
+
+      if (error) throw error;
+      if (!data?.success) throw new Error(data?.error || 'Erreur');
+
+      setVisibilities(prev => prev.map(v => ({ ...v, is_visible: enableAll })));
+
+      toast({
+        title: enableAll ? 'Tous les réseaux activés' : 'Tous les réseaux désactivés',
+        description: enableAll
+          ? 'Tous les réseaux sont maintenant visibles.'
+          : 'Tous les réseaux et leurs tokens liés ont été désactivés.',
+      });
+    } catch (error: any) {
+      toast({
+        title: 'Erreur',
+        description: error.message || 'Impossible de modifier la visibilité',
+        variant: 'destructive',
+      });
+    } finally {
+      setBulkLoading(false);
+    }
+  };
+
   const getNetworkIcon = (networkId: string) => {
     return SUPPORTED_NETWORKS.find(n => n.id === networkId)?.icon;
   };
 
   const visibleCount = visibilities.filter(v => v.is_visible).length;
+  const allVisible = visibleCount === visibilities.length;
+  const noneVisible = visibleCount === 0;
 
   if (loading) {
     return (
@@ -161,12 +197,32 @@ const BlockchainVisibilityManager: React.FC = () => {
                 Visibilité des Blockchains
               </CardTitle>
               <CardDescription>
-                Activez ou désactivez les réseaux blockchain affichés sur la page d'accueil
+                Désactiver un réseau désactive aussi ses tokens liés
               </CardDescription>
             </div>
             <Badge variant="outline">
               {visibleCount}/{visibilities.length} actifs
             </Badge>
+          </div>
+          <div className="flex gap-2 pt-2">
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={bulkLoading || allVisible}
+              onClick={() => handleBulkToggle(true)}
+            >
+              {bulkLoading ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <ToggleRight className="h-4 w-4 mr-1" />}
+              Tout activer
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={bulkLoading || noneVisible}
+              onClick={() => handleBulkToggle(false)}
+            >
+              {bulkLoading ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <ToggleLeft className="h-4 w-4 mr-1" />}
+              Tout désactiver
+            </Button>
           </div>
         </CardHeader>
         <CardContent>
@@ -243,7 +299,7 @@ const BlockchainVisibilityManager: React.FC = () => {
             <AlertDialogDescription>
               Le réseau <strong>{confirmDialog.networkName}</strong> a actuellement{' '}
               <strong>{confirmDialog.pendingCount} transaction{confirmDialog.pendingCount > 1 ? 's' : ''} non traitée{confirmDialog.pendingCount > 1 ? 's' : ''}</strong>.
-              Désactiver ce réseau le masquera sur la page d'accueil mais n'affectera pas les transactions existantes.
+              Désactiver ce réseau le masquera sur la page d'accueil et désactivera ses tokens liés.
               Voulez-vous continuer ?
             </AlertDialogDescription>
           </AlertDialogHeader>

@@ -17,7 +17,7 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    const { token, country_id, is_visible } = await req.json();
+    const { token, country_id, is_visible, bulk_action } = await req.json();
 
     if (!token) {
       return new Response(JSON.stringify({ error: 'Token requis' }), {
@@ -29,6 +29,38 @@ serve(async (req) => {
     if (!validToken) {
       return new Response(JSON.stringify({ error: 'Token invalide' }), {
         status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Bulk toggle all countries
+    if (bulk_action === 'enable_all' || bulk_action === 'disable_all') {
+      const newVisible = bulk_action === 'enable_all';
+
+      const { error } = await supabase
+        .from('country_visibility')
+        .update({ is_visible: newVisible })
+        .neq('id', '00000000-0000-0000-0000-000000000000'); // match all
+
+      if (error) throw error;
+
+      // Cascade: get all country IDs and update their operators
+      const { data: allCountries } = await supabase
+        .from('country_visibility')
+        .select('country_id');
+
+      if (allCountries && allCountries.length > 0) {
+        const countryIds = allCountries.map((c: any) => c.country_id);
+        if (!newVisible) {
+          // Disable all operators for all countries
+          await supabase
+            .from('mobile_operators')
+            .update({ is_visible: false })
+            .in('country_id', countryIds);
+        }
+      }
+
+      return new Response(JSON.stringify({ success: true, bulk: true }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
@@ -46,6 +78,14 @@ serve(async (req) => {
       .single();
 
     if (error) throw error;
+
+    // Cascade: when disabling a country, disable all its operators
+    if (!is_visible) {
+      await supabase
+        .from('mobile_operators')
+        .update({ is_visible: false })
+        .eq('country_id', country_id);
+    }
 
     return new Response(JSON.stringify({ success: true, data }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
