@@ -1,4 +1,4 @@
-# Crypto Offramp/Onramp Platform
+# SikaPay — Plateforme Crypto Offramp/Onramp
 
 Une plateforme complète de conversion blockchain-mobile money permettant des conversions transparentes entre cryptomonnaies et monnaies fiduciaires (XOF) via les opérateurs de mobile money.
 
@@ -6,178 +6,120 @@ Une plateforme complète de conversion blockchain-mobile money permettant des co
 
 **URL**: https://lovable.dev/projects/db5817c4-2500-4a73-9883-f2962444934c
 
-## Features
+## Fonctionnalités
 
-### Core Functionality
-
-#### 🔄 Offramp (Crypto to Fiat)
+### 🔄 Offramp (Crypto → Mobile Money)
 - Conversion de cryptomonnaies vers mobile money (XOF)
-- Support de multiples tokens (USDT, USDC, BUSD, DAI, etc.)
-- Support multi-réseaux (BSC, Ethereum, Polygon, Avalanche, Arbitrum, Optimism)
+- Support multi-tokens : USDT, USDC, BUSD, DAI, etc.
+- Support multi-réseaux : BSC, Ethereum, Polygon, Avalanche, Arbitrum, Optimism
 - Calculs de taux de change en temps réel avec marges configurables
 - Suivi et traitement automatique des événements blockchain
 - Transfert direct vers les opérateurs mobile money (MTN, Moov, Orange, Wave, Free)
+- **Adresse de paiement unique visuelle** liée à chaque référence de transaction
 
-#### 💰 Onramp (Fiat to Crypto)
+### 💰 Onramp (Mobile Money → Crypto)
 - Conversion de mobile money vers cryptomonnaies
 - Support de multiples réseaux blockchain
 - Validation sécurisée des adresses de portefeuilles destinataires
 - Intégration des opérateurs mobiles spécifiques par pays
 - Calculs des montants crypto en temps réel
+- **Identifiant de paiement unique** affiché pour chaque transaction
 
-#### 🔗 Payment Links (Paiement par Lien)
-- **Création de demandes de paiement partageable**: Initiez une demande et générez un lien unique
-- **Liens sécurisés avec expiration**: Validité de 7 jours pour chaque lien
-- **Support Offramp et Onramp**: Fonctionne pour les deux types de transactions
-- **QR Code intégré**: Scan facile pour les paiements crypto
-- **Partage multi-canal**: Copie, partage natif, ou QR code
-- **Informations complètes**: Affichage des montants, adresses, et instructions de paiement
-- **Suivi du statut**: Visibilité en temps réel de l'état de la transaction
+### 🔗 Liens de Paiement
+- Création de demandes de paiement partageables avec lien unique
+- Liens sécurisés avec expiration (7 jours)
+- Support Offramp et Onramp
+- QR Code intégré pour scan facile
+- Partage multi-canal : copie, partage natif, QR code
+- Suivi du statut en temps réel
 
-### Blockchain Integration
+### ⛓️ Intégration Blockchain
+- **Multi-Network** : BSC, Ethereum, Polygon, Avalanche, Arbitrum, Optimism
+- **Multi-Token** : USDT, USDC, BUSD, DAI et autres stablecoins
+- **Suivi de transactions** : Monitoring complet des événements blockchain
+- **Statistiques réseau** : Analytiques en temps réel sur l'utilisation et les volumes
 
-- **Multi-Network Support**: BSC, Ethereum, Polygon, Avalanche, Arbitrum, Optimism
-- **Wallet Connection**: Integration with multiple wallet providers via WagmiConfig
-- **Token Support**: USDT, USDC, BUSD, DAI, and other stablecoins
-- **Transaction Tracking**: Comprehensive blockchain event monitoring
-- **Network Statistics**: Real-time analytics on network usage and volumes
+### 🛡️ Dashboard Admin
 
-### Admin Dashboard
+#### Gestion des requêtes
+- Vue et gestion de toutes les requêtes offramp/onramp
+- Filtres par statut (pending, processing, paid, failed, completed)
+- Mise à jour du statut et ajout de notes
+- Suivi des hash de transaction
+- Pagination pour les grands jeux de données
 
-#### 📊 Request Management
-- View and manage all offramp/onramp requests
-- Filter by status (pending, processing, paid, failed, completed)
-- Update request status and add notes
-- Transaction hash tracking
-- Pagination for large datasets
+#### Analytiques & Statistiques
+- Compteurs de requêtes (offramp/onramp)
+- Répartition par statut
+- Suivi des volumes (USD et XOF)
+- Statistiques blockchain et réseau
 
-#### 📈 Analytics & Statistics
-- Total request counts (offramp/onramp)
-- Status breakdown (pending, processing, paid, failed)
-- Volume tracking (USD and XOF)
-- Blockchain event statistics
-- Network usage analytics:
-  - Volume by network
-  - Transaction counts per network
-  - Most/least used networks
-  - Unique token tracking per network
+#### Gestion de la Visibilité (avec cascade)
+- **Pays** : Activer/désactiver des pays — la désactivation d'un pays désactive automatiquement ses opérateurs liés
+- **Opérateurs** : Activer/désactiver des opérateurs mobile money
+- **Blockchains** : Activer/désactiver des réseaux — la désactivation d'un réseau désactive automatiquement ses tokens liés
+- **Tokens** : Activer/désactiver des tokens par réseau
+- **Actions groupées** : Boutons « Tout activer / Tout désactiver » pour chaque section
 
-#### 🔐 Security Features
-- Admin authentication with JWT tokens
-- Rate limiting on authentication endpoints
-- Audit logging for all admin actions
-- IP address tracking
-- Session management with token expiration
-- Row-Level Security (RLS) policies
+#### Sécurité
+- Authentification admin avec JWT
+- Rate limiting sur les endpoints d'authentification
+- Audit logging de toutes les actions admin
+- Tracking d'adresse IP
+- Gestion de session avec expiration de token
+- Row-Level Security (RLS)
 
-### Country & Operator Support
+### 🌍 Support Pays & Opérateurs
+- Support multi-pays avec préfixes téléphoniques
+- Opérateurs : MTN, Moov, Orange, Wave, Free
+- Détection automatique de l'opérateur depuis le numéro
+- Validation par pattern des numéros mobiles
 
-- **Multi-Country Support**: Configurable country list with phone prefixes
-- **Mobile Operators**: MTN, Moov, Orange, Wave, Free
-- **Smart Detection**: Automatic operator detection from phone numbers
-- **Number Validation**: Pattern-based validation for mobile numbers
+### 💱 Gestion des Taux de Change
+- Taux de change en temps réel (APIs multiples avec fallback)
+- Marges de profit configurables
+- Support des paires USD/XOF
+- Affichage transparent des taux
 
-### Exchange Rate Management
-
-- Real-time exchange rate updates
-- Configurable profit margins
-- Support for multiple currency pairs (USD/XOF)
-- Transparent rate display to users
-
-### Database & Backend
-
-- **Supabase Backend**: Intégration full-stack
-- **Edge Functions**: Fonctions serverless pour:
-  - Création de demandes offramp
-  - Création de demandes onramp
+### 🗄️ Backend & Base de Données
+- **Supabase** : Backend full-stack
+- **Edge Functions** :
+  - Création de demandes offramp/onramp
   - Récupération des taux de change
-  - Authentification admin
-  - Données du tableau de bord admin
-  - Journal d'audit
+  - Authentification et validation admin
+  - Dashboard admin
+  - Audit logging
   - Récupération des demandes de paiement par lien
-- **Database Tables**:
-  - Pays et opérateurs mobiles
-  - Demandes offramp/onramp (avec support des liens de paiement)
-  - Événements blockchain
-  - Taux de change
-  - Utilisateurs admin et journaux d'audit
+  - Toggle de visibilité (pays, opérateurs, blockchains, tokens) avec cascade
+  - Recherche de transactions
+  - Monitoring blockchain et webhooks
+- **Tables principales** : countries, mobile_operators, offramp_requests, onramp_requests, blockchain_events, exchange_rates, admin_users, admin_audit_logs, blockchain_visibility, country_visibility, token_visibility
 
-### Payment Link System
+## Stack Technique
 
-- **Token-based Links**: Chaque demande peut générer un token unique (UUID)
-- **Expiration automatique**: Les liens expirent après 7 jours
-- **Public Access**: RLS policies permettent l'accès public via token valide
-- **Type Detection**: Différenciation automatique entre offramp et onramp
-- **Requester Information**: Stockage du nom du demandeur et infos additionnelles
-- **Payment Instructions**: Instructions détaillées pour effectuer le paiement
-- **Status Tracking**: Suivi de l'état `paid_via_link` pour les paiements complétés
+- **Frontend** : React, TypeScript, Vite
+- **UI** : Tailwind CSS, shadcn/ui
+- **Backend** : Supabase (Edge Functions, PostgreSQL, RLS)
+- **Autres** : React Query, React Router, Recharts, QRCode.react, Zod
 
-### User Interface
-
-- Responsive design with Tailwind CSS
-- Dark/light mode support
-- Real-time form validation
-- QR code generation for wallet addresses
-- Toast notifications for user feedback
-- Comprehensive error handling
-
-## How can I edit this code?
-
-There are several ways of editing your application.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
+## Développement Local
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
+# Cloner le repo
 git clone <YOUR_GIT_URL>
 
-# Step 2: Navigate to the project directory.
+# Naviguer dans le projet
 cd <YOUR_PROJECT_NAME>
 
-# Step 3: Install the necessary dependencies.
+# Installer les dépendances
 npm i
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Lancer le serveur de développement
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+## Domaine Personnalisé
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+Pour connecter un domaine, allez dans Project > Settings > Domains et cliquez sur Connect Domain.
 
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+Plus d'infos : [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
