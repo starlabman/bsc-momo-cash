@@ -316,12 +316,22 @@ const OnrampForm = () => {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            {/* Reference ID prominently displayed */}
-            <div className="p-3 bg-primary/10 border border-primary/20 rounded-lg text-center">
-              <Label className="text-xs text-muted-foreground">Référence de transaction</Label>
-              <p className="text-xl font-bold font-mono text-primary">{request.reference_id}</p>
-              <p className="text-xs text-muted-foreground mt-1">Mentionnez cette référence lors du paiement</p>
+            {/* Unique Payment Identity - Reference + Deposit Info combined */}
+            <div className="p-4 bg-primary/5 border-2 border-primary/30 rounded-xl space-y-3">
+              <div className="flex items-center justify-center gap-2">
+                <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
+                <Label className="text-xs font-semibold uppercase tracking-wider text-primary">
+                  Identifiant de paiement unique
+                </Label>
+              </div>
+              <div className="text-center">
+                <p className="text-2xl font-bold font-mono text-primary tracking-wide">{request.reference_id}</p>
+              </div>
+              <p className="text-[11px] text-center text-muted-foreground">
+                🔒 Ce code identifie votre transaction de manière unique
+              </p>
             </div>
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Montant à envoyer</Label>
