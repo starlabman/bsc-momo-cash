@@ -9,8 +9,11 @@ import TestimonialsSection from '@/components/TestimonialsSection';
 import TransactionHistory from '@/components/TransactionHistory';
 import FloatingParticles from '@/components/FloatingParticles';
 import ScrollReveal from '@/components/ScrollReveal';
+import { useTranslation } from 'react-i18next';
 
 const Index = () => {
+  const { t } = useTranslation();
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 relative overflow-hidden">
       <FloatingParticles />
@@ -30,17 +33,17 @@ const Index = () => {
             <div className="space-y-6 relative z-10">
               <h2 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold leading-tight">
                 <span className="inline-block animate-fade-in opacity-0 [animation-delay:0.1s] [animation-fill-mode:forwards] bg-gradient-to-r from-primary via-violet-500 to-primary bg-clip-text text-transparent">
-                  Échangez Crypto
+                  {t('hero.title1')}
                 </span>
                 <span className="inline-block mx-3 md:mx-4 animate-fade-in opacity-0 [animation-delay:0.3s] [animation-fill-mode:forwards] text-primary/80 animate-pulse">
                   ↔
                 </span>
                 <span className="inline-block animate-fade-in opacity-0 [animation-delay:0.5s] [animation-fill-mode:forwards] bg-gradient-to-r from-orange-400 via-amber-500 to-orange-600 bg-clip-text text-transparent">
-                  Mobile Money
+                  {t('hero.title2')}
                 </span>
               </h2>
               <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-muted-foreground max-w-3xl mx-auto px-2 animate-fade-in opacity-0 [animation-delay:0.8s] [animation-fill-mode:forwards] font-medium leading-relaxed">
-                Solution multi-blockchain rapide et sécurisée pour vos conversions crypto ↔ XOF
+                {t('hero.subtitle')}
               </p>
               
               {/* Animated underline */}
@@ -62,8 +65,8 @@ const Index = () => {
                     data-[state=active]:text-white data-[state=active]:shadow-xl data-[state=active]:shadow-primary/30 data-[state=active]:scale-[1.02]"
                 >
                   <ArrowRightLeft className="h-4 w-4 sm:h-5 sm:w-5 transition-transform duration-300 group-hover:rotate-180" />
-                  <span className="hidden sm:inline">Crypto → Mobile Money</span>
-                  <span className="sm:hidden text-[11px]">Crypto → MoMo</span>
+                  <span className="hidden sm:inline">{t('tabs.cryptoToMomo')}</span>
+                  <span className="sm:hidden text-[11px]">{t('tabs.cryptoToMomoShort')}</span>
                 </TabsTrigger>
                 <TabsTrigger 
                   value="momo-to-crypto" 
@@ -73,8 +76,8 @@ const Index = () => {
                     data-[state=active]:text-white data-[state=active]:shadow-xl data-[state=active]:shadow-orange-500/30 data-[state=active]:scale-[1.02]"
                 >
                   <ArrowDownUp className="h-4 w-4 sm:h-5 sm:w-5 transition-transform duration-300" />
-                  <span className="hidden sm:inline">Mobile Money → Crypto</span>
-                  <span className="sm:hidden text-[11px]">MoMo → Crypto</span>
+                  <span className="hidden sm:inline">{t('tabs.momoToCrypto')}</span>
+                  <span className="sm:hidden text-[11px]">{t('tabs.momoToCryptoShort')}</span>
                 </TabsTrigger>
               </TabsList>
               

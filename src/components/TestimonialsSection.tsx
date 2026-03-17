@@ -2,6 +2,7 @@ import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Star, Quote } from 'lucide-react';
 import ScrollReveal from '@/components/ScrollReveal';
+import { useTranslation } from 'react-i18next';
 
 interface Testimonial {
   name: string;
@@ -38,21 +39,23 @@ const testimonials: Testimonial[] = [
     country: "🇧🇫 Burkina Faso",
     avatar: "AB",
     rating: 5,
-    text: "J'utilise CryptoMoMo depuis 3 mois. Transactions toujours réussies, jamais eu de problème. Top !"
+    text: "J'utilise SikaPay depuis 3 mois. Transactions toujours réussies, jamais eu de problème. Top !"
   }
 ];
 
 const TestimonialsSection = () => {
+  const { t } = useTranslation();
+
   return (
     <section className="py-10 sm:py-16 px-3 sm:px-4">
       <div className="max-w-6xl mx-auto">
         <ScrollReveal>
           <div className="text-center mb-8 sm:mb-12">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4">
-              Ce que nos clients disent
+              {t('testimonials.title')}
             </h2>
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Plus de 10 000 utilisateurs nous font confiance pour leurs conversions crypto
+              {t('testimonials.subtitle')}
             </p>
           </div>
         </ScrollReveal>
