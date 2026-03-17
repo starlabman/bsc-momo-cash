@@ -332,6 +332,31 @@ const OfframpForm = () => {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Montant à envoyer</Label>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <Badge variant="secondary" className="text-base sm:text-lg px-3 py-2 animate-scale-in">
+                    {request.amount} {request.token}
+                  </Badge>
+                  <ArrowRight className="h-4 w-4 text-muted-foreground" />
+                  <Badge variant="outline" className="text-base sm:text-lg px-3 py-2 animate-scale-in">
+                    {Math.round(request.xof_amount).toLocaleString()} XOF
+                  </Badge>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label>Numéro Mobile Money</Label>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <Smartphone className="h-4 w-4 text-primary" />
+                  <span className="font-medium text-sm sm:text-base">{formatPhoneNumber(request.momo_number)}</span>
+                  {request.momo_provider && (
+                    <Badge variant="outline" className="animate-fade-in">
+                      {request.momo_provider}
+                    </Badge>
+                  )}
+                </div>
+              </div>
+            </div>
 
             <div className="space-y-2">
               <Label>Statut</Label>
