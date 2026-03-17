@@ -3,6 +3,7 @@ import { ArrowRightLeft, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import ThemeToggle from "@/components/ThemeToggle";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 import {
   Sheet,
   SheetContent,
@@ -11,14 +12,16 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { t } = useTranslation();
 
   const navLinks = [
-    { to: "/about", label: "À propos" },
-    { to: "/faq", label: "FAQ" },
-    { to: "/contact", label: "Contact" },
+    { to: "/about", label: t('header.about') },
+    { to: "/faq", label: t('header.faq') },
+    { to: "/contact", label: t('header.contact') },
   ];
 
   return (
@@ -31,14 +34,14 @@ const Header = () => {
             </div>
             <div>
               <h1 className="text-xl sm:text-2xl font-bold bg-gradient-hero bg-clip-text text-transparent">SikaPay</h1>
-              <p className="text-[10px] sm:text-xs text-muted-foreground font-medium hidden xs:block">Crypto ↔ Mobile Money</p>
+              <p className="text-[10px] sm:text-xs text-muted-foreground font-medium hidden xs:block">{t('header.subtitle')}</p>
             </div>
           </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-3">
             <Badge variant="outline" className="text-xs animate-glow-pulse border-primary/30 bg-primary/5">
-              Multi-Blockchain
+              {t('header.multiBl')}
             </Badge>
             {navLinks.map((link) => (
               <Link key={link.to} to={link.to}>
@@ -53,13 +56,15 @@ const Header = () => {
               className="glass-button text-xs hover:bg-primary/10"
               onClick={() => window.location.href = '/admin/login'}
             >
-              Admin
+              {t('header.admin')}
             </Button>
+            <LanguageSwitcher />
             <ThemeToggle />
           </div>
 
           {/* Mobile Navigation */}
           <div className="flex items-center gap-1 md:hidden">
+            <LanguageSwitcher />
             <ThemeToggle />
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <SheetTrigger asChild>
@@ -92,7 +97,7 @@ const Header = () => {
                     window.location.href = '/admin/login';
                   }}
                 >
-                  Admin
+                  {t('header.admin')}
                 </Button>
               </nav>
             </SheetContent>

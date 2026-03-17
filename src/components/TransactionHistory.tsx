@@ -7,7 +7,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Search, History, ArrowUpRight, ArrowDownLeft, Loader2, RefreshCw } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { fr, enUS } from 'date-fns/locale';
+import { useTranslation } from 'react-i18next';
 
 interface Transaction {
   id: string;
@@ -30,23 +31,15 @@ const statusColors: Record<string, string> = {
   expired: 'bg-gray-500/20 text-gray-400 border-gray-500/30',
 };
 
-const statusLabels: Record<string, string> = {
-  pending_payment: 'En attente',
-  pending_momo_payment: 'En attente paiement',
-  received: 'Reçu',
-  processing: 'En cours',
-  paid: 'Payé',
-  completed: 'Terminé',
-  failed: 'Échoué',
-  expired: 'Expiré',
-};
-
 const TransactionHistory = () => {
+  const { t, i18n } = useTranslation();
   const [phoneNumber, setPhoneNumber] = useState('');
   const [searchedPhone, setSearchedPhone] = useState('');
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
+
+  const dateLocale = i18n.language?.startsWith('fr') ? fr : enUS;
 
   const fetchTransactions = async (phone: string) => {
     if (!phone.trim()) return;
@@ -56,7 +49,6 @@ const TransactionHistory = () => {
     setHasSearched(true);
 
     try {
-      // Use edge function to search transactions securely
       const { data, error } = await supabase.functions.invoke('search-transactions', {
         body: { phoneNumber: phone }
       });
@@ -80,14 +72,11 @@ const TransactionHistory = () => {
     }
   };
 
-  // Auto-refresh every 30 seconds when searched
   useEffect(() => {
     if (!searchedPhone) return;
-
     const interval = setInterval(() => {
       fetchTransactions(searchedPhone);
-    }, 30000); // Refresh every 30 seconds
-
+    }, 30000);
     return () => clearInterval(interval);
   }, [searchedPhone]);
 
@@ -101,28 +90,26 @@ const TransactionHistory = () => {
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-xl">
           <History className="h-5 w-5 text-primary" />
-          Historique des Transactions
+          {t('transactions.title')}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
-        {/* Search Form */}
         <form onSubmit={handleSearch} className="flex gap-3">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               type="tel"
-              placeholder="Entrez votre numéro Mobile Money"
+              placeholder={t('transactions.searchPlaceholder')}
               value={phoneNumber}
               onChange={(e) => setPhoneNumber(e.target.value)}
               className="pl-10 bg-background/50 border-primary/20"
             />
           </div>
           <Button type="submit" disabled={loading || !phoneNumber.trim()}>
-            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Rechercher'}
+            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : t('transactions.search')}
           </Button>
         </form>
 
-        {/* Results */}
         {hasSearched && (
           <div className="space-y-4">
             {loading ? (
@@ -132,13 +119,13 @@ const TransactionHistory = () => {
             ) : transactions.length === 0 ? (
               <div className="text-center py-12 text-muted-foreground">
                 <History className="h-12 w-12 mx-auto mb-3 opacity-50" />
-                <p>Aucune transaction trouvée pour ce numéro</p>
+                <p>{t('transactions.noResults')}</p>
               </div>
             ) : (
               <>
                 <div className="flex items-center justify-between">
                   <p className="text-sm text-muted-foreground">
-                    {transactions.length} transaction(s) trouvée(s)
+                    {t('transactions.found', { count: transactions.length })}
                   </p>
                   <Button
                     variant="ghost"
@@ -147,7 +134,7 @@ const TransactionHistory = () => {
                     className="gap-2"
                   >
                     <RefreshCw className="h-4 w-4" />
-                    <span className="hidden sm:inline">Actualiser</span>
+                    <span className="hidden sm:inline">{t('transactions.refresh')}</span>
                   </Button>
                 </div>
 
@@ -163,24 +150,24 @@ const TransactionHistory = () => {
                             <ArrowDownLeft className="h-4 w-4 text-blue-400" />
                           )}
                           <span className="text-sm font-medium">
-                            {tx.type === 'onramp' ? 'Achat Crypto' : 'Vente Crypto'}
+                            {tx.type === 'onramp' ? t('transactions.buyCrypto') : t('transactions.sellCrypto')}
                           </span>
                         </div>
                         <Badge 
                           variant="outline" 
                           className={`text-[10px] ${statusColors[tx.status] || 'bg-gray-500/20 text-gray-400'}`}
                         >
-                          {statusLabels[tx.status] || tx.status}
+                          {t(`statuses.${tx.status}`, tx.status)}
                         </Badge>
                       </div>
                       <div className="flex items-center justify-between text-sm">
                         <span className="font-semibold">{tx.xof_amount.toLocaleString('fr-FR')} XOF</span>
                         <span className="text-xs text-muted-foreground">
-                          {format(new Date(tx.created_at), 'dd MMM HH:mm', { locale: fr })}
+                          {format(new Date(tx.created_at), 'dd MMM HH:mm', { locale: dateLocale })}
                         </span>
                       </div>
                       <div className="text-xs font-mono text-muted-foreground truncate">
-                        Réf: {tx.reference_id}
+                        {t('transactions.ref')}: {tx.reference_id}
                       </div>
                     </div>
                   ))}
@@ -191,11 +178,11 @@ const TransactionHistory = () => {
                   <Table>
                     <TableHeader>
                       <TableRow className="bg-muted/30">
-                        <TableHead>Type</TableHead>
-                        <TableHead>Date</TableHead>
-                        <TableHead>Montant XOF</TableHead>
-                        <TableHead>Statut</TableHead>
-                        <TableHead>Référence</TableHead>
+                        <TableHead>{t('transactions.type')}</TableHead>
+                        <TableHead>{t('transactions.date')}</TableHead>
+                        <TableHead>{t('transactions.amountXof')}</TableHead>
+                        <TableHead>{t('transactions.statusCol')}</TableHead>
+                        <TableHead>{t('transactions.reference')}</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -206,18 +193,18 @@ const TransactionHistory = () => {
                               {tx.type === 'onramp' ? (
                                 <>
                                   <ArrowUpRight className="h-4 w-4 text-green-400" />
-                                  <span className="text-sm">Achat Crypto</span>
+                                  <span className="text-sm">{t('transactions.buyCrypto')}</span>
                                 </>
                               ) : (
                                 <>
                                   <ArrowDownLeft className="h-4 w-4 text-blue-400" />
-                                  <span className="text-sm">Vente Crypto</span>
+                                  <span className="text-sm">{t('transactions.sellCrypto')}</span>
                                 </>
                               )}
                             </div>
                           </TableCell>
                           <TableCell className="text-sm text-muted-foreground whitespace-nowrap">
-                            {format(new Date(tx.created_at), 'dd MMM yyyy HH:mm', { locale: fr })}
+                            {format(new Date(tx.created_at), 'dd MMM yyyy HH:mm', { locale: dateLocale })}
                           </TableCell>
                           <TableCell className="font-medium whitespace-nowrap">
                             {tx.xof_amount.toLocaleString('fr-FR')} XOF
@@ -227,7 +214,7 @@ const TransactionHistory = () => {
                               variant="outline" 
                               className={statusColors[tx.status] || 'bg-gray-500/20 text-gray-400'}
                             >
-                              {statusLabels[tx.status] || tx.status}
+                              {t(`statuses.${tx.status}`, tx.status)}
                             </Badge>
                           </TableCell>
                           <TableCell className="text-sm font-mono text-muted-foreground">

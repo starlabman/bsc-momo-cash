@@ -1,0 +1,285 @@
+{
+  "header": {
+    "about": "About",
+    "faq": "FAQ",
+    "contact": "Contact",
+    "admin": "Admin",
+    "multiBl": "Multi-Blockchain",
+    "subtitle": "Crypto ↔ Mobile Money"
+  },
+  "hero": {
+    "title1": "Exchange Crypto",
+    "title2": "Mobile Money",
+    "subtitle": "Fast and secure multi-blockchain solution for your crypto ↔ XOF conversions"
+  },
+  "tabs": {
+    "cryptoToMomo": "Crypto → Mobile Money",
+    "cryptoToMomoShort": "Crypto → MoMo",
+    "momoToCrypto": "Mobile Money → Crypto",
+    "momoToCryptoShort": "MoMo → Crypto"
+  },
+  "offramp": {
+    "title": "Crypto → Mobile Money",
+    "description": "Convert your tokens to XOF",
+    "noKyc": "No KYC",
+    "amountLabel": "Amount in USD",
+    "amountPlaceholder": "E.g.: 50",
+    "amountRange": "Min: 5 USD • Max: 1,000 USD",
+    "phoneLabel": "Mobile Money Number",
+    "submitBtn": "Submit Request",
+    "submitting": "Processing...",
+    "paymentLink": "Generate a payment link",
+    "paymentLinkDesc": "Create a shareable link for someone else to make the payment",
+    "requesterName": "Your name (optional)",
+    "requesterNamePlaceholder": "Requester name",
+    "successTitle": "Request created successfully",
+    "sendExactly": "Send exactly {{amount}} {{token}} to the address below",
+    "uniqueAddress": "Unique Payment Address",
+    "addressLinked": "🔒 This address is linked to your reference",
+    "amountToSend": "Amount to send",
+    "momoNumber": "Mobile Money Number",
+    "status": "Status",
+    "pendingPayment": "Awaiting payment",
+    "newRequest": "New request",
+    "refreshRate": "Refresh rate",
+    "network": "Network",
+    "requestDetails": "Request details",
+    "paymentInfo": "Payment information"
+  },
+  "onramp": {
+    "title": "Mobile Money → Crypto",
+    "description": "Buy tokens with XOF",
+    "noKyc": "No KYC",
+    "amountLabel": "Amount in XOF",
+    "amountPlaceholder": "E.g.: 50000",
+    "amountRange": "Min: 100 XOF • Max: 600,000 XOF",
+    "walletLabel": "Receiving address",
+    "walletPlaceholder": "Your wallet address",
+    "submitBtn": "Buy crypto",
+    "submitting": "Processing...",
+    "paymentLink": "Generate a payment link",
+    "paymentLinkDesc": "Create a shareable link for someone else to make the payment",
+    "requesterName": "Your name (optional)",
+    "requesterNamePlaceholder": "Requester name",
+    "successTitle": "Purchase request created successfully",
+    "sendExactly": "Send exactly {{amount}} XOF via Mobile Money",
+    "uniqueId": "Unique Payment Identifier",
+    "codeIdentifies": "🔒 This code uniquely identifies your transaction",
+    "amountToSend": "Amount to send",
+    "recipientAddress": "Receiving address",
+    "paymentInstructions": "Payment instructions",
+    "destinationNumber": "Destination number:",
+    "notConfigured": "Not configured - Contact support",
+    "exactAmount": "Exact amount:",
+    "referenceToMention": "Reference to mention:",
+    "status": "Status",
+    "pendingMomo": "Awaiting Mobile Money payment",
+    "newRequest": "New request",
+    "refreshRate": "Refresh rate"
+  },
+  "paymentLinkCard": {
+    "title": "Payment link generated",
+    "description": "Share this link with the person who will make the payment",
+    "label": "Payment link",
+    "copied": "Copied!",
+    "copiedDesc": "The link has been copied to clipboard",
+    "copyError": "Unable to copy the link",
+    "validity": "💡 This link is valid for 7 days",
+    "shareInfo": "The recipient can use this link to make the payment"
+  },
+  "transactions": {
+    "title": "Transaction History",
+    "searchPlaceholder": "Enter your Mobile Money number",
+    "search": "Search",
+    "noResults": "No transactions found for this number",
+    "found": "{{count}} transaction(s) found",
+    "refresh": "Refresh",
+    "buyCrypto": "Buy Crypto",
+    "sellCrypto": "Sell Crypto",
+    "type": "Type",
+    "date": "Date",
+    "amountXof": "Amount XOF",
+    "statusCol": "Status",
+    "reference": "Reference",
+    "ref": "Ref"
+  },
+  "statuses": {
+    "pending_payment": "Pending",
+    "pending_momo_payment": "Awaiting payment",
+    "received": "Received",
+    "processing": "Processing",
+    "paid": "Paid",
+    "completed": "Completed",
+    "failed": "Failed",
+    "expired": "Expired"
+  },
+  "testimonials": {
+    "title": "What our customers say",
+    "subtitle": "Over 10,000 users trust us for their crypto conversions"
+  },
+  "footer": {
+    "description": "Multi-blockchain crypto off-ramp to Mobile Money solution.",
+    "networks": "Supported Networks",
+    "navigation": "Navigation",
+    "home": "Home",
+    "about": "About",
+    "faq": "FAQ",
+    "contact": "Contact",
+    "contactTitle": "Contact",
+    "support247": "🕐 24/7 Support",
+    "rights": "© 2024 SikaPay. All rights reserved.",
+    "online": "Service online"
+  },
+  "about": {
+    "title": "About SikaPay",
+    "subtitle": "SikaPay is your trusted gateway between the world of cryptocurrencies and Mobile Money in West Africa.",
+    "missionTitle": "Our Mission",
+    "missionP1": "At SikaPay, we believe everyone should have access to the benefits of decentralized finance. Our mission is to simplify conversion between cryptocurrencies and Mobile Money, offering a fast, secure, and accessible solution for all users in West Africa.",
+    "missionP2": "Whether you want to convert your USDT, USDC, or other stablecoins to CFA francs (XOF), or buy cryptocurrencies with your Mobile Money, SikaPay supports you every step of the way.",
+    "whyTitle": "Why choose SikaPay?",
+    "features": {
+      "noKyc": "No KYC",
+      "noKycDesc": "No identity verification required. Fast and anonymous conversion for your privacy.",
+      "speed": "Speed",
+      "speedDesc": "Transactions processed in minutes. Receive your money on Mobile Money without delay.",
+      "security": "Security",
+      "securityDesc": "Advanced security protocols to protect your transactions and personal data.",
+      "multiChain": "Multi-Blockchain",
+      "multiChainDesc": "Support for 9 networks: Base, BSC, Ethereum, Arbitrum, Optimism, Polygon, Solana, Avalanche, and Lisk.",
+      "accessibility": "Accessibility",
+      "accessibilityDesc": "Simple and intuitive interface, designed for all users, beginners and experts alike.",
+      "support": "24/7 Support",
+      "supportDesc": "Our team is available at all times to assist you with your transactions."
+    },
+    "servicesTitle": "Our Services",
+    "offrampTitle": "Off-Ramp (Crypto → Mobile Money)",
+    "offrampDesc": "Convert your cryptocurrencies to XOF and receive money directly to your Mobile Money account (Orange Money, MTN Mobile Money, Wave, etc.).",
+    "onrampTitle": "On-Ramp (Mobile Money → Crypto)",
+    "onrampDesc": "Buy cryptocurrencies with your Mobile Money. Pay in XOF and receive tokens directly in your blockchain wallet.",
+    "countriesTitle": "Supported Countries",
+    "countriesSubtitle": "SikaPay is available in several West African countries using the CFA franc (XOF).",
+    "ctaTitle": "Ready to get started?",
+    "ctaSubtitle": "Make your first transaction in minutes.",
+    "ctaButton": "Get started now"
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "subtitle": "Find answers to your questions about SikaPay and our crypto/Mobile Money conversion services.",
+    "items": [
+      {
+        "q": "What is SikaPay?",
+        "a": "SikaPay is a conversion platform between cryptocurrencies and Mobile Money. It allows West African users to convert their crypto (USDT, USDC, etc.) to CFA francs (XOF) directly to their Mobile Money, and vice versa."
+      },
+      {
+        "q": "How does Off-Ramp (Crypto → Mobile Money) work?",
+        "a": "To convert your crypto to XOF: 1) Select the token and blockchain network, 2) Enter the amount to convert, 3) Enter your Mobile Money number, 4) Send your crypto to the provided address, 5) Receive your XOF on your Mobile Money within minutes."
+      },
+      {
+        "q": "How does On-Ramp (Mobile Money → Crypto) work?",
+        "a": "To buy crypto with your Mobile Money: 1) Select the desired token and network, 2) Enter the amount in XOF to convert, 3) Enter your blockchain wallet address, 4) Make the Mobile Money payment, 5) Receive your crypto in your wallet."
+      },
+      {
+        "q": "Do I need to create an account or do KYC verification?",
+        "a": "No, SikaPay works without registration or identity verification (KYC). You can make transactions anonymously and quickly, preserving your privacy."
+      },
+      {
+        "q": "What tokens and networks are supported?",
+        "a": "SikaPay supports USDT and USDC stablecoins on 9 blockchain networks: Base, BSC (BNB Smart Chain), Ethereum, Arbitrum, Optimism, Polygon, Solana, Avalanche, and Lisk. More tokens and networks may be added in the future."
+      },
+      {
+        "q": "What Mobile Money operators are accepted?",
+        "a": "We support the major Mobile Money operators in West Africa: Orange Money, MTN Mobile Money, Wave, Moov Money, and Free Money. Availability may vary by country."
+      },
+      {
+        "q": "In which countries is SikaPay available?",
+        "a": "SikaPay is available in WAEMU zone countries using the CFA franc (XOF): Senegal, Mali, Burkina Faso, Ivory Coast, Togo, and Benin."
+      },
+      {
+        "q": "What are the transaction fees?",
+        "a": "Fees are included in the displayed exchange rate. You see exactly how much you will receive before confirming your transaction. No hidden fees are applied."
+      },
+      {
+        "q": "How long does a transaction take?",
+        "a": "Most transactions are processed within minutes. The exact time depends on the blockchain network used and Mobile Money payment confirmation. Typically, expect between 5 and 30 minutes."
+      },
+      {
+        "q": "What is the minimum/maximum amount per transaction?",
+        "a": "The minimum amount is generally 5 USD (approximately 3,000 XOF). The maximum may vary based on your Mobile Money operator's limits and SikaPay policies. Contact our support for large amounts."
+      },
+      {
+        "q": "What if my transaction is pending?",
+        "a": "If your transaction remains pending for more than 30 minutes, first verify that you sent funds to the correct address on the right network. Then contact our support with your transaction number for assistance."
+      },
+      {
+        "q": "How to contact support?",
+        "a": "Our support team is available 24/7. You can reach us via WhatsApp, Telegram, or email. Contact details are available on our website."
+      }
+    ],
+    "moreQTitle": "Have more questions?",
+    "moreQSubtitle": "Our team is available 24/7 to help you.",
+    "startTransaction": "Start a transaction",
+    "learnMore": "Learn more"
+  },
+  "contact": {
+    "title": "Contact Us",
+    "subtitle": "Our team is available 24/7 to answer your questions and assist you with your transactions.",
+    "email": "Email",
+    "emailResponse": "Response within 24h",
+    "whatsapp": "WhatsApp",
+    "whatsappAvail": "Available 24/7",
+    "telegram": "Telegram",
+    "telegramResponse": "Instant response",
+    "sendMessage": "Send us a message",
+    "fullName": "Full name",
+    "fullNamePlaceholder": "Your name",
+    "emailLabel": "Email",
+    "emailPlaceholder": "your@email.com",
+    "subject": "Subject",
+    "subjectPlaceholder": "Subject of your message",
+    "message": "Message",
+    "messagePlaceholder": "Describe your request...",
+    "sending": "Sending...",
+    "send": "Send message",
+    "sent": "Message sent!",
+    "sentDesc": "We will get back to you as soon as possible.",
+    "supportHours": "Support Hours",
+    "supportDesc": "Our team is available to help you at all times.",
+    "whatsappTelegram": "WhatsApp & Telegram",
+    "allDay": "24/7",
+    "emailDelay": "Response within 24h",
+    "coveredAreas": "Covered Areas",
+    "coveredDesc": "SikaPay is available throughout the WAEMU zone.",
+    "urgentHelp": "Need urgent help?",
+    "urgentDesc": "For questions about an ongoing transaction, use WhatsApp or Telegram for a faster response."
+  },
+  "errors": {
+    "fetchRate": "Unable to fetch exchange rate",
+    "error": "Error",
+    "genericError": "An error occurred",
+    "amountRange": "Amount must be between 0 and 1,000 USD",
+    "amountRangeXof": "Amount must be between 0 and 600,000 XOF",
+    "fillFields": "Please fill in all required fields and verify the phone number",
+    "addressRequired": "Receiving address is required",
+    "invalidAddress": "Invalid {{network}} address",
+    "copyError": "Unable to copy"
+  },
+  "success": {
+    "requestCreated": "Request created!",
+    "requestCreatedDesc": "Your conversion request has been created successfully",
+    "buyCreated": "Request created!",
+    "buyCreatedDesc": "Your crypto purchase request has been created successfully",
+    "linkGenerated": "Payment link generated!",
+    "linkGeneratedDesc": "Share the link for someone else to make the payment",
+    "copied": "Copied!",
+    "addressCopied": "The address has been copied"
+  },
+  "common": {
+    "steps": {
+      "network": "Network",
+      "amount": "Amount",
+      "recipient": "Recipient",
+      "wallet": "Wallet",
+      "confirm": "Confirm"
+    }
+  }
+}
