@@ -8,9 +8,11 @@ import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 
 const Contact = () => {
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -23,12 +25,11 @@ const Contact = () => {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // Simulate form submission
     await new Promise(resolve => setTimeout(resolve, 1000));
     
     toast({
-      title: "Message envoyé !",
-      description: "Nous vous répondrons dans les plus brefs délais.",
+      title: t('contact.sent'),
+      description: t('contact.sentDesc'),
     });
     
     setFormData({ name: "", email: "", subject: "", message: "" });
@@ -38,23 +39,23 @@ const Contact = () => {
   const contactMethods = [
     {
       icon: Mail,
-      title: "Email",
+      title: t('contact.email'),
       value: "support@sikapay.com",
-      description: "Réponse sous 24h",
+      description: t('contact.emailResponse'),
       href: "mailto:support@sikapay.com"
     },
     {
       icon: Phone,
-      title: "WhatsApp",
+      title: t('contact.whatsapp'),
       value: "+228 98 24 48 50",
-      description: "Disponible 24/7",
+      description: t('contact.whatsappAvail'),
       href: "https://wa.me/221771234567"
     },
     {
       icon: MessageCircle,
-      title: "Telegram",
+      title: t('contact.telegram'),
       value: "@sikapay_support",
-      description: "Réponse instantanée",
+      description: t('contact.telegramResponse'),
       href: "https://t.me/sikapay_support"
     }
   ];
@@ -63,30 +64,22 @@ const Contact = () => {
     <div className="min-h-screen bg-background">
       <Header />
 
-      {/* Hero Section */}
       <section className="py-16 px-4">
         <div className="container max-w-4xl mx-auto text-center">
           <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-hero bg-clip-text text-transparent">
-            Contactez-nous
+            {t('contact.title')}
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Notre équipe est disponible 24/7 pour répondre à vos questions et vous accompagner dans vos transactions.
+            {t('contact.subtitle')}
           </p>
         </div>
       </section>
 
-      {/* Contact Methods */}
       <section className="py-8 px-4">
         <div className="container max-w-5xl mx-auto">
           <div className="grid md:grid-cols-3 gap-6">
             {contactMethods.map((method, index) => (
-              <a 
-                key={index} 
-                href={method.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block"
-              >
+              <a key={index} href={method.href} target="_blank" rel="noopener noreferrer" className="block">
                 <Card className="border-primary/10 hover:border-primary/30 transition-all hover:shadow-lg h-full">
                   <CardContent className="p-6 text-center">
                     <div className="h-14 w-14 bg-gradient-primary rounded-xl flex items-center justify-center mx-auto mb-4">
@@ -103,56 +96,54 @@ const Contact = () => {
         </div>
       </section>
 
-      {/* Contact Form & Info */}
       <section className="py-12 px-4">
         <div className="container max-w-5xl mx-auto">
           <div className="grid md:grid-cols-2 gap-8">
-            {/* Contact Form */}
             <Card className="border-primary/20">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Send className="h-5 w-5 text-primary" />
-                  Envoyez-nous un message
+                  {t('contact.sendMessage')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="name">Nom complet</Label>
+                    <Label htmlFor="name">{t('contact.fullName')}</Label>
                     <Input
                       id="name"
-                      placeholder="Votre nom"
+                      placeholder={t('contact.fullNamePlaceholder')}
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       required
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
+                    <Label htmlFor="email">{t('contact.emailLabel')}</Label>
                     <Input
                       id="email"
                       type="email"
-                      placeholder="votre@email.com"
+                      placeholder={t('contact.emailPlaceholder')}
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       required
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="subject">Sujet</Label>
+                    <Label htmlFor="subject">{t('contact.subject')}</Label>
                     <Input
                       id="subject"
-                      placeholder="Sujet de votre message"
+                      placeholder={t('contact.subjectPlaceholder')}
                       value={formData.subject}
                       onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                       required
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="message">Message</Label>
+                    <Label htmlFor="message">{t('contact.message')}</Label>
                     <Textarea
                       id="message"
-                      placeholder="Décrivez votre demande..."
+                      placeholder={t('contact.messagePlaceholder')}
                       rows={5}
                       value={formData.message}
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
@@ -164,33 +155,30 @@ const Contact = () => {
                     className="w-full bg-gradient-primary hover:opacity-90"
                     disabled={isSubmitting}
                   >
-                    {isSubmitting ? "Envoi en cours..." : "Envoyer le message"}
+                    {isSubmitting ? t('contact.sending') : t('contact.send')}
                   </Button>
                 </form>
               </CardContent>
             </Card>
 
-            {/* Additional Info */}
             <div className="space-y-6">
               <Card className="border-primary/20">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Clock className="h-5 w-5 text-primary" />
-                    Horaires de support
+                    {t('contact.supportHours')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-muted-foreground mb-4">
-                    Notre équipe est disponible pour vous aider à tout moment.
-                  </p>
+                  <p className="text-muted-foreground mb-4">{t('contact.supportDesc')}</p>
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">WhatsApp & Telegram</span>
-                      <span className="font-medium text-green-500">24h/24 - 7j/7</span>
+                      <span className="text-muted-foreground">{t('contact.whatsappTelegram')}</span>
+                      <span className="font-medium text-green-500">{t('contact.allDay')}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Email</span>
-                      <span className="font-medium">Réponse sous 24h</span>
+                      <span className="text-muted-foreground">{t('contact.email')}</span>
+                      <span className="font-medium">{t('contact.emailDelay')}</span>
                     </div>
                   </div>
                 </CardContent>
@@ -200,13 +188,11 @@ const Contact = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <MapPin className="h-5 w-5 text-primary" />
-                    Zones couvertes
+                    {t('contact.coveredAreas')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-muted-foreground mb-4">
-                    SikaPay est disponible dans toute la zone UEMOA.
-                  </p>
+                  <p className="text-muted-foreground mb-4">{t('contact.coveredDesc')}</p>
                   <div className="flex flex-wrap gap-2">
                     {["🇸🇳 Sénégal", "🇲🇱 Mali", "🇧🇫 Burkina Faso", "🇨🇮 Côte d'Ivoire", "🇹🇬 Togo", "🇧🇯 Bénin"].map((country, index) => (
                       <span key={index} className="px-3 py-1 bg-muted rounded-full text-xs font-medium">
@@ -219,10 +205,8 @@ const Contact = () => {
 
               <Card className="border-primary/20 bg-gradient-to-r from-primary/5 to-primary/10">
                 <CardContent className="p-6">
-                  <h4 className="font-semibold mb-2 text-foreground">Besoin d'aide urgente ?</h4>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Pour les questions concernant une transaction en cours, utilisez WhatsApp ou Telegram pour une réponse plus rapide.
-                  </p>
+                  <h4 className="font-semibold mb-2 text-foreground">{t('contact.urgentHelp')}</h4>
+                  <p className="text-sm text-muted-foreground mb-4">{t('contact.urgentDesc')}</p>
                   <div className="flex gap-3">
                     <a href="https://wa.me/22898244850" target="_blank" rel="noopener noreferrer">
                       <Button size="sm" className="bg-green-600 hover:bg-green-700">
