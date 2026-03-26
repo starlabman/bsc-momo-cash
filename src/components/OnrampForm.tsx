@@ -17,6 +17,7 @@ import { QRCodeSVG } from 'qrcode.react';
 import AmountPresets from './AmountPresets';
 import FormStepIndicator from './FormStepIndicator';
 import LiveConversionPreview from './LiveConversionPreview';
+import { useTranslation } from 'react-i18next';
 
 interface ExchangeRate {
   external_rate: number;
@@ -44,6 +45,7 @@ interface OnrampRequest {
 }
 
 const OnrampForm = () => {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [loadingRate, setLoadingRate] = useState(true);
@@ -54,7 +56,7 @@ const OnrampForm = () => {
   
   const [formData, setFormData] = useState({
     xofAmount: '',
-    network: 'base', // Default to Base for better UX
+    network: 'base',
     token: 'USDC',
     momoNumber: '',
     momoProvider: '',
@@ -68,13 +70,10 @@ const OnrampForm = () => {
   const [selectedOperatorData, setSelectedOperatorData] = useState<MobileOperator | null>(null);
   const [isPhoneNumberValid, setIsPhoneNumberValid] = useState(false);
 
-  // Fetch exchange rate on component mount
   useEffect(() => {
     fetchExchangeRate();
   }, []);
 
-  // Calculate crypto amount when XOF amount or rate changes
-  // Onramp: XOF → Crypto, utilise onramp_rate (taux + 5%)
   useEffect(() => {
     if (formData.xofAmount && exchangeRate) {
       const amount = parseFloat(formData.xofAmount);
@@ -103,8 +102,8 @@ const OnrampForm = () => {
     } catch (error) {
       console.error('Error fetching exchange rate:', error);
       toast({
-        title: "Erreur",
-        description: "Impossible de récupérer le taux de change",
+        title: t('errors.error'),
+        description: t('errors.fetchRate'),
         variant: "destructive",
       });
     } finally {
@@ -120,21 +119,20 @@ const OnrampForm = () => {
       const xofAmount = parseFloat(formData.xofAmount);
       
       if (!xofAmount || xofAmount <= 0 || xofAmount > 600000) {
-        throw new Error('Le montant doit être entre 0 et 600,000 XOF');
+        throw new Error(t('errors.amountRangeXof'));
       }
 
       if (!formData.momoNumber || !selectedCountry || !isPhoneNumberValid) {
-        throw new Error('Veuillez remplir tous les champs requis et vérifier le numéro de téléphone');
+        throw new Error(t('errors.fillFields'));
       }
 
       if (!formData.recipientAddress) {
-        throw new Error('L\'adresse de réception est requise');
+        throw new Error(t('errors.addressRequired'));
       }
 
       const currentNetwork = SUPPORTED_NETWORKS.find(n => n.id === formData.network);
       const tokenInfo = currentNetwork?.tokens.find(t => t.symbol === formData.token);
 
-      // Validate address based on network
       let addressValid = false;
       if (formData.network === 'base' || formData.network === 'bsc' || 
           formData.network === 'ethereum' || formData.network === 'arbitrum' || 
@@ -146,7 +144,7 @@ const OnrampForm = () => {
       }
 
       if (!addressValid) {
-        throw new Error(`Adresse ${currentNetwork?.name} invalide`);
+        throw new Error(t('errors.invalidAddress', { network: currentNetwork?.name }));
       }
 
       const { data, error } = await supabase.functions.invoke('create-onramp-request', {
@@ -167,7 +165,6 @@ const OnrampForm = () => {
       if (error) throw error;
 
       if (data.success) {
-        // Add deposit number from selected operator to request data
         const requestWithDeposit = {
           ...data.data,
           deposit_number: selectedOperatorData?.deposit_number
@@ -176,17 +173,15 @@ const OnrampForm = () => {
         if (data.data.payment_link) {
           setPaymentLinkData({link: data.data.payment_link, type: 'onramp'});
           setRequest(requestWithDeposit);
-          
           toast({
-            title: "Lien de paiement généré !",
-            description: "Partagez le lien pour que quelqu'un d'autre effectue le paiement",
+            title: t('success.linkGenerated'),
+            description: t('success.linkGeneratedDesc'),
           });
         } else {
           setRequest(requestWithDeposit);
-          
           toast({
-            title: "Demande créée !",
-            description: "Votre demande d'achat de crypto a été créée avec succès",
+            title: t('success.buyCreated'),
+            description: t('success.buyCreatedDesc'),
           });
         }
       } else {
@@ -195,8 +190,8 @@ const OnrampForm = () => {
     } catch (error) {
       console.error('Error creating request:', error);
       toast({
-        title: "Erreur",
-        description: error instanceof Error ? error.message : "Une erreur s'est produite",
+        title: t('errors.error'),
+        description: error instanceof Error ? error.message : t('errors.genericError'),
         variant: "destructive",
       });
     } finally {
@@ -209,7 +204,7 @@ const OnrampForm = () => {
     setPaymentLinkData(null);
     setFormData({
       xofAmount: '',
-      network: 'base', // Reset to Base
+      network: 'base',
       token: 'USDC',
       momoNumber: '',
       momoProvider: '',
@@ -225,13 +220,12 @@ const OnrampForm = () => {
 
   const currentNetwork = SUPPORTED_NETWORKS.find(n => n.id === formData.network);
 
-  // Form steps for progress indicator - must be before early return
   const formSteps = useMemo(() => [
-    { id: 'network', label: 'Réseau', completed: !!formData.network && !!formData.token, active: !formData.network },
-    { id: 'amount', label: 'Montant', completed: !!formData.xofAmount && parseFloat(formData.xofAmount) > 0, active: !!formData.network && !formData.xofAmount },
-    { id: 'wallet', label: 'Wallet', completed: !!formData.recipientAddress, active: !!formData.xofAmount && !formData.recipientAddress },
-    { id: 'confirm', label: 'Confirmer', completed: false, active: isPhoneNumberValid && !!formData.recipientAddress },
-  ], [formData.network, formData.token, formData.xofAmount, formData.recipientAddress, isPhoneNumberValid]);
+    { id: 'network', label: t('common.steps.network'), completed: !!formData.network && !!formData.token, active: !formData.network },
+    { id: 'amount', label: t('common.steps.amount'), completed: !!formData.xofAmount && parseFloat(formData.xofAmount) > 0, active: !!formData.network && !formData.xofAmount },
+    { id: 'wallet', label: t('common.steps.wallet'), completed: !!formData.recipientAddress, active: !!formData.xofAmount && !formData.recipientAddress },
+    { id: 'confirm', label: t('common.steps.confirm'), completed: false, active: isPhoneNumberValid && !!formData.recipientAddress },
+  ], [formData.network, formData.token, formData.xofAmount, formData.recipientAddress, isPhoneNumberValid, t]);
 
   const XOF_PRESETS = [5000, 10000, 25000, 50000, 100000, 250000];
 
@@ -243,15 +237,15 @@ const OnrampForm = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Share2 className="h-5 w-5 text-primary" />
-                Lien de paiement généré
+                {t('paymentLinkCard.title')}
               </CardTitle>
               <CardDescription>
-                Partagez ce lien avec la personne qui effectuera le paiement
+                {t('paymentLinkCard.description')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label>Lien de paiement</Label>
+                <Label>{t('paymentLinkCard.label')}</Label>
                 <div className="flex gap-2">
                   <Input
                     value={paymentLinkData.link}
@@ -266,13 +260,13 @@ const OnrampForm = () => {
                       try {
                         await navigator.clipboard.writeText(paymentLinkData.link);
                         toast({
-                          title: "Copié !",
-                          description: "Le lien a été copié dans le presse-papier",
+                          title: t('paymentLinkCard.copied'),
+                          description: t('paymentLinkCard.copiedDesc'),
                         });
                       } catch (err) {
                         toast({
-                          title: "Erreur",
-                          description: "Impossible de copier le lien",
+                          title: t('errors.error'),
+                          description: t('paymentLinkCard.copyError'),
                           variant: "destructive",
                         });
                       }
@@ -293,8 +287,8 @@ const OnrampForm = () => {
               </div>
 
               <div className="text-xs text-muted-foreground">
-                <p>💡 Ce lien est valide pendant 7 jours</p>
-                <p className="mt-1">La personne pourra utiliser ce lien pour effectuer le paiement</p>
+                <p>{t('paymentLinkCard.validity')}</p>
+                <p className="mt-1">{t('paymentLinkCard.shareInfo')}</p>
               </div>
             </CardContent>
           </Card>
@@ -305,36 +299,35 @@ const OnrampForm = () => {
             <div className="flex items-center justify-between">
               <CardTitle className="flex items-center gap-2 text-green-700 dark:text-green-300">
                 <CheckCircle className="h-5 w-5" />
-                {paymentLinkData ? 'Détails de la demande' : 'Demande d\'achat créée avec succès'}
+                {paymentLinkData ? t('onramp.recipientAddress') : t('onramp.successTitle')}
               </CardTitle>
               <Badge variant="outline" className="font-mono text-xs bg-background">
                 {request.reference_id}
               </Badge>
             </div>
             <CardDescription>
-              {paymentLinkData ? 'Informations de paiement' : `Envoyez exactement ${Math.round(request.xof_amount).toLocaleString()} XOF via Mobile Money`}
+              {paymentLinkData ? t('offramp.paymentInfo') : t('onramp.sendExactly', { amount: Math.round(request.xof_amount).toLocaleString() })}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            {/* Unique Payment Identity - Reference + Deposit Info combined */}
             <div className="p-4 bg-primary/5 border-2 border-primary/30 rounded-xl space-y-3">
               <div className="flex items-center justify-center gap-2">
                 <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
                 <Label className="text-xs font-semibold uppercase tracking-wider text-primary">
-                  Identifiant de paiement unique
+                  {t('onramp.uniqueId')}
                 </Label>
               </div>
               <div className="text-center">
                 <p className="text-2xl font-bold font-mono text-primary tracking-wide">{request.reference_id}</p>
               </div>
               <p className="text-[11px] text-center text-muted-foreground">
-                🔒 Ce code identifie votre transaction de manière unique
+                {t('onramp.codeIdentifies')}
               </p>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Montant à envoyer</Label>
+                <Label>{t('onramp.amountToSend')}</Label>
                 <div className="flex items-center gap-2 flex-wrap">
                   <Badge variant="secondary" className="text-base sm:text-lg px-3 py-2 animate-scale-in">
                     {Math.round(request.xof_amount).toLocaleString()} XOF
@@ -346,7 +339,7 @@ const OnrampForm = () => {
                 </div>
               </div>
               <div className="space-y-2">
-                <Label>Adresse de réception</Label>
+                <Label>{t('onramp.recipientAddress')}</Label>
                 <div className="p-2 bg-muted rounded break-all font-mono text-xs">
                   {request.recipient_address}
                 </div>
@@ -354,27 +347,27 @@ const OnrampForm = () => {
             </div>
 
             <div className="space-y-2">
-              <Label>Instructions de paiement</Label>
+              <Label>{t('onramp.paymentInstructions')}</Label>
               <Card className="bg-primary/5 border-primary/20">
                 <CardContent className="pt-4">
                   <div className="space-y-3">
                     <div className="flex items-center gap-2 flex-wrap">
                       <Smartphone className="h-4 w-4 text-primary shrink-0" />
-                      <span className="font-medium">Numéro de destination :</span>
+                      <span className="font-medium">{t('onramp.destinationNumber')}</span>
                       <span className="font-mono font-bold text-primary">
                         {request.deposit_number 
                           ? `${selectedCountryData?.phone_prefix || ''} ${request.deposit_number}`
-                          : 'Non configuré - Contactez le support'
+                          : t('onramp.notConfigured')
                         }
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
                       <DollarSign className="h-4 w-4 text-primary" />
-                      <span className="font-medium">Montant exact :</span>
+                      <span className="font-medium">{t('onramp.exactAmount')}</span>
                       <span className="font-mono">{Math.round(request.xof_amount).toLocaleString()} XOF</span>
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      Référence à mentionner : <span className="font-mono font-bold text-primary">{request.reference_id}</span>
+                      {t('onramp.referenceToMention')} <span className="font-mono font-bold text-primary">{request.reference_id}</span>
                     </p>
                   </div>
                 </CardContent>
@@ -382,18 +375,18 @@ const OnrampForm = () => {
             </div>
 
             <div className="space-y-2">
-              <Label>Statut</Label>
+              <Label>{t('onramp.status')}</Label>
               <Badge 
                 variant={request.status === 'pending_momo_payment' ? 'secondary' : 'default'}
                 className="text-sm px-3 py-1"
               >
-                {request.status === 'pending_momo_payment' ? 'En attente de paiement Mobile Money' : request.status}
+                {request.status === 'pending_momo_payment' ? t('onramp.pendingMomo') : request.status}
               </Badge>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
               <Button onClick={resetForm} variant="outline" className="flex-1 hover-scale">
-                Nouvelle demande
+                {t('onramp.newRequest')}
               </Button>
               <Button 
                 onClick={fetchExchangeRate} 
@@ -406,7 +399,7 @@ const OnrampForm = () => {
                 ) : (
                   <Coins className="h-4 w-4" />
                 )}
-                Actualiser le taux
+                {t('onramp.refreshRate')}
               </Button>
             </div>
           </CardContent>
@@ -417,7 +410,6 @@ const OnrampForm = () => {
 
   return (
     <div className="max-w-2xl mx-auto space-y-6 animate-slide-in-up">
-      {/* Live Conversion Preview - Always visible at top */}
       <LiveConversionPreview
         fromAmount={formData.xofAmount}
         fromCurrency="XOF"
@@ -436,19 +428,18 @@ const OnrampForm = () => {
                 <div className="w-8 h-8 rounded-lg bg-gradient-primary flex items-center justify-center">
                   <DollarSign className="h-4 w-4 text-white" />
                 </div>
-                Mobile Money → Crypto
+                {t('onramp.title')}
               </CardTitle>
               <CardDescription className="mt-1">
-                Achetez des tokens avec XOF
+                {t('onramp.description')}
               </CardDescription>
             </div>
             <Badge variant="outline" className="text-xs gap-1">
               <Sparkles className="h-3 w-3" />
-              Sans KYC
+              {t('onramp.noKyc')}
             </Badge>
           </div>
           
-          {/* Progress Indicator */}
           <div className="mt-4">
             <FormStepIndicator steps={formSteps} />
           </div>
@@ -456,7 +447,6 @@ const OnrampForm = () => {
         
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Network & Token Selection */}
             <div className="space-y-4">
               <NetworkSelector
                 selectedNetwork={formData.network}
@@ -470,15 +460,12 @@ const OnrampForm = () => {
               />
             </div>
 
-            {/* Amount & Wallet Address */}
             <div className="grid grid-cols-1 gap-4">
-              {/* Amount Input with Presets */}
               <div className="space-y-3">
                 <Label htmlFor="xofAmount" className="text-sm font-medium flex items-center gap-2">
-                  💵 Montant à envoyer (XOF)
+                  {t('onramp.amountLabel')}
                 </Label>
                 
-                {/* Quick Amount Presets */}
                 <AmountPresets
                   presets={XOF_PRESETS}
                   currency="XOF"
@@ -489,7 +476,7 @@ const OnrampForm = () => {
                 <Input
                   id="xofAmount"
                   type="number"
-                  placeholder="Ou entrez un montant personnalisé"
+                  placeholder={t('onramp.amountPlaceholder')}
                   min="1000"
                   max="600000"
                   step="1"
@@ -499,32 +486,30 @@ const OnrampForm = () => {
                   required
                 />
                 <p className="text-xs text-muted-foreground">
-                  Min: 1,000 XOF • Max: 600,000 XOF
+                  {t('onramp.amountRange')}
                 </p>
               </div>
 
-              {/* Wallet Address */}
               <div className="space-y-2">
                 <Label htmlFor="recipientAddress" className="text-sm font-medium flex items-center gap-2">
                   <Wallet className="h-4 w-4" />
-                  Adresse de réception ({currentNetwork?.name})
+                  {t('onramp.walletLabel', { network: currentNetwork?.name })}
                 </Label>
                 <Input
                   id="recipientAddress"
                   type="text"
-                  placeholder={formData.network === 'solana' ? 'Adresse Solana (Base58)' : 'Adresse EVM (0x...)'}
+                  placeholder={formData.network === 'solana' ? t('onramp.walletPlaceholder') : t('onramp.walletPlaceholderEvm')}
                   value={formData.recipientAddress}
                   onChange={(e) => setFormData({ ...formData, recipientAddress: e.target.value })}
                   className="text-base font-mono h-11"
                   required
                 />
                 <p className="text-xs text-muted-foreground">
-                  Votre adresse {currentNetwork?.name} pour recevoir les {formData.token}
+                  {t('onramp.walletHint', { network: currentNetwork?.name, token: formData.token })}
                 </p>
               </div>
             </div>
 
-            {/* Country/Operator Selection */}
             <div className="pt-2 border-t border-border/50">
               <CountryOperatorSelector
                 selectedCountry={selectedCountry}
@@ -543,14 +528,13 @@ const OnrampForm = () => {
               />
             </div>
 
-            {/* Payment Link Option */}
             <Card className="bg-muted/30 border-dashed">
               <CardContent className="pt-4 pb-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Link2 className="h-4 w-4 text-muted-foreground" />
                     <Label htmlFor="payment-link-onramp" className="cursor-pointer text-sm">
-                      Générer un lien de paiement
+                      {t('onramp.paymentLink')}
                     </Label>
                   </div>
                   <Switch
@@ -564,11 +548,11 @@ const OnrampForm = () => {
                 
                 {formData.generatePaymentLink && (
                   <div className="space-y-2 mt-4 animate-fade-in">
-                    <Label htmlFor="requester-name-onramp" className="text-xs">Votre nom (optionnel)</Label>
+                    <Label htmlFor="requester-name-onramp" className="text-xs">{t('onramp.requesterName')}</Label>
                     <Input
                       id="requester-name-onramp"
                       type="text"
-                      placeholder="Ex: Jean Dupont"
+                      placeholder={t('onramp.requesterNamePlaceholder')}
                       value={formData.requesterName}
                       onChange={(e) => setFormData({ ...formData, requesterName: e.target.value })}
                       className="h-9"
@@ -579,7 +563,6 @@ const OnrampForm = () => {
               </CardContent>
             </Card>
 
-            {/* Submit Button */}
             <Button 
               type="submit" 
               className="w-full h-12 text-base bg-gradient-primary hover:opacity-90 transition-all duration-300" 
@@ -588,12 +571,12 @@ const OnrampForm = () => {
               {loading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Création en cours...
+                  {t('onramp.submitting')}
                 </>
               ) : (
                 <>
                   <Coins className="mr-2 h-4 w-4" />
-                  {formData.generatePaymentLink ? 'Générer le lien' : 'Créer la demande'}
+                  {formData.generatePaymentLink ? t('onramp.submitLinkBtn') : t('onramp.submitBtn')}
                 </>
               )}
             </Button>
@@ -601,11 +584,10 @@ const OnrampForm = () => {
         </CardContent>
       </Card>
 
-      {/* Exchange Rate Info Footer */}
       {exchangeRate && (
         <div className="text-center text-xs text-muted-foreground space-y-1">
-          <p>Taux: 1 USD = {Math.round(exchangeRate.final_rate)} XOF (marge {(exchangeRate.margin * 100).toFixed(0)}%)</p>
-          <p>Mis à jour: {new Date(exchangeRate.last_updated).toLocaleString('fr-FR')}</p>
+          <p>{t('common.rate', { rate: Math.round(exchangeRate.final_rate), margin: (exchangeRate.margin * 100).toFixed(0) })}</p>
+          <p>{t('common.updated', { date: new Date(exchangeRate.last_updated).toLocaleString() })}</p>
         </div>
       )}
     </div>

@@ -4,6 +4,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from 'react-i18next';
 
 interface Country {
   id: string;
@@ -42,17 +43,16 @@ export const CountryOperatorSelector: React.FC<CountryOperatorSelectorProps> = (
   onPhoneNumberChange,
   onValidationChange
 }) => {
+  const { t } = useTranslation();
   const [countries, setCountries] = useState<Country[]>([]);
   const [operators, setOperators] = useState<MobileOperator[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
-  // Load countries on component mount
   useEffect(() => {
     fetchCountries();
   }, []);
 
-  // Load operators when country changes
   useEffect(() => {
     if (selectedCountry) {
       fetchOperators(selectedCountry);
@@ -61,9 +61,7 @@ export const CountryOperatorSelector: React.FC<CountryOperatorSelectorProps> = (
     }
   }, [selectedCountry]);
 
-  // Validate phone number when it changes or operator changes
   useEffect(() => {
-    // Use setTimeout to avoid calling setState during render of parent component
     const timeoutId = setTimeout(() => {
       if (!phoneNumber || !selectedOperator) {
         onValidationChange(false);
@@ -76,7 +74,6 @@ export const CountryOperatorSelector: React.FC<CountryOperatorSelectorProps> = (
         return;
       }
 
-      // Check if phone number matches any of the operator's patterns
       const isValid = selectedOp.number_patterns.some(pattern => {
         const regex = new RegExp(pattern);
         return regex.test(phoneNumber);
@@ -90,7 +87,6 @@ export const CountryOperatorSelector: React.FC<CountryOperatorSelectorProps> = (
 
   const fetchCountries = async () => {
     try {
-      // Fetch visible country IDs
       const { data: visData } = await supabase
         .from('country_visibility')
         .select('country_id, is_visible');
@@ -101,7 +97,6 @@ export const CountryOperatorSelector: React.FC<CountryOperatorSelectorProps> = (
 
       let query = supabase.from('countries').select('*').order('name');
 
-      // If we have visibility data, filter by visible countries
       if (visibleIds && visibleIds.length > 0) {
         query = query.in('id', visibleIds);
       }
@@ -112,8 +107,8 @@ export const CountryOperatorSelector: React.FC<CountryOperatorSelectorProps> = (
     } catch (error) {
       console.error('Error fetching countries:', error);
       toast({
-        title: "Erreur",
-        description: "Impossible de charger les pays",
+        title: t('errors.error'),
+        description: t('countrySelector.loadError'),
         variant: "destructive",
       });
     } finally {
@@ -135,8 +130,8 @@ export const CountryOperatorSelector: React.FC<CountryOperatorSelectorProps> = (
     } catch (error) {
       console.error('Error fetching operators:', error);
       toast({
-        title: "Erreur",
-        description: "Impossible de charger les opérateurs",
+        title: t('errors.error'),
+        description: t('countrySelector.operatorLoadError'),
         variant: "destructive",
       });
     }
@@ -147,14 +142,10 @@ export const CountryOperatorSelector: React.FC<CountryOperatorSelectorProps> = (
   };
 
   const formatPhoneNumber = (value: string) => {
-    // Remove all non-digits
     const digits = value.replace(/\D/g, '');
-    
-    // Get current country
     const country = getSelectedCountry();
     if (!country) return digits;
 
-    // Remove country prefix if user typed it
     const prefixDigits = country.phone_prefix.replace(/\D/g, '');
     if (digits.startsWith(prefixDigits)) {
       return digits.substring(prefixDigits.length);
@@ -166,7 +157,6 @@ export const CountryOperatorSelector: React.FC<CountryOperatorSelectorProps> = (
   const getDisplayPhoneNumber = () => {
     const country = getSelectedCountry();
     if (!country || !phoneNumber) return phoneNumber;
-    
     return `${country.phone_prefix} ${phoneNumber}`;
   };
 
@@ -187,7 +177,7 @@ export const CountryOperatorSelector: React.FC<CountryOperatorSelectorProps> = (
       <div className="space-y-4">
         <div className="flex items-center gap-2 text-muted-foreground">
           <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-          <span className="text-sm">Chargement des pays...</span>
+          <span className="text-sm">{t('countrySelector.loadingCountries')}</span>
         </div>
       </div>
     );
@@ -197,13 +187,11 @@ export const CountryOperatorSelector: React.FC<CountryOperatorSelectorProps> = (
 
   return (
     <div className="space-y-4">
-      {/* Country Selection with visual cards for popular countries */}
       <div className="space-y-3">
         <Label className="text-sm font-medium flex items-center gap-2">
-          <span>🌍</span> Pays
+          {t('countrySelector.country')}
         </Label>
         
-        {/* Quick select for popular countries */}
         <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-1.5 sm:gap-2 mb-2">
           {countries.slice(0, 8).map((country) => (
             <button
@@ -232,7 +220,6 @@ export const CountryOperatorSelector: React.FC<CountryOperatorSelectorProps> = (
           ))}
         </div>
         
-        {/* Dropdown for all countries */}
         <Select value={selectedCountry} onValueChange={(value) => {
           const country = countries.find(c => c.id === value);
           if (country) {
@@ -242,7 +229,7 @@ export const CountryOperatorSelector: React.FC<CountryOperatorSelectorProps> = (
           }
         }}>
           <SelectTrigger className="h-11">
-            <SelectValue placeholder="Ou sélectionnez un autre pays..." />
+            <SelectValue placeholder={t('countrySelector.selectCountry')} />
           </SelectTrigger>
           <SelectContent className="bg-background border border-border max-h-[300px]">
             {countries.map((country) => (
@@ -258,11 +245,10 @@ export const CountryOperatorSelector: React.FC<CountryOperatorSelectorProps> = (
         </Select>
       </div>
 
-      {/* Operator Selection with visual cards */}
       {selectedCountry && operators.length > 0 && (
         <div className="space-y-3 animate-fade-in">
           <Label className="text-sm font-medium flex items-center gap-2">
-            <span>📱</span> Opérateur Mobile Money
+            {t('countrySelector.operator')}
           </Label>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
             {operators.map((operator) => (
@@ -286,11 +272,10 @@ export const CountryOperatorSelector: React.FC<CountryOperatorSelectorProps> = (
         </div>
       )}
 
-      {/* Phone Number Input with better UX */}
       {selectedCountry && selectedOperator && (
         <div className="space-y-2 animate-fade-in">
           <Label htmlFor="phoneNumber" className="text-sm font-medium flex items-center gap-2">
-            <span>📞</span> Numéro Mobile Money
+            {t('countrySelector.phoneNumber')}
           </Label>
           <div className="relative">
             <div className="flex">
@@ -305,7 +290,7 @@ export const CountryOperatorSelector: React.FC<CountryOperatorSelectorProps> = (
                   const formatted = formatPhoneNumber(e.target.value);
                   onPhoneNumberChange(formatted);
                 }}
-                placeholder="70 123 456"
+                placeholder={t('countrySelector.phonePlaceholder')}
                 className={`
                   rounded-l-none text-base h-11
                   ${isPhoneNumberValid() === false ? 'border-destructive focus-visible:ring-destructive' : ''}
@@ -314,7 +299,6 @@ export const CountryOperatorSelector: React.FC<CountryOperatorSelectorProps> = (
               />
             </div>
             
-            {/* Validation feedback */}
             {phoneNumber && (
               <div className={`
                 flex items-center gap-1.5 mt-2 text-sm
@@ -325,10 +309,10 @@ export const CountryOperatorSelector: React.FC<CountryOperatorSelectorProps> = (
                 {isPhoneNumberValid() === false && <span>✗</span>}
                 <span>
                   {isPhoneNumberValid() === true 
-                    ? `Numéro valide: ${getDisplayPhoneNumber()}`
+                    ? t('countrySelector.validNumber', { number: getDisplayPhoneNumber() })
                     : isPhoneNumberValid() === false 
-                    ? 'Format invalide pour cet opérateur'
-                    : `Numéro: ${getDisplayPhoneNumber()}`
+                    ? t('countrySelector.invalidFormat')
+                    : t('countrySelector.number', { number: getDisplayPhoneNumber() })
                   }
                 </span>
               </div>

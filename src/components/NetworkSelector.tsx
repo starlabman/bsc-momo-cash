@@ -4,6 +4,7 @@ import { Label } from '@/components/ui/label';
 import { Network, Check } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { supabase } from '@/integrations/supabase/client';
+import { useTranslation } from 'react-i18next';
 
 export interface BlockchainNetwork {
   id: string;
@@ -30,16 +31,8 @@ export const SUPPORTED_NETWORKS: BlockchainNetwork[] = [
     chainId: 8453,
     blockExplorer: 'https://basescan.org',
     tokens: [
-      {
-        symbol: 'USDC',
-        address: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913',
-        decimals: 6
-      },
-      {
-        symbol: 'USDT',
-        address: '0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA',
-        decimals: 6
-      }
+      { symbol: 'USDC', address: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913', decimals: 6 },
+      { symbol: 'USDT', address: '0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA', decimals: 6 }
     ]
   },
   {
@@ -51,16 +44,8 @@ export const SUPPORTED_NETWORKS: BlockchainNetwork[] = [
     chainId: 56,
     blockExplorer: 'https://bscscan.com',
     tokens: [
-      {
-        symbol: 'USDC',
-        address: '0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d',
-        decimals: 18
-      },
-      {
-        symbol: 'USDT',
-        address: '0x55d398326f99059fF775485246999027B3197955',
-        decimals: 18
-      }
+      { symbol: 'USDC', address: '0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d', decimals: 18 },
+      { symbol: 'USDT', address: '0x55d398326f99059fF775485246999027B3197955', decimals: 18 }
     ]
   },
   {
@@ -72,16 +57,8 @@ export const SUPPORTED_NETWORKS: BlockchainNetwork[] = [
     chainId: 1,
     blockExplorer: 'https://etherscan.io',
     tokens: [
-      {
-        symbol: 'USDC',
-        address: '0xA0b86a33E6135FF96e4D2bF53A4C2e86B5ae4f8c',
-        decimals: 6
-      },
-      {
-        symbol: 'USDT',
-        address: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
-        decimals: 6
-      }
+      { symbol: 'USDC', address: '0xA0b86a33E6135FF96e4D2bF53A4C2e86B5ae4f8c', decimals: 6 },
+      { symbol: 'USDT', address: '0xdAC17F958D2ee523a2206206994597C13D831ec7', decimals: 6 }
     ]
   },
   {
@@ -93,16 +70,8 @@ export const SUPPORTED_NETWORKS: BlockchainNetwork[] = [
     chainId: 42161,
     blockExplorer: 'https://arbiscan.io',
     tokens: [
-      {
-        symbol: 'USDC',
-        address: '0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
-        decimals: 6
-      },
-      {
-        symbol: 'USDT',
-        address: '0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9',
-        decimals: 6
-      }
+      { symbol: 'USDC', address: '0xaf88d065e77c8cC2239327C5EDb3A432268e5831', decimals: 6 },
+      { symbol: 'USDT', address: '0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9', decimals: 6 }
     ]
   },
   {
@@ -114,16 +83,8 @@ export const SUPPORTED_NETWORKS: BlockchainNetwork[] = [
     chainId: 10,
     blockExplorer: 'https://optimistic.etherscan.io',
     tokens: [
-      {
-        symbol: 'USDC',
-        address: '0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85',
-        decimals: 6
-      },
-      {
-        symbol: 'USDT',
-        address: '0x94b008aA00579c1307B0EF2c499aD98a8ce58e58',
-        decimals: 6
-      }
+      { symbol: 'USDC', address: '0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85', decimals: 6 },
+      { symbol: 'USDT', address: '0x94b008aA00579c1307B0EF2c499aD98a8ce58e58', decimals: 6 }
     ]
   },
   {
@@ -135,16 +96,8 @@ export const SUPPORTED_NETWORKS: BlockchainNetwork[] = [
     chainId: 137,
     blockExplorer: 'https://polygonscan.com',
     tokens: [
-      {
-        symbol: 'USDC',
-        address: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
-        decimals: 6
-      },
-      {
-        symbol: 'USDT',
-        address: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
-        decimals: 6
-      }
+      { symbol: 'USDC', address: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174', decimals: 6 },
+      { symbol: 'USDT', address: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F', decimals: 6 }
     ]
   },
   {
@@ -156,16 +109,8 @@ export const SUPPORTED_NETWORKS: BlockchainNetwork[] = [
     chainId: 101,
     blockExplorer: 'https://solscan.io',
     tokens: [
-      {
-        symbol: 'USDC',
-        address: 'Fq9sgX7UHqEEwpVMu7UKjpstQGcf1JD3kPnUTYRbEdcZ',
-        decimals: 6
-      },
-      {
-        symbol: 'USDT',
-        address: 'Fq9sgX7UHqEEwpVMu7UKjpstQGcf1JD3kPnUTYRbEdcZ',
-        decimals: 6
-      }
+      { symbol: 'USDC', address: 'Fq9sgX7UHqEEwpVMu7UKjpstQGcf1JD3kPnUTYRbEdcZ', decimals: 6 },
+      { symbol: 'USDT', address: 'Fq9sgX7UHqEEwpVMu7UKjpstQGcf1JD3kPnUTYRbEdcZ', decimals: 6 }
     ]
   },
   {
@@ -177,16 +122,8 @@ export const SUPPORTED_NETWORKS: BlockchainNetwork[] = [
     chainId: 43114,
     blockExplorer: 'https://snowtrace.io',
     tokens: [
-      {
-        symbol: 'USDC',
-        address: '0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E',
-        decimals: 6
-      },
-      {
-        symbol: 'USDT',
-        address: '0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7',
-        decimals: 6
-      }
+      { symbol: 'USDC', address: '0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E', decimals: 6 },
+      { symbol: 'USDT', address: '0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7', decimals: 6 }
     ]
   },
   {
@@ -198,16 +135,8 @@ export const SUPPORTED_NETWORKS: BlockchainNetwork[] = [
     chainId: 1135,
     blockExplorer: 'https://blockscout.lisk.com',
     tokens: [
-      {
-        symbol: 'USDC',
-        address: '0xF242275d3a6527d877f2c927a82D9b057609cc71',
-        decimals: 6
-      },
-      {
-        symbol: 'USDT',
-        address: '0x05D032ac25d322df992303dCa074EE7392C117b9',
-        decimals: 6
-      }
+      { symbol: 'USDC', address: '0xF242275d3a6527d877f2c927a82D9b057609cc71', decimals: 6 },
+      { symbol: 'USDT', address: '0x05D032ac25d322df992303dCa074EE7392C117b9', decimals: 6 }
     ]
   }
 ];
@@ -227,6 +156,7 @@ const NetworkSelector: React.FC<NetworkSelectorProps> = ({
   onTokenChange,
   className = ''
 }) => {
+  const { t } = useTranslation();
   const [visibleNetworkIds, setVisibleNetworkIds] = useState<string[]>(
     SUPPORTED_NETWORKS.map(n => n.id)
   );
@@ -271,11 +201,10 @@ const NetworkSelector: React.FC<NetworkSelectorProps> = ({
 
   return (
     <div className={`space-y-6 animate-slide-in-up ${className}`}>
-      {/* Network Selection */}
       <div className="space-y-3">
         <Label className="flex items-center gap-2 text-base font-semibold">
           <Network className="h-5 w-5 text-primary" />
-          Sélectionner le réseau
+          {t('networkSelector.selectNetwork')}
         </Label>
         <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3">
           {filteredNetworks.map((network) => (
@@ -318,11 +247,10 @@ const NetworkSelector: React.FC<NetworkSelectorProps> = ({
         </div>
       </div>
 
-      {/* Token Selection */}
       {currentNetwork && (
         <div className="space-y-3 animate-slide-in-up">
           <Label className="text-base font-semibold">
-            Sélectionner le token sur {currentNetwork.name}
+            {t('networkSelector.selectToken', { network: currentNetwork.name })}
           </Label>
           <div className="grid grid-cols-2 gap-3">
             {availableTokens.map((token) => (
@@ -352,7 +280,7 @@ const NetworkSelector: React.FC<NetworkSelectorProps> = ({
                   <div className="flex-1">
                     <p className="font-semibold">{token.symbol}</p>
                     <p className="text-xs text-muted-foreground">
-                      {token.decimals} decimals
+                      {t('networkSelector.decimals', { count: token.decimals })}
                     </p>
                   </div>
                 </div>
@@ -360,7 +288,6 @@ const NetworkSelector: React.FC<NetworkSelectorProps> = ({
             ))}
           </div>
           
-          {/* Network Info */}
           <Card className="p-4 bg-gradient-to-r from-primary/5 to-accent/5 border-primary/20">
             <div className="flex items-start gap-3">
               <img 
@@ -383,7 +310,7 @@ const NetworkSelector: React.FC<NetworkSelectorProps> = ({
                   </Badge>
                 </div>
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <span>{availableTokens.length} tokens disponibles</span>
+                  <span>{t('networkSelector.tokensAvailable', { count: availableTokens.length })}</span>
                   <span>•</span>
                   <a 
                     href={currentNetwork.blockExplorer} 
