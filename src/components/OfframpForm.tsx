@@ -17,6 +17,7 @@ import { Link2 } from 'lucide-react';
 import AmountPresets from './AmountPresets';
 import FormStepIndicator from './FormStepIndicator';
 import LiveConversionPreview from './LiveConversionPreview';
+import { useTranslation } from 'react-i18next';
 
 interface ExchangeRate {
   external_rate: number;
@@ -44,6 +45,7 @@ interface OfframpRequest {
 }
 
 const OfframpForm = () => {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [loadingRate, setLoadingRate] = useState(true);
@@ -54,7 +56,7 @@ const OfframpForm = () => {
   
   const [formData, setFormData] = useState({
     amount: '',
-    network: 'base', // Default to Base
+    network: 'base',
     token: 'USDC',
     momoNumber: '',
     momoProvider: '',
@@ -67,14 +69,10 @@ const OfframpForm = () => {
   const [selectedOperatorData, setSelectedOperatorData] = useState<MobileOperator | null>(null);
   const [isPhoneNumberValid, setIsPhoneNumberValid] = useState(false);
 
-  // Fetch exchange rate on component mount
   useEffect(() => {
     fetchExchangeRate();
   }, []);
 
-
-  // Calculate XOF amount when amount or rate changes
-  // Offramp: Crypto → XOF, utilise offramp_rate (taux - 5%)
   useEffect(() => {
     if (formData.amount && exchangeRate) {
       const amount = parseFloat(formData.amount);
@@ -102,8 +100,8 @@ const OfframpForm = () => {
     } catch (error) {
       console.error('Error fetching exchange rate:', error);
       toast({
-        title: "Erreur",
-        description: "Impossible de récupérer le taux de change",
+        title: t('errors.error'),
+        description: t('errors.fetchRate'),
         variant: "destructive",
       });
     } finally {
@@ -119,13 +117,12 @@ const OfframpForm = () => {
       const amount = parseFloat(formData.amount);
       
       if (!amount || amount <= 0 || amount > 1000) {
-        throw new Error('Le montant doit être entre 0 et 1000 USD');
+        throw new Error(t('errors.amountRange'));
       }
 
       if (!formData.momoNumber || !selectedCountry || !isPhoneNumberValid) {
-        throw new Error('Veuillez remplir tous les champs requis et vérifier le numéro de téléphone');
+        throw new Error(t('errors.fillFields'));
       }
-
 
       const currentNetwork = SUPPORTED_NETWORKS.find(n => n.id === formData.network);
       const tokenInfo = currentNetwork?.tokens.find(t => t.symbol === formData.token);
@@ -150,17 +147,15 @@ const OfframpForm = () => {
         if (data.data.payment_link) {
           setPaymentLinkData({link: data.data.payment_link, type: 'offramp'});
           setRequest(data.data);
-          
           toast({
-            title: "Lien de paiement généré !",
-            description: "Partagez le lien pour que quelqu'un d'autre effectue le paiement",
+            title: t('success.linkGenerated'),
+            description: t('success.linkGeneratedDesc'),
           });
         } else {
           setRequest(data.data);
-          
           toast({
-            title: "Demande créée !",
-            description: "Votre demande de conversion a été créée avec succès",
+            title: t('success.requestCreated'),
+            description: t('success.requestCreatedDesc'),
           });
         }
       } else {
@@ -169,8 +164,8 @@ const OfframpForm = () => {
     } catch (error) {
       console.error('Error creating request:', error);
       toast({
-        title: "Erreur",
-        description: error instanceof Error ? error.message : "Une erreur s'est produite",
+        title: t('errors.error'),
+        description: error instanceof Error ? error.message : t('errors.genericError'),
         variant: "destructive",
       });
     } finally {
@@ -183,7 +178,7 @@ const OfframpForm = () => {
     setPaymentLinkData(null);
     setFormData({
       amount: '',
-      network: 'base', // Reset to Base
+      network: 'base',
       token: 'USDC',
       momoNumber: '',
       momoProvider: '',
@@ -198,13 +193,12 @@ const OfframpForm = () => {
 
   const currentNetwork = SUPPORTED_NETWORKS.find(n => n.id === formData.network);
 
-  // Form steps for progress indicator - must be before early return
   const formSteps = useMemo(() => [
-    { id: 'network', label: 'Réseau', completed: !!formData.network && !!formData.token, active: !formData.network },
-    { id: 'amount', label: 'Montant', completed: !!formData.amount && parseFloat(formData.amount) > 0, active: !!formData.network && !formData.amount },
-    { id: 'recipient', label: 'Destinataire', completed: isPhoneNumberValid, active: !!formData.amount && !isPhoneNumberValid },
-    { id: 'confirm', label: 'Confirmer', completed: false, active: isPhoneNumberValid },
-  ], [formData.network, formData.token, formData.amount, isPhoneNumberValid]);
+    { id: 'network', label: t('common.steps.network'), completed: !!formData.network && !!formData.token, active: !formData.network },
+    { id: 'amount', label: t('common.steps.amount'), completed: !!formData.amount && parseFloat(formData.amount) > 0, active: !!formData.network && !formData.amount },
+    { id: 'recipient', label: t('common.steps.recipient'), completed: isPhoneNumberValid, active: !!formData.amount && !isPhoneNumberValid },
+    { id: 'confirm', label: t('common.steps.confirm'), completed: false, active: isPhoneNumberValid },
+  ], [formData.network, formData.token, formData.amount, isPhoneNumberValid, t]);
 
   const USD_PRESETS = [10, 25, 50, 100, 250, 500];
 
@@ -216,15 +210,15 @@ const OfframpForm = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Share2 className="h-5 w-5 text-primary" />
-                Lien de paiement généré
+                {t('paymentLinkCard.title')}
               </CardTitle>
               <CardDescription>
-                Partagez ce lien avec la personne qui effectuera le paiement
+                {t('paymentLinkCard.description')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label>Lien de paiement</Label>
+                <Label>{t('paymentLinkCard.label')}</Label>
                 <div className="flex gap-2">
                   <Input
                     value={paymentLinkData.link}
@@ -239,13 +233,13 @@ const OfframpForm = () => {
                       try {
                         await navigator.clipboard.writeText(paymentLinkData.link);
                         toast({
-                          title: "Copié !",
-                          description: "Le lien a été copié dans le presse-papier",
+                          title: t('paymentLinkCard.copied'),
+                          description: t('paymentLinkCard.copiedDesc'),
                         });
                       } catch (err) {
                         toast({
-                          title: "Erreur",
-                          description: "Impossible de copier le lien",
+                          title: t('errors.error'),
+                          description: t('paymentLinkCard.copyError'),
                           variant: "destructive",
                         });
                       }
@@ -266,8 +260,8 @@ const OfframpForm = () => {
               </div>
 
               <div className="text-xs text-muted-foreground">
-                <p>💡 Ce lien est valide pendant 7 jours</p>
-                <p className="mt-1">La personne pourra utiliser ce lien pour effectuer le paiement</p>
+                <p>{t('paymentLinkCard.validity')}</p>
+                <p className="mt-1">{t('paymentLinkCard.shareInfo')}</p>
               </div>
             </CardContent>
           </Card>
@@ -278,23 +272,22 @@ const OfframpForm = () => {
             <div className="flex items-center justify-between">
               <CardTitle className="flex items-center gap-2 text-green-700 dark:text-green-300">
                 <CheckCircle className="h-5 w-5" />
-                {paymentLinkData ? 'Détails de la demande' : 'Demande créée avec succès'}
+                {paymentLinkData ? t('offramp.requestDetails') : t('offramp.successTitle')}
               </CardTitle>
               <Badge variant="outline" className="font-mono text-xs bg-background">
                 {request.reference_id}
               </Badge>
             </div>
             <CardDescription>
-              {paymentLinkData ? 'Informations de paiement' : `Envoyez exactement ${request.amount} ${request.token} à l'adresse ci-dessous`}
+              {paymentLinkData ? t('offramp.paymentInfo') : t('offramp.sendExactly', { amount: request.amount, token: request.token })}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            {/* Unique Payment Identity - Reference + Address combined */}
             <div className="p-4 bg-primary/5 border-2 border-primary/30 rounded-xl space-y-3">
               <div className="flex items-center justify-center gap-2">
                 <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
                 <Label className="text-xs font-semibold uppercase tracking-wider text-primary">
-                  Adresse de paiement unique
+                  {t('offramp.uniqueAddress')}
                 </Label>
               </div>
               <div className="text-center">
@@ -302,13 +295,13 @@ const OfframpForm = () => {
               </div>
               <div className="text-center">
                 <Label className="text-xs text-muted-foreground">
-                  Réseau {request.network?.toUpperCase() || ''} • {request.token}
+                  {t('offramp.network')} {request.network?.toUpperCase() || ''} • {request.token}
                 </Label>
                 <div className="mt-1 p-3 bg-muted rounded-lg break-all font-mono text-xs hover:bg-muted/80 transition-colors cursor-pointer"
                   onClick={async () => {
                     try {
                       await navigator.clipboard.writeText(request.deposit_address);
-                      toast({ title: "Copié !", description: "L'adresse a été copiée" });
+                      toast({ title: t('success.copied'), description: t('success.addressCopied') });
                     } catch {}
                   }}
                 >
@@ -316,7 +309,7 @@ const OfframpForm = () => {
                 </div>
               </div>
               <p className="text-[11px] text-center text-muted-foreground">
-                🔒 Cette adresse est liée à votre référence <span className="font-mono font-bold text-primary">{request.reference_id}</span>
+                {t('offramp.addressLinked')} <span className="font-mono font-bold text-primary">{request.reference_id}</span>
               </p>
             </div>
 
@@ -333,7 +326,7 @@ const OfframpForm = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Montant à envoyer</Label>
+                <Label>{t('offramp.amountToSend')}</Label>
                 <div className="flex items-center gap-2 flex-wrap">
                   <Badge variant="secondary" className="text-base sm:text-lg px-3 py-2 animate-scale-in">
                     {request.amount} {request.token}
@@ -345,7 +338,7 @@ const OfframpForm = () => {
                 </div>
               </div>
               <div className="space-y-2">
-                <Label>Numéro Mobile Money</Label>
+                <Label>{t('offramp.momoNumber')}</Label>
                 <div className="flex items-center gap-2 flex-wrap">
                   <Smartphone className="h-4 w-4 text-primary" />
                   <span className="font-medium text-sm sm:text-base">{formatPhoneNumber(request.momo_number)}</span>
@@ -359,18 +352,18 @@ const OfframpForm = () => {
             </div>
 
             <div className="space-y-2">
-              <Label>Statut</Label>
+              <Label>{t('offramp.status')}</Label>
               <Badge 
                 variant={request.status === 'pending_payment' ? 'secondary' : 'default'}
                 className="text-sm px-3 py-1"
               >
-                {request.status === 'pending_payment' ? 'En attente de paiement' : request.status}
+                {request.status === 'pending_payment' ? t('offramp.pendingPayment') : request.status}
               </Badge>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
               <Button onClick={resetForm} variant="outline" className="flex-1 hover-scale">
-                Nouvelle demande
+                {t('offramp.newRequest')}
               </Button>
               <Button 
                 onClick={fetchExchangeRate} 
@@ -383,7 +376,7 @@ const OfframpForm = () => {
                 ) : (
                   <Coins className="h-4 w-4" />
                 )}
-                Actualiser le taux
+                {t('offramp.refreshRate')}
               </Button>
             </div>
           </CardContent>
@@ -394,7 +387,6 @@ const OfframpForm = () => {
 
   return (
     <div className="max-w-2xl mx-auto space-y-6 animate-slide-in-up">
-      {/* Live Conversion Preview - Always visible at top */}
       <LiveConversionPreview
         fromAmount={formData.amount}
         fromCurrency="USD"
@@ -413,19 +405,18 @@ const OfframpForm = () => {
                 <div className="w-8 h-8 rounded-lg bg-gradient-primary flex items-center justify-center">
                   <Coins className="h-4 w-4 text-white" />
                 </div>
-                Crypto → Mobile Money
+                {t('offramp.title')}
               </CardTitle>
               <CardDescription className="mt-1">
-                Convertissez vos tokens en XOF
+                {t('offramp.description')}
               </CardDescription>
             </div>
             <Badge variant="outline" className="text-xs gap-1">
               <Sparkles className="h-3 w-3" />
-              Sans KYC
+              {t('offramp.noKyc')}
             </Badge>
           </div>
           
-          {/* Progress Indicator */}
           <div className="mt-4">
             <FormStepIndicator steps={formSteps} />
           </div>
@@ -433,7 +424,6 @@ const OfframpForm = () => {
         
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Network & Token Selection */}
             <div className="space-y-4">
               <NetworkSelector
                 selectedNetwork={formData.network}
@@ -447,13 +437,11 @@ const OfframpForm = () => {
               />
             </div>
 
-            {/* Amount Input with Presets */}
             <div className="space-y-3">
               <Label htmlFor="amount" className="text-sm font-medium flex items-center gap-2">
-                💵 Montant à envoyer (USD)
+                {t('offramp.amountLabel')}
               </Label>
               
-              {/* Quick Amount Presets */}
               <AmountPresets
                 presets={USD_PRESETS}
                 currency="$"
@@ -464,7 +452,7 @@ const OfframpForm = () => {
               <Input
                 id="amount"
                 type="number"
-                placeholder="Ou entrez un montant personnalisé"
+                placeholder={t('offramp.amountPlaceholder')}
                 min="1"
                 max="1000"
                 step="0.01"
@@ -474,11 +462,10 @@ const OfframpForm = () => {
                 required
               />
               <p className="text-xs text-muted-foreground">
-                Min: 1 USD • Max: 1000 USD
+                {t('offramp.amountRange')}
               </p>
             </div>
 
-            {/* Country/Operator Selection */}
             <div className="pt-2 border-t border-border/50">
               <CountryOperatorSelector
                 selectedCountry={selectedCountry}
@@ -497,14 +484,13 @@ const OfframpForm = () => {
               />
             </div>
 
-            {/* Payment Link Option */}
             <Card className="bg-muted/30 border-dashed">
               <CardContent className="pt-4 pb-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Link2 className="h-4 w-4 text-muted-foreground" />
                     <Label htmlFor="payment-link" className="cursor-pointer text-sm">
-                      Générer un lien de paiement
+                      {t('offramp.paymentLink')}
                     </Label>
                   </div>
                   <Switch
@@ -518,11 +504,11 @@ const OfframpForm = () => {
                 
                 {formData.generatePaymentLink && (
                   <div className="space-y-2 mt-4 animate-fade-in">
-                    <Label htmlFor="requester-name" className="text-xs">Votre nom (optionnel)</Label>
+                    <Label htmlFor="requester-name" className="text-xs">{t('offramp.requesterName')}</Label>
                     <Input
                       id="requester-name"
                       type="text"
-                      placeholder="Ex: Jean Dupont"
+                      placeholder={t('offramp.requesterNamePlaceholder')}
                       value={formData.requesterName}
                       onChange={(e) => setFormData({ ...formData, requesterName: e.target.value })}
                       className="h-9"
@@ -533,7 +519,6 @@ const OfframpForm = () => {
               </CardContent>
             </Card>
 
-            {/* Submit Button */}
             <Button 
               type="submit" 
               className="w-full h-12 text-base bg-gradient-primary hover:opacity-90 transition-all duration-300" 
@@ -542,12 +527,12 @@ const OfframpForm = () => {
               {loading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Création en cours...
+                  {t('offramp.submitting')}
                 </>
               ) : (
                 <>
                   <Coins className="mr-2 h-4 w-4" />
-                  {formData.generatePaymentLink ? 'Générer le lien' : 'Créer la demande'}
+                  {formData.generatePaymentLink ? t('offramp.submitLinkBtn') : t('offramp.submitBtn')}
                 </>
               )}
             </Button>
@@ -555,11 +540,10 @@ const OfframpForm = () => {
         </CardContent>
       </Card>
 
-      {/* Exchange Rate Info Footer */}
       {exchangeRate && (
         <div className="text-center text-xs text-muted-foreground space-y-1">
-          <p>Taux: 1 USD = {Math.round(exchangeRate.final_rate)} XOF (marge {(exchangeRate.margin * 100).toFixed(0)}%)</p>
-          <p>Mis à jour: {new Date(exchangeRate.last_updated).toLocaleString('fr-FR')}</p>
+          <p>{t('common.rate', { rate: Math.round(exchangeRate.final_rate), margin: (exchangeRate.margin * 100).toFixed(0) })}</p>
+          <p>{t('common.updated', { date: new Date(exchangeRate.last_updated).toLocaleString() })}</p>
         </div>
       )}
     </div>

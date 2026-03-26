@@ -9,8 +9,10 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { QRCodeSVG } from 'qrcode.react';
 import { formatPhoneNumber } from '@/utils/phoneDetection';
+import { useTranslation } from 'react-i18next';
 
 const PaymentLink = () => {
+  const { t } = useTranslation();
   const { token } = useParams<{ token: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -32,14 +34,14 @@ const PaymentLink = () => {
       if (data.success) {
         setRequest(data.data);
       } else {
-        setError(data.error || 'Demande de paiement introuvable ou expirée');
+        setError(data.error || t('paymentPage.notFoundOrExpired'));
       }
     } catch (err) {
       console.error('Error fetching payment request:', err);
-      setError('Impossible de charger la demande de paiement');
+      setError(t('paymentPage.loadError'));
       toast({
-        title: "Erreur",
-        description: "Impossible de charger la demande de paiement",
+        title: t('errors.error'),
+        description: t('paymentPage.loadError'),
         variant: "destructive",
       });
     } finally {
@@ -53,7 +55,6 @@ const PaymentLink = () => {
     }
   }, [token]);
 
-  // Real-time subscription for status updates
   useEffect(() => {
     if (!request?.id) return;
 
@@ -87,7 +88,7 @@ const PaymentLink = () => {
         <Card className="max-w-md w-full">
           <CardContent className="pt-6 flex flex-col items-center gap-4">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            <p className="text-muted-foreground">Chargement de la demande de paiement...</p>
+            <p className="text-muted-foreground">{t('paymentPage.loading')}</p>
           </CardContent>
         </Card>
       </div>
@@ -101,13 +102,13 @@ const PaymentLink = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-destructive">
               <XCircle className="h-5 w-5" />
-              Lien invalide ou expiré
+              {t('paymentPage.invalidLink')}
             </CardTitle>
-            <CardDescription>{error || 'Cette demande de paiement n\'existe pas ou a expiré'}</CardDescription>
+            <CardDescription>{error || t('paymentPage.invalidDesc')}</CardDescription>
           </CardHeader>
           <CardContent>
             <Button onClick={() => navigate('/')} className="w-full">
-              Retour à l'accueil
+              {t('paymentPage.backHome')}
             </Button>
           </CardContent>
         </Card>
@@ -125,29 +126,28 @@ const PaymentLink = () => {
             <div className="flex items-center justify-between">
               <CardTitle className="flex items-center gap-2">
                 <Coins className="h-5 w-5 text-primary" />
-                Demande de paiement {isOfframp ? 'Crypto → Mobile Money' : 'Mobile Money → Crypto'}
+                {t('paymentPage.paymentRequest')} {isOfframp ? 'Crypto → Mobile Money' : 'Mobile Money → Crypto'}
               </CardTitle>
               <Badge variant="outline" className="font-mono text-xs bg-background">
                 {request.reference_id}
               </Badge>
             </div>
             <CardDescription>
-              {request.requester_name && `De: ${request.requester_name}`}
+              {request.requester_name && t('paymentPage.from', { name: request.requester_name })}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            {/* Reference ID prominently displayed */}
             <div className="p-3 bg-primary/10 border border-primary/20 rounded-lg text-center">
-              <Label className="text-xs text-muted-foreground">Référence de transaction</Label>
+              <Label className="text-xs text-muted-foreground">{t('paymentPage.transactionRef')}</Label>
               <p className="text-xl font-bold font-mono text-primary">{request.reference_id}</p>
-              <p className="text-xs text-muted-foreground mt-1">À mentionner lors du paiement</p>
+              <p className="text-xs text-muted-foreground mt-1">{t('paymentPage.mentionOnPayment')}</p>
             </div>
-            {/* Transaction Details */}
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {isOfframp ? (
                 <>
                   <div className="space-y-2">
-                    <Label>Montant à envoyer</Label>
+                    <Label>{t('paymentPage.amountToSend')}</Label>
                     <div className="flex items-center gap-2 flex-wrap">
                       <Badge variant="secondary" className="text-lg px-3 py-2">
                         {request.amount} {request.token}
@@ -159,7 +159,7 @@ const PaymentLink = () => {
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label>Numéro de réception Mobile Money</Label>
+                    <Label>{t('paymentPage.momoReceiveNumber')}</Label>
                     <div className="flex items-center gap-2 flex-wrap">
                       <Smartphone className="h-4 w-4 text-primary" />
                       <span className="font-medium">{formatPhoneNumber(request.momo_number)}</span>
@@ -172,7 +172,7 @@ const PaymentLink = () => {
               ) : (
                 <>
                   <div className="space-y-2">
-                    <Label>Montant à payer</Label>
+                    <Label>{t('paymentPage.amountToPay')}</Label>
                     <div className="flex items-center gap-2 flex-wrap">
                       <Badge variant="secondary" className="text-lg px-3 py-2">
                         {Math.round(request.xof_amount).toLocaleString()} XOF
@@ -184,7 +184,7 @@ const PaymentLink = () => {
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label>Adresse de réception</Label>
+                    <Label>{t('paymentPage.recipientAddress')}</Label>
                     <div className="p-2 bg-muted rounded break-all font-mono text-xs">
                       {request.recipient_address}
                     </div>
@@ -193,12 +193,11 @@ const PaymentLink = () => {
               )}
             </div>
 
-            {/* Payment Instructions */}
             {isOfframp ? (
               <div className="space-y-4">
                 <div className="text-center">
                   <Label className="text-base font-medium">
-                    Adresse de dépôt ({request.token})
+                    {t('paymentPage.depositAddress', { token: request.token })}
                   </Label>
                   <div className="mt-2 p-4 bg-muted rounded-lg break-all font-mono text-sm">
                     {request.bsc_address}
@@ -218,11 +217,11 @@ const PaymentLink = () => {
                 <Card className="bg-primary/5 border-primary/20">
                   <CardContent className="pt-4">
                     <div className="space-y-2 text-sm">
-                      <p className="font-medium">Instructions:</p>
+                      <p className="font-medium">{t('paymentPage.instructions')}</p>
                       <ol className="list-decimal list-inside space-y-1 text-muted-foreground">
-                        <li>Scannez le QR code ou copiez l'adresse ci-dessus</li>
-                        <li>Envoyez exactement {request.amount} {request.token}</li>
-                        <li>Le bénéficiaire recevra {Math.round(request.xof_amount).toLocaleString()} XOF sur son Mobile Money</li>
+                        <li>{t('paymentPage.offrampStep1')}</li>
+                        <li>{t('paymentPage.offrampStep2', { amount: request.amount, token: request.token })}</li>
+                        <li>{t('paymentPage.offrampStep3', { amount: Math.round(request.xof_amount).toLocaleString() })}</li>
                       </ol>
                     </div>
                   </CardContent>
@@ -234,23 +233,23 @@ const PaymentLink = () => {
                   <div className="space-y-3">
                     <div className="flex items-center gap-2">
                       <Smartphone className="h-4 w-4 text-primary" />
-                      <span className="font-medium">Numéro de destination :</span>
+                      <span className="font-medium">{t('paymentPage.onrampDestNumber')}</span>
                       <span className="font-mono">+221 77 XXX XX XX</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <DollarSign className="h-4 w-4 text-primary" />
-                      <span className="font-medium">Montant exact :</span>
+                      <span className="font-medium">{t('paymentPage.onrampExactAmount')}</span>
                       <span className="font-mono">{Math.round(request.xof_amount).toLocaleString()} XOF</span>
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      Référence à mentionner : <span className="font-mono font-bold text-primary">{request.reference_id}</span>
+                      {t('paymentPage.onrampRefMention')} <span className="font-mono font-bold text-primary">{request.reference_id}</span>
                     </p>
                     <div className="mt-4 pt-4 border-t">
-                      <p className="text-sm font-medium">Instructions:</p>
+                      <p className="text-sm font-medium">{t('paymentPage.instructions')}</p>
                       <ol className="list-decimal list-inside space-y-1 text-sm text-muted-foreground mt-2">
-                        <li>Envoyez {Math.round(request.xof_amount).toLocaleString()} XOF via Mobile Money</li>
-                        <li>Mentionnez la référence dans le message</li>
-                        <li>Le bénéficiaire recevra {request.crypto_amount.toFixed(6)} {request.token}</li>
+                        <li>{t('paymentPage.onrampStep1', { amount: Math.round(request.xof_amount).toLocaleString() })}</li>
+                        <li>{t('paymentPage.onrampStep2')}</li>
+                        <li>{t('paymentPage.onrampStep3', { amount: request.crypto_amount.toFixed(6), token: request.token })}</li>
                       </ol>
                     </div>
                   </div>
@@ -258,28 +257,25 @@ const PaymentLink = () => {
               </Card>
             )}
 
-            {/* Status */}
             <div className="space-y-2">
-              <Label>Statut</Label>
+              <Label>{t('paymentPage.status')}</Label>
               <Badge 
                 variant={request.status.includes('pending') ? 'secondary' : 'default'}
                 className="text-sm px-3 py-1"
               >
-                {request.status === 'pending_payment' ? 'En attente de paiement crypto' : 
-                 request.status === 'pending_momo_payment' ? 'En attente de paiement Mobile Money' :
+                {request.status === 'pending_payment' ? t('paymentPage.pendingCrypto') : 
+                 request.status === 'pending_momo_payment' ? t('paymentPage.pendingMomo') :
                  request.status}
               </Badge>
             </div>
 
-            {/* Expiry */}
             <div className="text-sm text-muted-foreground">
-              <p>Lien valide jusqu'au : {new Date(request.link_expires_at).toLocaleString('fr-FR')}</p>
+              <p>{t('paymentPage.validUntil', { date: new Date(request.link_expires_at).toLocaleString() })}</p>
             </div>
 
-            {/* Actions */}
             <div className="flex flex-col gap-3">
               <Button onClick={() => navigate('/')} variant="outline" className="w-full">
-                Retour à l'accueil
+                {t('paymentPage.backHome')}
               </Button>
             </div>
           </CardContent>
