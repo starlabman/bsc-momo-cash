@@ -1215,7 +1215,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                           </div>
                           <div className="text-right">
                             <span className="text-3xl font-bold">{item.percentage.toFixed(1)}%</span>
-                            <p className="text-xs text-muted-foreground">du total</p>
+                            <p className="text-xs text-muted-foreground">{t('admin.dashboard.ofTotal')}</p>
                           </div>
                         </div>
                         
