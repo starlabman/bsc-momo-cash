@@ -1891,14 +1891,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                 <Table>
                   <TableHeader className="sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/75">
                     <TableRow>
-                      <TableHead className="h-11 text-xs font-medium">Référence</TableHead>
-                      <TableHead className="h-11 text-xs font-medium">Date</TableHead>
-                      <TableHead className="h-11 text-xs font-medium">XOF</TableHead>
-                      <TableHead className="h-11 text-xs font-medium">Crypto</TableHead>
-                      <TableHead className="h-11 text-xs font-medium">Mobile Money</TableHead>
-                      <TableHead className="h-11 text-xs font-medium">Destination</TableHead>
-                      <TableHead className="h-11 text-xs font-medium">Statut</TableHead>
-                      <TableHead className="h-11 text-xs font-medium">Actions</TableHead>
+                      <TableHead className="h-11 text-xs font-medium">{t('admin.dashboard.reference')}</TableHead>
+                      <TableHead className="h-11 text-xs font-medium">{t('admin.dashboard.date')}</TableHead>
+                      <TableHead className="h-11 text-xs font-medium">{t('admin.dashboard.xof')}</TableHead>
+                      <TableHead className="h-11 text-xs font-medium">{t('admin.dashboard.crypto')}</TableHead>
+                      <TableHead className="h-11 text-xs font-medium">{t('admin.dashboard.mobileMoney')}</TableHead>
+                      <TableHead className="h-11 text-xs font-medium">{t('admin.dashboard.destination')}</TableHead>
+                      <TableHead className="h-11 text-xs font-medium">{t('admin.dashboard.status')}</TableHead>
+                      <TableHead className="h-11 text-xs font-medium">{t('admin.dashboard.actions')}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
