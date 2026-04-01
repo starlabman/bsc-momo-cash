@@ -1335,7 +1335,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                 </p>
               </div>
               <div className="rounded-lg border bg-card p-4">
-                <p className="text-sm text-muted-foreground mb-2">Total Volume Blockchain</p>
+                <p className="text-sm text-muted-foreground mb-2">{t('admin.dashboard.totalVolumeBlockchain')}</p>
                 <p className="text-2xl font-bold">
                   {blockchainStats.total_volume.toLocaleString('fr-FR', { maximumFractionDigits: 2 })}
                 </p>
