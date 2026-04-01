@@ -446,8 +446,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
     } catch (error) {
       console.error('Error fetching onramp requests:', error);
       toast({
-        title: "Erreur",
-        description: `Impossible de charger les demandes onramp: ${error instanceof Error ? error.message : 'Erreur inconnue'}`,
+        title: t('admin.dashboard.error'),
+        description: `${t('admin.dashboard.loadOnrampError')}: ${error instanceof Error ? error.message : 'Unknown'}`,
         variant: "destructive",
       });
     } finally {
