@@ -1796,7 +1796,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                                       onValueChange={(value) => setUpdateData({ ...updateData, status: value })}
                                     >
                                       <SelectTrigger>
-                                        <SelectValue placeholder="Choisir un statut" />
+                                        <SelectValue placeholder={t('admin.dashboard.chooseStatus')} />
                                       </SelectTrigger>
                                       <SelectContent>
                                         {offrampStatuses.map((status) => (
