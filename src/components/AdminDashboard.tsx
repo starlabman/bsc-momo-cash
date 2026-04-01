@@ -1382,7 +1382,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                   <Globe className="h-4 w-4" />
                 </div>
                 <p className="text-2xl font-bold">{countryStats.total_countries}</p>
-                <p className="mt-1 text-xs text-muted-foreground">Pays actifs</p>
+                <p className="mt-1 text-xs text-muted-foreground">{t('admin.dashboard.activeCountries')}</p>
               </div>
 
               {countryStats.most_active_country && (
