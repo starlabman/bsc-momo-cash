@@ -383,7 +383,7 @@ const AdminFilters: React.FC<AdminFiltersProps> = ({
                         className="w-full justify-start"
                         onClick={() => exportToCSV('all')}
                       >
-                        Toutes les transactions
+                        {t('admin.filters.allTransactions')}
                       </Button>
                     </div>
                   </PopoverContent>
