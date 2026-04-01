@@ -771,7 +771,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                 ) : (
                   <Search className="h-4 w-4" />
                 )}
-                Rechercher
+                {t('admin.dashboard.search')}
               </Button>
             </div>
             
