@@ -399,7 +399,7 @@ const AdminFilters: React.FC<AdminFiltersProps> = ({
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {/* Status filter */}
               <div className="space-y-2">
-                <Label className="text-xs">Statut</Label>
+                <Label className="text-xs">{t('admin.filters.status')}</Label>
                 <Select value={filters.status} onValueChange={(v) => setFilters({ ...filters, status: v })}>
                   <SelectTrigger>
                     <SelectValue placeholder="Tous les statuts" />
