@@ -2020,7 +2020,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                                   <div className="space-y-2">
                                     <Label>{t('admin.dashboard.notes')}</Label>
                                     <Textarea
-                                      placeholder="Ajouter des notes..."
+                                      placeholder={t('admin.dashboard.notesPlaceholder')}
                                       value={onrampUpdateData.notes}
                                       onChange={(e) => setOnrampUpdateData({ ...onrampUpdateData, notes: e.target.value })}
                                     />
