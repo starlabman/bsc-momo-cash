@@ -1790,7 +1790,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                                   </div>
 
                                   <div className="space-y-2">
-                                    <Label>Statut actuel: {getStatusInfo(request.status, false).label}</Label>
+                                    <Label>{t('admin.dashboard.currentStatus')}: {getStatusInfo(request.status, false).label}</Label>
                                     <Select 
                                       value={updateData.status} 
                                       onValueChange={(value) => setUpdateData({ ...updateData, status: value })}
