@@ -356,7 +356,7 @@ const AdminFilters: React.FC<AdminFiltersProps> = ({
                   <PopoverTrigger asChild>
                     <Button variant="outline" size="sm" className="gap-2" onClick={(e) => e.stopPropagation()}>
                       <Download className="h-4 w-4" />
-                      Exporter CSV
+                      {t('admin.filters.exportCsv')}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-48 bg-background" align="end">
