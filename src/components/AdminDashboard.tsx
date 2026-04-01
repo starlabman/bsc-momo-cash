@@ -915,7 +915,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                 <div className="text-center p-3 bg-indigo-50 dark:bg-indigo-950 rounded-lg">
                   <Users className="h-5 w-5 text-indigo-600 dark:text-indigo-400 mx-auto mb-2" />
                   <p className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">{stats.total_onramp || 0}</p>
-                  <p className="text-xs text-muted-foreground mt-1">Total</p>
+                  <p className="text-xs text-muted-foreground mt-1">{t('admin.dashboard.total')}</p>
                 </div>
 
                 <div className="text-center p-3 bg-cyan-50 dark:bg-cyan-950 rounded-lg">
