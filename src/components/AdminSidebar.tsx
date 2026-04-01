@@ -1,5 +1,6 @@
 import { LayoutDashboard, ArrowRightLeft, ArrowDownUp, BarChart3, Eye, Globe, Phone, Coins } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   Sidebar,
   SidebarContent,
@@ -14,60 +15,21 @@ import {
 } from '@/components/ui/sidebar';
 import { cn } from '@/lib/utils';
 
-const navigationItems = [
-  { 
-    title: 'Dashboard', 
-    url: '/admin', 
-    icon: LayoutDashboard,
-    section: 'dashboard'
-  },
-  { 
-    title: 'Offramp (Crypto → MoMo)', 
-    url: '/admin#offramp', 
-    icon: ArrowRightLeft,
-    section: 'offramp'
-  },
-  { 
-    title: 'Onramp (MoMo → Crypto)', 
-    url: '/admin#onramp', 
-    icon: ArrowDownUp,
-    section: 'onramp'
-  },
-  { 
-    title: 'Statistiques', 
-    url: '/admin#stats', 
-    icon: BarChart3,
-    section: 'stats'
-  },
-  { 
-    title: 'Visibilité Blockchains', 
-    url: '/admin#visibility', 
-    icon: Eye,
-    section: 'visibility'
-  },
-  { 
-    title: 'Visibilité Pays', 
-    url: '/admin#countries', 
-    icon: Globe,
-    section: 'countries'
-  },
-  { 
-    title: 'Visibilité Opérateurs', 
-    url: '/admin#operators', 
-    icon: Phone,
-    section: 'operators'
-  },
-  { 
-    title: 'Visibilité Tokens', 
-    url: '/admin#tokens', 
-    icon: Coins,
-    section: 'tokens'
-  },
-];
-
 export function AdminSidebar() {
+  const { t } = useTranslation();
   const location = useLocation();
   const active = (location.hash || '#dashboard').replace('#', '');
+
+  const navigationItems = [
+    { title: t('admin.sidebar.dashboard'), url: '/admin', icon: LayoutDashboard, section: 'dashboard' },
+    { title: t('admin.sidebar.offramp'), url: '/admin#offramp', icon: ArrowRightLeft, section: 'offramp' },
+    { title: t('admin.sidebar.onramp'), url: '/admin#onramp', icon: ArrowDownUp, section: 'onramp' },
+    { title: t('admin.sidebar.stats'), url: '/admin#stats', icon: BarChart3, section: 'stats' },
+    { title: t('admin.sidebar.visibilityBlockchains'), url: '/admin#visibility', icon: Eye, section: 'visibility' },
+    { title: t('admin.sidebar.visibilityCountries'), url: '/admin#countries', icon: Globe, section: 'countries' },
+    { title: t('admin.sidebar.visibilityOperators'), url: '/admin#operators', icon: Phone, section: 'operators' },
+    { title: t('admin.sidebar.visibilityTokens'), url: '/admin#tokens', icon: Coins, section: 'tokens' },
+  ];
 
   return (
     <Sidebar>
@@ -77,8 +39,8 @@ export function AdminSidebar() {
             <ArrowRightLeft className="h-4 w-4 text-primary" />
           </div>
           <div className="leading-tight">
-            <p className="text-sm font-semibold">Administration</p>
-            <p className="text-xs text-muted-foreground">Gestion des transactions</p>
+            <p className="text-sm font-semibold">{t('admin.sidebar.administration')}</p>
+            <p className="text-xs text-muted-foreground">{t('admin.sidebar.transactionMgmt')}</p>
           </div>
         </div>
       </SidebarHeader>
@@ -87,7 +49,7 @@ export function AdminSidebar() {
 
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+          <SidebarGroupLabel>{t('admin.sidebar.navigation')}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {navigationItems.map((item) => (

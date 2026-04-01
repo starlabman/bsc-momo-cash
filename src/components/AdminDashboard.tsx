@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -211,6 +212,7 @@ const FlagOrFallback = ({ flag, code }: { flag: string | null | undefined; code:
 
 const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }) => {
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [requests, setRequests] = useState<OfframpRequest[]>([]);
   const [onrampRequests, setOnrampRequests] = useState<OnrampRequest[]>([]);
@@ -261,20 +263,19 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
 
   // Statuts pour OFFRAMP (Crypto → Mobile Money)
   const offrampStatuses = [
-    { value: 'pending_payment', label: 'En attente paiement crypto', color: 'secondary', description: 'Client doit envoyer la crypto' },
-    { value: 'received', label: 'Crypto reçue', color: 'default', description: 'Paiement crypto confirmé' },
-    { value: 'processing', label: 'En cours de traitement', color: 'outline', description: 'Transfert mobile money en cours' },
-    { value: 'paid', label: 'Mobile Money envoyé', color: 'default', description: 'Client a reçu le mobile money' },
-    { value: 'failed', label: 'Échoué', color: 'destructive', description: 'Transaction échouée' }
+    { value: 'pending_payment', label: t('admin.dashboard.offrampStatusPending'), color: 'secondary', description: t('admin.dashboard.offrampStatusPendingDesc') },
+    { value: 'received', label: t('admin.dashboard.offrampStatusReceived'), color: 'default', description: t('admin.dashboard.offrampStatusReceivedDesc') },
+    { value: 'processing', label: t('admin.dashboard.offrampStatusProcessing'), color: 'outline', description: t('admin.dashboard.offrampStatusProcessingDesc') },
+    { value: 'paid', label: t('admin.dashboard.offrampStatusPaid'), color: 'default', description: t('admin.dashboard.offrampStatusPaidDesc') },
+    { value: 'failed', label: t('admin.dashboard.offrampStatusFailed'), color: 'destructive', description: t('admin.dashboard.offrampStatusFailedDesc') }
   ];
 
-  // Statuts pour ONRAMP (Mobile Money → Crypto)
   const onrampStatuses = [
-    { value: 'pending_momo_payment', label: 'En attente paiement Mobile Money', color: 'secondary', description: 'Client doit envoyer le mobile money' },
-    { value: 'momo_payment_received', label: 'Mobile Money reçu', color: 'default', description: 'Paiement mobile money confirmé' },
-    { value: 'processing', label: 'En cours de traitement', color: 'outline', description: 'Transfert crypto en cours' },
-    { value: 'completed', label: 'Crypto envoyée', color: 'default', description: 'Client a reçu la crypto' },
-    { value: 'failed', label: 'Échoué', color: 'destructive', description: 'Transaction échouée' }
+    { value: 'pending_momo_payment', label: t('admin.dashboard.onrampStatusPending'), color: 'secondary', description: t('admin.dashboard.onrampStatusPendingDesc') },
+    { value: 'momo_payment_received', label: t('admin.dashboard.onrampStatusReceived'), color: 'default', description: t('admin.dashboard.onrampStatusReceivedDesc') },
+    { value: 'processing', label: t('admin.dashboard.onrampStatusProcessing'), color: 'outline', description: t('admin.dashboard.onrampStatusProcessingDesc') },
+    { value: 'completed', label: t('admin.dashboard.onrampStatusCompleted'), color: 'default', description: t('admin.dashboard.onrampStatusCompletedDesc') },
+    { value: 'failed', label: t('admin.dashboard.onrampStatusFailed'), color: 'destructive', description: t('admin.dashboard.onrampStatusFailedDesc') }
   ];
 
   const getStatusInfo = (status: string, isOnramp: boolean = false) => {
@@ -294,14 +295,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
   } as const;
 
   const statusLabels = {
-    'pending_payment': 'En attente paiement crypto',
-    'pending_momo_payment': 'En attente paiement Mobile Money',
-    'momo_payment_received': 'Mobile Money reçu',
-    'received': 'Crypto reçue',
-    'processing': 'En cours de traitement',
-    'paid': 'Mobile Money envoyé',
-    'completed': 'Crypto envoyée',
-    'failed': 'Échoué'
+    'pending_payment': t('admin.dashboard.offrampStatusPending'),
+    'pending_momo_payment': t('admin.dashboard.onrampStatusPending'),
+    'momo_payment_received': t('admin.dashboard.onrampStatusReceived'),
+    'received': t('admin.dashboard.offrampStatusReceived'),
+    'processing': t('admin.dashboard.offrampStatusProcessing'),
+    'paid': t('admin.dashboard.offrampStatusPaid'),
+    'completed': t('admin.dashboard.onrampStatusCompleted'),
+    'failed': t('admin.dashboard.offrampStatusFailed')
   };
 
   useEffect(() => {
@@ -358,7 +359,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
             const newEvent = payload.new as any;
             setLiveBlockchainEvents(prev => [newEvent, ...prev].slice(0, 50));
             toast({
-              title: "⛓️ Transaction blockchain détectée",
+              title: t('admin.dashboard.blockchainDetected'),
               description: `${newEvent.amount} ${newEvent.token_symbol} reçu sur ${newEvent.network?.toUpperCase()} via ${newEvent.webhook_source}`,
             });
           } else if (payload.eventType === 'UPDATE') {
@@ -409,8 +410,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
     } catch (error) {
       console.error('Error fetching requests:', error);
       toast({
-        title: "Erreur",
-        description: `Impossible de charger les demandes: ${error instanceof Error ? error.message : 'Erreur inconnue'}`,
+        title: t('admin.dashboard.error'),
+        description: `${t('admin.dashboard.loadError')}: ${error instanceof Error ? error.message : 'Unknown'}`,
         variant: "destructive",
       });
     } finally {
@@ -445,8 +446,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
     } catch (error) {
       console.error('Error fetching onramp requests:', error);
       toast({
-        title: "Erreur",
-        description: `Impossible de charger les demandes onramp: ${error instanceof Error ? error.message : 'Erreur inconnue'}`,
+        title: t('admin.dashboard.error'),
+        description: `${t('admin.dashboard.loadOnrampError')}: ${error instanceof Error ? error.message : 'Unknown'}`,
         variant: "destructive",
       });
     } finally {
@@ -473,8 +474,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
 
       if (data.success) {
         toast({
-          title: "Succès",
-          description: "Demande mise à jour",
+          title: t('admin.dashboard.success'),
+          description: t('admin.dashboard.requestUpdated'),
         });
         setSelectedRequest(null);
         setUpdateData({ status: '', notes: '', transaction_hash: '' });
@@ -485,8 +486,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
     } catch (error) {
       console.error('Error updating request:', error);
       toast({
-        title: "Erreur",
-        description: error instanceof Error ? error.message : "Une erreur s'est produite",
+        title: t('admin.dashboard.error'),
+        description: error instanceof Error ? error.message : t('errors.genericError'),
         variant: "destructive",
       });
     } finally {
@@ -514,8 +515,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
 
       if (data.success) {
         toast({
-          title: "Succès",
-          description: "Demande onramp mise à jour",
+          title: t('admin.dashboard.success'),
+          description: t('admin.dashboard.onrampUpdated'),
         });
         setSelectedOnrampRequest(null);
         setOnrampUpdateData({ status: '', notes: '', transaction_hash: '' });
@@ -526,8 +527,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
     } catch (error) {
       console.error('Error updating onramp request:', error);
       toast({
-        title: "Erreur",
-        description: error instanceof Error ? error.message : "Une erreur s'est produite",
+        title: t('admin.dashboard.error'),
+        description: error instanceof Error ? error.message : t('errors.genericError'),
         variant: "destructive",
       });
     } finally {
@@ -590,14 +591,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
   };
 
   const sectionTitles: Record<DashboardSection, { title: string; subtitle: string }> = {
-    dashboard: { title: 'Vue d\'ensemble', subtitle: 'Aperçu des transactions et statistiques' },
-    offramp: { title: 'Transactions Offramp', subtitle: 'Crypto → Mobile Money' },
-    onramp: { title: 'Transactions Onramp', subtitle: 'Mobile Money → Crypto' },
-    stats: { title: 'Statistiques', subtitle: 'Analyses et métriques détaillées' },
-    visibility: { title: 'Visibilité Blockchains', subtitle: 'Gérer les réseaux affichés sur les formulaires' },
-    countries: { title: 'Visibilité Pays', subtitle: 'Gérer les pays affichés sur les formulaires' },
-    operators: { title: 'Visibilité Opérateurs', subtitle: 'Gérer les opérateurs Mobile Money par pays' },
-    tokens: { title: 'Visibilité Tokens', subtitle: 'Gérer les tokens affichés par réseau blockchain' },
+    dashboard: { title: t('admin.dashboard.overview'), subtitle: t('admin.dashboard.overviewSub') },
+    offramp: { title: t('admin.dashboard.offrampTitle'), subtitle: t('admin.dashboard.offrampSub') },
+    onramp: { title: t('admin.dashboard.onrampTitle'), subtitle: t('admin.dashboard.onrampSub') },
+    stats: { title: t('admin.dashboard.statsTitle'), subtitle: t('admin.dashboard.statsSub') },
+    visibility: { title: t('admin.dashboard.visibilityTitle'), subtitle: t('admin.dashboard.visibilitySub') },
+    countries: { title: t('admin.dashboard.countriesTitle'), subtitle: t('admin.dashboard.countriesSub') },
+    operators: { title: t('admin.dashboard.operatorsTitle'), subtitle: t('admin.dashboard.operatorsSub') },
+    tokens: { title: t('admin.dashboard.tokensTitle'), subtitle: t('admin.dashboard.tokensSub') },
   };
 
   // Determine which requests to display (search results > filters > all)
@@ -648,8 +649,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
     return (
       <div className="mt-4 flex flex-col sm:flex-row items-center justify-between gap-3">
         <p className="text-xs text-muted-foreground">
-          Page <span className="font-medium text-foreground">{safePage}</span> sur{' '}
-          <span className="font-medium text-foreground">{totalPages}</span> • {totalItems} élément(s)
+          {t('admin.dashboard.page')} <span className="font-medium text-foreground">{safePage}</span> {t('admin.dashboard.of')}{' '}
+          <span className="font-medium text-foreground">{totalPages}</span> • {totalItems} {t('admin.dashboard.items')}
         </p>
 
         <Pagination className="justify-end sm:justify-center">
@@ -736,7 +737,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
             className="gap-2"
           >
             <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-            <span className="hidden sm:inline">Actualiser</span>
+            <span className="hidden sm:inline">{t('admin.dashboard.refresh')}</span>
           </Button>
         </div>
 
@@ -747,7 +748,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Rechercher par référence (OFF-XXXXXX, ONR-XXXXXX), numéro, adresse..."
+                  placeholder={t('admin.dashboard.searchPlaceholder')}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
@@ -770,20 +771,20 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                 ) : (
                   <Search className="h-4 w-4" />
                 )}
-                Rechercher
+                {t('admin.dashboard.search')}
               </Button>
             </div>
             
             {searchResults && (
               <div className="mt-3 flex items-center gap-2 text-sm">
                 <Badge variant="secondary">
-                  {searchResults.offramp.length + searchResults.onramp.length} résultat(s)
+                  {searchResults.offramp.length + searchResults.onramp.length} {t('admin.dashboard.results', { count: searchResults.offramp.length + searchResults.onramp.length }).split(' ').slice(1).join(' ')}
                 </Badge>
                 <span className="text-muted-foreground">
                   {searchResults.offramp.length} offramp, {searchResults.onramp.length} onramp
                 </span>
                 <Button variant="ghost" size="sm" onClick={clearSearch} className="ml-auto text-xs">
-                  Effacer la recherche
+                  {t('admin.dashboard.clearSearch')}
                 </Button>
               </div>
             )}
@@ -811,11 +812,11 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
               <Card className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900 border-blue-200 dark:border-blue-800 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
                 <CardHeader>
-                  <CardTitle className="text-xl flex items-center gap-2">
-                    <TrendingUp className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-                    Volume Total USD
-                  </CardTitle>
-                  <CardDescription>Total des transactions en USD</CardDescription>
+                    <CardTitle className="text-xl flex items-center gap-2">
+                      <TrendingUp className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                      {t('admin.dashboard.totalVolumeUsd')}
+                    </CardTitle>
+                    <CardDescription>{t('admin.dashboard.totalVolumeUsdDesc')}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <p className="text-3xl lg:text-4xl font-bold text-blue-600 dark:text-blue-400">
@@ -826,11 +827,11 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
 
               <Card className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950 dark:to-green-900 border-green-200 dark:border-green-800 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
                 <CardHeader>
-                  <CardTitle className="text-xl flex items-center gap-2">
-                    <TrendingUp className="h-5 w-5 text-green-600 dark:text-green-400" />
-                    Volume Total XOF
-                  </CardTitle>
-                  <CardDescription>Total des transactions en XOF</CardDescription>
+                    <CardTitle className="text-xl flex items-center gap-2">
+                      <TrendingUp className="h-5 w-5 text-green-600 dark:text-green-400" />
+                      {t('admin.dashboard.totalVolumeXof')}
+                    </CardTitle>
+                    <CardDescription>{t('admin.dashboard.totalVolumeXofDesc')}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <p className="text-3xl lg:text-4xl font-bold text-green-600 dark:text-green-400">
@@ -845,7 +846,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg lg:text-xl">
                 <ArrowRightLeft className="h-5 w-5" />
-                Statistiques Offramp (Crypto → Mobile Money)
+                {t('admin.dashboard.offrampStats')}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -853,37 +854,37 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                 <div className="text-center p-3 bg-yellow-50 dark:bg-yellow-950 rounded-lg hover:scale-105 transition-transform">
                   <Clock className="h-5 w-5 text-yellow-600 dark:text-yellow-400 mx-auto mb-2" />
                   <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{stats.pending_payment}</p>
-                  <p className="text-xs text-muted-foreground mt-1">En attente</p>
+                  <p className="text-xs text-muted-foreground mt-1">{t('admin.dashboard.pending')}</p>
                 </div>
                 
                 <div className="text-center p-3 bg-blue-50 dark:bg-blue-950 rounded-lg hover:scale-105 transition-transform">
                   <TrendingUp className="h-5 w-5 text-blue-600 dark:text-blue-400 mx-auto mb-2" />
                   <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{stats.received}</p>
-                  <p className="text-xs text-muted-foreground mt-1">Reçu</p>
+                  <p className="text-xs text-muted-foreground mt-1">{t('admin.dashboard.received')}</p>
                 </div>
 
                 <div className="text-center p-3 bg-orange-50 dark:bg-orange-950 rounded-lg hover:scale-105 transition-transform">
                   <Settings className="h-5 w-5 text-orange-600 dark:text-orange-400 mx-auto mb-2" />
                   <p className="text-2xl font-bold text-orange-600 dark:text-orange-400">{stats.processing}</p>
-                  <p className="text-xs text-muted-foreground mt-1">En cours</p>
+                  <p className="text-xs text-muted-foreground mt-1">{t('admin.dashboard.processing')}</p>
                 </div>
 
                 <div className="text-center p-3 bg-green-50 dark:bg-green-950 rounded-lg hover:scale-105 transition-transform">
                   <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400 mx-auto mb-2" />
                   <p className="text-2xl font-bold text-green-600 dark:text-green-400">{stats.paid}</p>
-                  <p className="text-xs text-muted-foreground mt-1">Payé</p>
+                  <p className="text-xs text-muted-foreground mt-1">{t('admin.dashboard.paid')}</p>
                 </div>
 
                 <div className="text-center p-3 bg-red-50 dark:bg-red-950 rounded-lg hover:scale-105 transition-transform">
                   <XCircle className="h-5 w-5 text-red-600 dark:text-red-400 mx-auto mb-2" />
                   <p className="text-2xl font-bold text-red-600 dark:text-red-400">{stats.failed}</p>
-                  <p className="text-xs text-muted-foreground mt-1">Échoué</p>
+                  <p className="text-xs text-muted-foreground mt-1">{t('admin.dashboard.failed')}</p>
                 </div>
 
                 <div className="text-center p-3 bg-purple-50 dark:bg-purple-950 rounded-lg hover:scale-105 transition-transform">
                   <Users className="h-5 w-5 text-purple-600 dark:text-purple-400 mx-auto mb-2" />
                   <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">{stats.total_offramp || 0}</p>
-                  <p className="text-xs text-muted-foreground mt-1">Total</p>
+                  <p className="text-xs text-muted-foreground mt-1">{t('admin.dashboard.total')}</p>
                 </div>
               </div>
             </CardContent>
@@ -894,7 +895,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg lg:text-xl">
                 <ArrowDownUp className="h-5 w-5" />
-                Statistiques Onramp (Mobile Money → Crypto)
+                {t('admin.dashboard.onrampStats')}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -902,19 +903,19 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                 <div className="text-center p-3 bg-amber-50 dark:bg-amber-950 rounded-lg">
                   <Clock className="h-5 w-5 text-amber-600 dark:text-amber-400 mx-auto mb-2" />
                   <p className="text-2xl font-bold text-amber-600 dark:text-amber-400">{stats.pending_onramp || 0}</p>
-                  <p className="text-xs text-muted-foreground mt-1">En attente paiement</p>
+                  <p className="text-xs text-muted-foreground mt-1">{t('admin.dashboard.pendingPayment')}</p>
                 </div>
 
                 <div className="text-center p-3 bg-emerald-50 dark:bg-emerald-950 rounded-lg">
                   <CheckCircle className="h-5 w-5 text-emerald-600 dark:text-emerald-400 mx-auto mb-2" />
                   <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{stats.completed_onramp || 0}</p>
-                  <p className="text-xs text-muted-foreground mt-1">Complété</p>
+                  <p className="text-xs text-muted-foreground mt-1">{t('admin.dashboard.completed')}</p>
                 </div>
 
                 <div className="text-center p-3 bg-indigo-50 dark:bg-indigo-950 rounded-lg">
                   <Users className="h-5 w-5 text-indigo-600 dark:text-indigo-400 mx-auto mb-2" />
                   <p className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">{stats.total_onramp || 0}</p>
-                  <p className="text-xs text-muted-foreground mt-1">Total</p>
+                  <p className="text-xs text-muted-foreground mt-1">{t('admin.dashboard.total')}</p>
                 </div>
 
                 <div className="text-center p-3 bg-cyan-50 dark:bg-cyan-950 rounded-lg">
@@ -1107,8 +1108,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
           ) : (
             <div className="text-center py-8 text-muted-foreground">
               <Radio className="h-12 w-12 mx-auto mb-3 opacity-50 animate-pulse" />
-              <p className="font-medium">En attente de transactions blockchain...</p>
-              <p className="text-sm mt-1">Les transactions seront détectées automatiquement via le polling et les webhooks</p>
+              <p className="font-medium">{t('admin.dashboard.waitingBlockchain')}</p>
+              <p className="text-sm mt-1">{t('admin.dashboard.waitingBlockchainDesc')}</p>
             </div>
           )}
         </CardContent>
@@ -1119,9 +1120,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg lg:text-xl">
               <BarChart3 className="h-5 w-5" />
-              Statistiques par Réseau Blockchain
+              {t('admin.dashboard.blockchainStatsByNetwork')}
             </CardTitle>
-            <CardDescription>Utilisation et volume des différents réseaux blockchain</CardDescription>
+            <CardDescription>{t('admin.dashboard.blockchainStatsByNetworkDesc')}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 gap-4 mb-6 md:grid-cols-5">
@@ -1130,7 +1131,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                   <Hash className="h-4 w-4" />
                 </div>
                 <p className="text-2xl font-bold">{blockchainStats.total_events}</p>
-                <p className="mt-1 text-xs text-muted-foreground">Total événements</p>
+                <p className="mt-1 text-xs text-muted-foreground">{t('admin.dashboard.totalEvents')}</p>
               </div>
 
               <div className="rounded-lg border bg-card p-3 text-center">
@@ -1138,7 +1139,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                   <CheckCircle className="h-4 w-4" />
                 </div>
                 <p className="text-2xl font-bold">{blockchainStats.processed_events}</p>
-                <p className="mt-1 text-xs text-muted-foreground">Traités</p>
+                <p className="mt-1 text-xs text-muted-foreground">{t('admin.dashboard.processed')}</p>
               </div>
 
               <div className="rounded-lg border bg-card p-3 text-center">
@@ -1146,7 +1147,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                   <Clock className="h-4 w-4" />
                 </div>
                 <p className="text-2xl font-bold">{blockchainStats.pending_events}</p>
-                <p className="mt-1 text-xs text-muted-foreground">En attente</p>
+                <p className="mt-1 text-xs text-muted-foreground">{t('admin.dashboard.pending')}</p>
               </div>
 
               <div className="rounded-lg border bg-card p-3 text-center">
@@ -1156,7 +1157,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                 <p className="text-2xl font-bold">
                   {blockchainStats.total_volume.toLocaleString('fr-FR', { maximumFractionDigits: 2 })}
                 </p>
-                <p className="mt-1 text-xs text-muted-foreground">Volume total</p>
+                <p className="mt-1 text-xs text-muted-foreground">{t('admin.dashboard.totalVolume')}</p>
               </div>
 
               <div className="rounded-lg border bg-card p-3 text-center">
@@ -1164,7 +1165,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                   <BarChart3 className="h-4 w-4" />
                 </div>
                 <p className="text-2xl font-bold">{blockchainStats.unique_networks}</p>
-                <p className="mt-1 text-xs text-muted-foreground">Réseaux actifs</p>
+                <p className="mt-1 text-xs text-muted-foreground">{t('admin.dashboard.activeNetworks')}</p>
               </div>
             </div>
 
@@ -1173,7 +1174,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
               <div className="mb-6">
                 <h4 className="mb-4 flex items-center gap-2 text-lg font-semibold">
                   <BarChart3 className="h-4 w-4 text-muted-foreground" />
-                  Utilisation par réseau
+                  {t('admin.dashboard.usageByNetwork')}
                 </h4>
                 <div className="space-y-3">
                   {blockchainStats.volume_by_network.map((item: any, index: number) => {
@@ -1199,7 +1200,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                               <Badge>
                                 <span className="inline-flex items-center gap-1">
                                   <Trophy className="h-3.5 w-3.5" />
-                                  Plus utilisé
+                                  {t('admin.dashboard.mostUsed')}
                                 </span>
                               </Badge>
                             )}
@@ -1207,30 +1208,30 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                               <Badge variant="destructive">
                                 <span className="inline-flex items-center gap-1">
                                   <TrendingDown className="h-3.5 w-3.5" />
-                                  Moins utilisé
+                                  {t('admin.dashboard.leastUsed')}
                                 </span>
                               </Badge>
                             )}
                           </div>
                           <div className="text-right">
                             <span className="text-3xl font-bold">{item.percentage.toFixed(1)}%</span>
-                            <p className="text-xs text-muted-foreground">du total</p>
+                            <p className="text-xs text-muted-foreground">{t('admin.dashboard.ofTotal')}</p>
                           </div>
                         </div>
                         
                         <div className="grid grid-cols-3 gap-4 mb-3">
                           <div className="rounded-md bg-muted/40 p-2">
-                            <p className="text-xs text-muted-foreground">Transactions</p>
+                            <p className="text-xs text-muted-foreground">{t('admin.dashboard.transactions')}</p>
                             <p className="text-xl font-bold">{item.count}</p>
                           </div>
                           <div className="rounded-md bg-muted/40 p-2">
-                            <p className="text-xs text-muted-foreground">Volume</p>
+                            <p className="text-xs text-muted-foreground">{t('admin.dashboard.volume')}</p>
                             <p className="text-xl font-bold">
                               {item.volume.toLocaleString('fr-FR', { maximumFractionDigits: 2 })}
                             </p>
                           </div>
                           <div className="rounded-md bg-muted/40 p-2">
-                            <p className="text-xs text-muted-foreground">Tokens</p>
+                            <p className="text-xs text-muted-foreground">{t('admin.dashboard.tokens')}</p>
                             <p className="text-xl font-bold">{item.unique_tokens}</p>
                           </div>
                         </div>
@@ -1260,7 +1261,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                     <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-primary ring-1 ring-border">
                       <Trophy className="h-4 w-4" />
                     </div>
-                    <p className="text-sm font-semibold">Réseau le plus utilisé</p>
+                    <p className="text-sm font-semibold">{t('admin.dashboard.mostUsedNetwork')}</p>
                   </div>
                   <p className="mb-2 text-3xl font-bold">
                     {blockchainStats.highest_volume_network.network}
@@ -1277,7 +1278,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                       <span className="font-bold">{blockchainStats.highest_volume_network.count}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Part de marché:</span>
+                      <span className="text-muted-foreground">{t('admin.dashboard.marketShare')}:</span>
                       <span className="font-bold">
                         {blockchainStats.highest_volume_network.percentage.toFixed(1)}%
                       </span>
@@ -1292,7 +1293,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                     <div className="flex h-9 w-9 items-center justify-center rounded-full bg-destructive/10 text-destructive ring-1 ring-border">
                       <TrendingDown className="h-4 w-4" />
                     </div>
-                    <p className="text-sm font-semibold">Réseau moins utilisé</p>
+                    <p className="text-sm font-semibold">{t('admin.dashboard.leastUsedNetwork')}</p>
                   </div>
                   <p className="mb-2 text-3xl font-bold">
                     {blockchainStats.lowest_volume_network.network}
@@ -1309,7 +1310,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                       <span className="font-bold">{blockchainStats.lowest_volume_network.count}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Part de marché:</span>
+                      <span className="text-muted-foreground">{t('admin.dashboard.marketShare')}:</span>
                       <span className="font-bold text-destructive">
                         {blockchainStats.lowest_volume_network.percentage.toFixed(1)}%
                       </span>
@@ -1322,19 +1323,19 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
             {/* Volume comparison */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
               <div className="rounded-lg border bg-card p-4">
-                <p className="text-sm text-muted-foreground mb-2">Volume Offramp (XOF)</p>
+                <p className="text-sm text-muted-foreground mb-2">{t('admin.dashboard.volumeOfframpXof')}</p>
                 <p className="text-2xl font-bold">
                   {stats?.total_volume_xof?.toLocaleString('fr-FR', { maximumFractionDigits: 0 }) || '0'} XOF
                 </p>
               </div>
               <div className="rounded-lg border bg-card p-4">
-                <p className="text-sm text-muted-foreground mb-2">Volume Offramp (USD)</p>
+                <p className="text-sm text-muted-foreground mb-2">{t('admin.dashboard.volumeOfframpUsd')}</p>
                 <p className="text-2xl font-bold">
                   ${stats?.total_volume_usd?.toLocaleString('fr-FR', { maximumFractionDigits: 2 }) || '0'}
                 </p>
               </div>
               <div className="rounded-lg border bg-card p-4">
-                <p className="text-sm text-muted-foreground mb-2">Total Volume Blockchain</p>
+                <p className="text-sm text-muted-foreground mb-2">{t('admin.dashboard.totalVolumeBlockchain')}</p>
                 <p className="text-2xl font-bold">
                   {blockchainStats.total_volume.toLocaleString('fr-FR', { maximumFractionDigits: 2 })}
                 </p>
@@ -1350,7 +1351,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                   </div>
                   <div>
                     <p className="text-2xl font-bold">
-                      {blockchainStats.supported_networks} Réseaux Blockchain
+                      {blockchainStats.supported_networks} {t('admin.dashboard.blockchainNetworks')}
                     </p>
                     <p className="text-sm text-muted-foreground">
                       Base, BSC, Ethereum, Arbitrum, Optimism, Polygon, Solana, Avalanche, Lisk
@@ -1369,9 +1370,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg lg:text-xl">
               <Globe className="h-5 w-5" />
-              Statistiques détaillées par Pays
+              {t('admin.dashboard.countryStats')}
             </CardTitle>
-            <CardDescription>Utilisation par pays avec répartition blockchain, offramp et onramp</CardDescription>
+            <CardDescription>{t('admin.dashboard.countryStatsDesc')}</CardDescription>
           </CardHeader>
           <CardContent>
             {/* Summary tiles */}
@@ -1381,7 +1382,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                   <Globe className="h-4 w-4" />
                 </div>
                 <p className="text-2xl font-bold">{countryStats.total_countries}</p>
-                <p className="mt-1 text-xs text-muted-foreground">Pays actifs</p>
+                <p className="mt-1 text-xs text-muted-foreground">{t('admin.dashboard.activeCountries')}</p>
               </div>
 
               {countryStats.most_active_country && (
@@ -1391,7 +1392,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                       <FlagOrFallback flag={countryStats.most_active_country.flag_emoji} code={countryStats.most_active_country.country_code} />
                     </div>
                     <p className="text-2xl font-bold">{countryStats.most_active_country.total_transactions}</p>
-                    <p className="mt-1 text-xs text-muted-foreground">Plus actif: {countryStats.most_active_country.country_name}</p>
+                    <p className="mt-1 text-xs text-muted-foreground">{t('admin.dashboard.mostActive')}: {countryStats.most_active_country.country_name}</p>
                   </div>
 
                   <div className="rounded-lg border bg-card p-3 text-center">
@@ -1411,15 +1412,15 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                   <Users className="h-4 w-4" />
                 </div>
                 <p className="text-2xl font-bold">{countryStats.by_country.reduce((sum, c) => sum + c.total_transactions, 0)}</p>
-                <p className="mt-1 text-xs text-muted-foreground">Total transactions</p>
+                <p className="mt-1 text-xs text-muted-foreground">{t('admin.dashboard.totalTransactions')}</p>
               </div>
             </div>
 
             {/* Detailed Country Cards */}
             <div className="mb-6">
               <h4 className="mb-4 flex items-center gap-2 text-lg font-semibold">
-                <BarChart3 className="h-4 w-4 text-muted-foreground" />
-                Détails par pays
+                  <BarChart3 className="h-4 w-4 text-muted-foreground" />
+                  {t('admin.dashboard.detailsByCountry')}
               </h4>
               <div className="space-y-4">
                 {countryStats.by_country.map((country) => {
@@ -1678,14 +1679,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg lg:text-xl">
                 <ArrowRightLeft className="h-5 w-5" />
-                Demandes Offramp (Crypto → Mobile Money)
+                {t('admin.dashboard.offrampRequests')}
                 <Badge variant="secondary" className="ml-2">{displayedOfframpRequests.length}</Badge>
                 {searchResults && displayedOfframpRequests.length !== requests.length && (
                   <span className="text-xs text-muted-foreground font-normal">/ {requests.length} total</span>
                 )}
               </CardTitle>
               <CardDescription>
-                Liste des demandes de conversion crypto vers Mobile Money
+                {t('admin.dashboard.offrampRequestsDesc')}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -1693,14 +1694,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                 <Table>
                   <TableHeader className="sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/75">
                     <TableRow>
-                      <TableHead className="h-11 text-xs font-medium">Référence</TableHead>
-                      <TableHead className="h-11 text-xs font-medium">Date</TableHead>
-                      <TableHead className="h-11 text-xs font-medium">Montant</TableHead>
-                      <TableHead className="h-11 text-xs font-medium">Token</TableHead>
-                      <TableHead className="h-11 text-xs font-medium">Mobile Money</TableHead>
-                      <TableHead className="h-11 text-xs font-medium">XOF</TableHead>
-                      <TableHead className="h-11 text-xs font-medium">Statut</TableHead>
-                      <TableHead className="h-11 text-xs font-medium">Actions</TableHead>
+                      <TableHead className="h-11 text-xs font-medium">{t('admin.dashboard.reference')}</TableHead>
+                      <TableHead className="h-11 text-xs font-medium">{t('admin.dashboard.date')}</TableHead>
+                      <TableHead className="h-11 text-xs font-medium">{t('admin.dashboard.amount')}</TableHead>
+                      <TableHead className="h-11 text-xs font-medium">{t('admin.dashboard.token')}</TableHead>
+                      <TableHead className="h-11 text-xs font-medium">{t('admin.dashboard.mobileMoney')}</TableHead>
+                      <TableHead className="h-11 text-xs font-medium">{t('admin.dashboard.xof')}</TableHead>
+                      <TableHead className="h-11 text-xs font-medium">{t('admin.dashboard.status')}</TableHead>
+                      <TableHead className="h-11 text-xs font-medium">{t('admin.dashboard.actions')}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -1764,14 +1765,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                                 size="sm"
                                 onClick={() => openUpdateDialog(request)}
                               >
-                                Modifier
+                                {t('admin.dashboard.edit')}
                               </Button>
                             </DialogTrigger>
                             <DialogContent className="max-w-md">
                               <DialogHeader>
-                                <DialogTitle>Mettre à jour la demande offramp</DialogTitle>
+                                <DialogTitle>{t('admin.dashboard.updateOfframp')}</DialogTitle>
                                 <DialogDescription>
-                                  Modifiez le statut et ajoutez des notes
+                                  {t('admin.dashboard.updateStatusDesc')}
                                 </DialogDescription>
                               </DialogHeader>
                               
@@ -1779,23 +1780,23 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                                 <div className="space-y-4">
                                   {/* Status flow explanation */}
                                   <div className="bg-muted/50 p-3 rounded-lg mb-4">
-                                    <p className="text-xs font-semibold mb-2">📋 Flux Offramp (Crypto → Mobile Money):</p>
+                                    <p className="text-xs font-semibold mb-2">{t('admin.dashboard.offrampFlow')}</p>
                                     <div className="space-y-1 text-xs text-muted-foreground">
-                                      <div>1️⃣ En attente paiement crypto → Client envoie crypto</div>
-                                      <div>2️⃣ Crypto reçue → Paiement confirmé on-chain</div>
-                                      <div>3️⃣ En cours de traitement → Transfert Mobile Money en cours</div>
-                                      <div>4️⃣ Mobile Money envoyé → Transaction terminée ✓</div>
+                                      <div>{t('admin.dashboard.offrampStep1')}</div>
+                                      <div>{t('admin.dashboard.offrampStep2')}</div>
+                                      <div>{t('admin.dashboard.offrampStep3')}</div>
+                                      <div>{t('admin.dashboard.offrampStep4')}</div>
                                     </div>
                                   </div>
 
                                   <div className="space-y-2">
-                                    <Label>Statut actuel: {getStatusInfo(request.status, false).label}</Label>
+                                    <Label>{t('admin.dashboard.currentStatus')}: {getStatusInfo(request.status, false).label}</Label>
                                     <Select 
                                       value={updateData.status} 
                                       onValueChange={(value) => setUpdateData({ ...updateData, status: value })}
                                     >
                                       <SelectTrigger>
-                                        <SelectValue placeholder="Choisir un statut" />
+                                        <SelectValue placeholder={t('admin.dashboard.chooseStatus')} />
                                       </SelectTrigger>
                                       <SelectContent>
                                         {offrampStatuses.map((status) => (
@@ -1811,7 +1812,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                                   </div>
 
                                   <div className="space-y-2">
-                                    <Label>Hash de transaction (optionnel)</Label>
+                                    <Label>{t('admin.dashboard.txHashOptional')}</Label>
                                     <Input
                                       placeholder="0x..."
                                       value={updateData.transaction_hash}
@@ -1820,9 +1821,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                                   </div>
 
                                   <div className="space-y-2">
-                                    <Label>Notes</Label>
+                                    <Label>{t('admin.dashboard.notes')}</Label>
                                     <Textarea
-                                      placeholder="Ajouter des notes..."
+                                      placeholder={t('admin.dashboard.notesPlaceholder')}
                                       value={updateData.notes}
                                       onChange={(e) => setUpdateData({ ...updateData, notes: e.target.value })}
                                     />
@@ -1836,10 +1837,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                                     {loading ? (
                                       <>
                                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                        Mise à jour...
+                                        {t('admin.dashboard.updating')}
                                       </>
                                     ) : (
-                                      'Mettre à jour'
+                                      t('admin.dashboard.update')
                                     )}
                                   </Button>
                                 </div>
@@ -1857,9 +1858,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
               
               {displayedOfframpRequests.length === 0 && !loading && (
                 <div className="rounded-lg border border-dashed p-8 text-center">
-                  <p className="text-sm font-medium">Aucune demande offramp</p>
+                  <p className="text-sm font-medium">{t('admin.dashboard.noOfframpRequests')}</p>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    {searchResults ? "Aucun résultat pour cette recherche." : "Aucune transaction ne correspond aux filtres actuels."}
+                    {searchResults ? t('admin.dashboard.noSearchResults') : t('admin.dashboard.noFilterResults')}
                   </p>
                 </div>
               )}
@@ -1875,14 +1876,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg lg:text-xl">
                 <ArrowDownUp className="h-5 w-5" />
-                Demandes Onramp (Mobile Money → Crypto)
+                {t('admin.dashboard.onrampRequests')}
                 <Badge variant="secondary" className="ml-2">{displayedOnrampRequests.length}</Badge>
                 {searchResults && displayedOnrampRequests.length !== onrampRequests.length && (
                   <span className="text-xs text-muted-foreground font-normal">/ {onrampRequests.length} total</span>
                 )}
               </CardTitle>
               <CardDescription>
-                Liste des demandes de conversion Mobile Money vers crypto
+                {t('admin.dashboard.onrampRequestsDesc')}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -1890,14 +1891,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                 <Table>
                   <TableHeader className="sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/75">
                     <TableRow>
-                      <TableHead className="h-11 text-xs font-medium">Référence</TableHead>
-                      <TableHead className="h-11 text-xs font-medium">Date</TableHead>
-                      <TableHead className="h-11 text-xs font-medium">XOF</TableHead>
-                      <TableHead className="h-11 text-xs font-medium">Crypto</TableHead>
-                      <TableHead className="h-11 text-xs font-medium">Mobile Money</TableHead>
-                      <TableHead className="h-11 text-xs font-medium">Destination</TableHead>
-                      <TableHead className="h-11 text-xs font-medium">Statut</TableHead>
-                      <TableHead className="h-11 text-xs font-medium">Actions</TableHead>
+                      <TableHead className="h-11 text-xs font-medium">{t('admin.dashboard.reference')}</TableHead>
+                      <TableHead className="h-11 text-xs font-medium">{t('admin.dashboard.date')}</TableHead>
+                      <TableHead className="h-11 text-xs font-medium">{t('admin.dashboard.xof')}</TableHead>
+                      <TableHead className="h-11 text-xs font-medium">{t('admin.dashboard.crypto')}</TableHead>
+                      <TableHead className="h-11 text-xs font-medium">{t('admin.dashboard.mobileMoney')}</TableHead>
+                      <TableHead className="h-11 text-xs font-medium">{t('admin.dashboard.destination')}</TableHead>
+                      <TableHead className="h-11 text-xs font-medium">{t('admin.dashboard.status')}</TableHead>
+                      <TableHead className="h-11 text-xs font-medium">{t('admin.dashboard.actions')}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -1961,14 +1962,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                                 size="sm"
                                 onClick={() => openOnrampUpdateDialog(request)}
                               >
-                                Modifier
+                                {t('admin.dashboard.edit')}
                               </Button>
                             </DialogTrigger>
                             <DialogContent className="max-w-md">
                               <DialogHeader>
-                                <DialogTitle>Mettre à jour la demande onramp</DialogTitle>
+                                <DialogTitle>{t('admin.dashboard.updateOnramp')}</DialogTitle>
                                 <DialogDescription>
-                                  Modifiez le statut et ajoutez des notes
+                                  {t('admin.dashboard.updateStatusDesc')}
                                 </DialogDescription>
                               </DialogHeader>
                               
@@ -1976,23 +1977,23 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                                 <div className="space-y-4">
                                   {/* Status flow explanation */}
                                   <div className="bg-muted/50 p-3 rounded-lg mb-4">
-                                    <p className="text-xs font-semibold mb-2">📋 Flux Onramp (Mobile Money → Crypto):</p>
+                                    <p className="text-xs font-semibold mb-2">{t('admin.dashboard.onrampFlow')}</p>
                                     <div className="space-y-1 text-xs text-muted-foreground">
-                                      <div>1️⃣ En attente paiement Mobile Money → Client envoie Mobile Money</div>
-                                      <div>2️⃣ Mobile Money reçu → Paiement confirmé</div>
-                                      <div>3️⃣ En cours de traitement → Transfert crypto en cours</div>
-                                      <div>4️⃣ Crypto envoyée → Transaction terminée ✓</div>
+                                      <div>{t('admin.dashboard.onrampStep1')}</div>
+                                      <div>{t('admin.dashboard.onrampStep2')}</div>
+                                      <div>{t('admin.dashboard.onrampStep3')}</div>
+                                      <div>{t('admin.dashboard.onrampStep4')}</div>
                                     </div>
                                   </div>
 
                                   <div className="space-y-2">
-                                    <Label>Statut actuel: {getStatusInfo(request.status, true).label}</Label>
+                                    <Label>{t('admin.dashboard.currentStatus')}: {getStatusInfo(request.status, true).label}</Label>
                                     <Select 
                                       value={onrampUpdateData.status} 
                                       onValueChange={(value) => setOnrampUpdateData({ ...onrampUpdateData, status: value })}
                                     >
                                       <SelectTrigger>
-                                        <SelectValue placeholder="Choisir un statut" />
+                                        <SelectValue placeholder={t('admin.dashboard.chooseStatus')} />
                                       </SelectTrigger>
                                       <SelectContent>
                                         {onrampStatuses.map((status) => (
@@ -2008,7 +2009,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                                   </div>
 
                                   <div className="space-y-2">
-                                    <Label>Hash de transaction (optionnel)</Label>
+                                    <Label>{t('admin.dashboard.txHashOptional')}</Label>
                                     <Input
                                       placeholder="0x..."
                                       value={onrampUpdateData.transaction_hash}
@@ -2017,9 +2018,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                                   </div>
 
                                   <div className="space-y-2">
-                                    <Label>Notes</Label>
+                                    <Label>{t('admin.dashboard.notes')}</Label>
                                     <Textarea
-                                      placeholder="Ajouter des notes..."
+                                      placeholder={t('admin.dashboard.notesPlaceholder')}
                                       value={onrampUpdateData.notes}
                                       onChange={(e) => setOnrampUpdateData({ ...onrampUpdateData, notes: e.target.value })}
                                     />
@@ -2033,10 +2034,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                                     {loading ? (
                                       <>
                                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                        Mise à jour...
+                                        {t('admin.dashboard.updating')}
                                       </>
                                     ) : (
-                                      'Mettre à jour'
+                                      t('admin.dashboard.update')
                                     )}
                                   </Button>
                                 </div>
@@ -2054,9 +2055,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
               
               {displayedOnrampRequests.length === 0 && !loading && (
                 <div className="rounded-lg border border-dashed p-8 text-center">
-                  <p className="text-sm font-medium">Aucune demande onramp</p>
+                  <p className="text-sm font-medium">{t('admin.dashboard.noOnrampRequests')}</p>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    {searchResults ? "Aucun résultat pour cette recherche." : "Aucune transaction ne correspond aux filtres actuels."}
+                    {searchResults ? t('admin.dashboard.noSearchResults') : t('admin.dashboard.noFilterResults')}
                   </p>
                 </div>
               )}

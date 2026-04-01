@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -90,6 +91,7 @@ const AdminFilters: React.FC<AdminFiltersProps> = ({
   onFilteredOnramp,
   activeTab
 }) => {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [countries, setCountries] = useState<Country[]>([]);
   const [filters, setFilters] = useState<FilterState>({
@@ -105,19 +107,19 @@ const AdminFilters: React.FC<AdminFiltersProps> = ({
 
   // Status options
   const offrampStatuses = [
-    { value: 'pending_payment', label: 'En attente paiement crypto' },
-    { value: 'received', label: 'Crypto reçue' },
-    { value: 'processing', label: 'En cours de traitement' },
-    { value: 'paid', label: 'Mobile Money envoyé' },
-    { value: 'failed', label: 'Échoué' }
+    { value: 'pending_payment', label: t('admin.dashboard.offrampStatusPending') },
+    { value: 'received', label: t('admin.dashboard.offrampStatusReceived') },
+    { value: 'processing', label: t('admin.dashboard.offrampStatusProcessing') },
+    { value: 'paid', label: t('admin.dashboard.offrampStatusPaid') },
+    { value: 'failed', label: t('admin.dashboard.offrampStatusFailed') }
   ];
 
   const onrampStatuses = [
-    { value: 'pending_momo_payment', label: 'En attente paiement Mobile Money' },
-    { value: 'momo_payment_received', label: 'Mobile Money reçu' },
-    { value: 'processing', label: 'En cours de traitement' },
-    { value: 'completed', label: 'Crypto envoyée' },
-    { value: 'failed', label: 'Échoué' }
+    { value: 'pending_momo_payment', label: t('admin.dashboard.onrampStatusPending') },
+    { value: 'momo_payment_received', label: t('admin.dashboard.onrampStatusReceived') },
+    { value: 'processing', label: t('admin.dashboard.onrampStatusProcessing') },
+    { value: 'completed', label: t('admin.dashboard.onrampStatusCompleted') },
+    { value: 'failed', label: t('admin.dashboard.onrampStatusFailed') }
   ];
 
   const networks = ['Base', 'BSC', 'Ethereum', 'Arbitrum', 'Optimism', 'Polygon', 'Solana', 'Avalanche', 'Lisk'];
@@ -341,10 +343,10 @@ const AdminFilters: React.FC<AdminFiltersProps> = ({
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <Filter className="h-5 w-5 text-primary" />
-                <span className="font-medium">Filtres avancés</span>
+                <span className="font-medium">{t('admin.filters.advancedFilters')}</span>
                 {hasActiveFilters() && (
                   <Badge variant="secondary" className="bg-primary text-primary-foreground">
-                    {getActiveFilterCount()} actif(s)
+                    {getActiveFilterCount()} {t('admin.filters.active', { count: getActiveFilterCount() }).split(' ').slice(1).join(' ')}
                   </Badge>
                 )}
               </div>
@@ -354,7 +356,7 @@ const AdminFilters: React.FC<AdminFiltersProps> = ({
                   <PopoverTrigger asChild>
                     <Button variant="outline" size="sm" className="gap-2" onClick={(e) => e.stopPropagation()}>
                       <Download className="h-4 w-4" />
-                      Exporter CSV
+                      {t('admin.filters.exportCsv')}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-48 bg-background" align="end">
@@ -365,7 +367,7 @@ const AdminFilters: React.FC<AdminFiltersProps> = ({
                         className="w-full justify-start"
                         onClick={() => exportToCSV('offramp')}
                       >
-                        Offramp seulement
+                        {t('admin.filters.offrampOnly')}
                       </Button>
                       <Button 
                         variant="ghost" 
@@ -373,7 +375,7 @@ const AdminFilters: React.FC<AdminFiltersProps> = ({
                         className="w-full justify-start"
                         onClick={() => exportToCSV('onramp')}
                       >
-                        Onramp seulement
+                        {t('admin.filters.onrampOnly')}
                       </Button>
                       <Button 
                         variant="ghost" 
@@ -381,7 +383,7 @@ const AdminFilters: React.FC<AdminFiltersProps> = ({
                         className="w-full justify-start"
                         onClick={() => exportToCSV('all')}
                       >
-                        Toutes les transactions
+                        {t('admin.filters.allTransactions')}
                       </Button>
                     </div>
                   </PopoverContent>
@@ -397,13 +399,13 @@ const AdminFilters: React.FC<AdminFiltersProps> = ({
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {/* Status filter */}
               <div className="space-y-2">
-                <Label className="text-xs">Statut</Label>
+                <Label className="text-xs">{t('admin.filters.status')}</Label>
                 <Select value={filters.status} onValueChange={(v) => setFilters({ ...filters, status: v })}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Tous les statuts" />
+                    <SelectValue placeholder={t('admin.filters.allStatuses')} />
                   </SelectTrigger>
                   <SelectContent className="bg-background">
-                    <SelectItem value="all">Tous les statuts</SelectItem>
+                    <SelectItem value="all">{t('admin.filters.allStatuses')}</SelectItem>
                     {statuses.map((s) => (
                       <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
                     ))}
@@ -413,7 +415,7 @@ const AdminFilters: React.FC<AdminFiltersProps> = ({
 
               {/* Date from */}
               <div className="space-y-2">
-                <Label className="text-xs">Date début</Label>
+                <Label className="text-xs">{t('admin.filters.dateFrom')}</Label>
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button 
@@ -424,7 +426,7 @@ const AdminFilters: React.FC<AdminFiltersProps> = ({
                       )}
                     >
                       <CalendarIcon className="mr-2 h-4 w-4" />
-                      {filters.dateFrom ? format(filters.dateFrom, 'dd/MM/yyyy') : 'Sélectionner'}
+                      {filters.dateFrom ? format(filters.dateFrom, 'dd/MM/yyyy') : t('admin.filters.select')}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0 bg-background" align="start">
@@ -441,7 +443,7 @@ const AdminFilters: React.FC<AdminFiltersProps> = ({
 
               {/* Date to */}
               <div className="space-y-2">
-                <Label className="text-xs">Date fin</Label>
+                <Label className="text-xs">{t('admin.filters.dateTo')}</Label>
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button 
@@ -452,7 +454,7 @@ const AdminFilters: React.FC<AdminFiltersProps> = ({
                       )}
                     >
                       <CalendarIcon className="mr-2 h-4 w-4" />
-                      {filters.dateTo ? format(filters.dateTo, 'dd/MM/yyyy') : 'Sélectionner'}
+                      {filters.dateTo ? format(filters.dateTo, 'dd/MM/yyyy') : t('admin.filters.select')}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0 bg-background" align="start">
@@ -469,13 +471,13 @@ const AdminFilters: React.FC<AdminFiltersProps> = ({
 
               {/* Country filter */}
               <div className="space-y-2">
-                <Label className="text-xs">Pays</Label>
+                <Label className="text-xs">{t('admin.filters.country')}</Label>
                 <Select value={filters.country} onValueChange={(v) => setFilters({ ...filters, country: v })}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Tous les pays" />
+                    <SelectValue placeholder={t('admin.filters.allCountries')} />
                   </SelectTrigger>
                   <SelectContent className="bg-background">
-                    <SelectItem value="all">Tous les pays</SelectItem>
+                    <SelectItem value="all">{t('admin.filters.allCountries')}</SelectItem>
                     {countries.map((c) => (
                       <SelectItem key={c.id} value={c.id}>
                         {c.flag_emoji} {c.name}
@@ -488,13 +490,13 @@ const AdminFilters: React.FC<AdminFiltersProps> = ({
               {/* Network filter (for offramp) */}
               {(activeTab === 'offramp' || activeTab === 'all') && (
                 <div className="space-y-2">
-                  <Label className="text-xs">Réseau Blockchain</Label>
+                  <Label className="text-xs">{t('admin.filters.blockchainNetwork')}</Label>
                   <Select value={filters.network} onValueChange={(v) => setFilters({ ...filters, network: v })}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Tous les réseaux" />
+                      <SelectValue placeholder={t('admin.filters.allNetworks')} />
                     </SelectTrigger>
                     <SelectContent className="bg-background">
-                      <SelectItem value="all">Tous les réseaux</SelectItem>
+                      <SelectItem value="all">{t('admin.filters.allNetworks')}</SelectItem>
                       {networks.map((n) => (
                         <SelectItem key={n} value={n}>{n}</SelectItem>
                       ))}
@@ -505,13 +507,13 @@ const AdminFilters: React.FC<AdminFiltersProps> = ({
 
               {/* Mobile Money Provider */}
               <div className="space-y-2">
-                <Label className="text-xs">Opérateur Mobile Money</Label>
+                <Label className="text-xs">{t('admin.filters.momoOperator')}</Label>
                 <Select value={filters.momoProvider} onValueChange={(v) => setFilters({ ...filters, momoProvider: v })}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Tous les opérateurs" />
+                    <SelectValue placeholder={t('admin.filters.allOperators')} />
                   </SelectTrigger>
                   <SelectContent className="bg-background">
-                    <SelectItem value="all">Tous les opérateurs</SelectItem>
+                    <SelectItem value="all">{t('admin.filters.allOperators')}</SelectItem>
                     {momoProviders.map((p) => (
                       <SelectItem key={p} value={p}>{p}</SelectItem>
                     ))}
@@ -521,7 +523,7 @@ const AdminFilters: React.FC<AdminFiltersProps> = ({
 
               {/* Min Amount */}
               <div className="space-y-2">
-                <Label className="text-xs">Montant min (USD)</Label>
+                <Label className="text-xs">{t('admin.filters.minAmount')}</Label>
                 <Input
                   type="number"
                   placeholder="0"
@@ -532,7 +534,7 @@ const AdminFilters: React.FC<AdminFiltersProps> = ({
 
               {/* Max Amount */}
               <div className="space-y-2">
-                <Label className="text-xs">Montant max (USD)</Label>
+                <Label className="text-xs">{t('admin.filters.maxAmount')}</Label>
                 <Input
                   type="number"
                   placeholder="∞"
@@ -547,7 +549,7 @@ const AdminFilters: React.FC<AdminFiltersProps> = ({
               <div className="flex justify-end">
                 <Button variant="ghost" size="sm" onClick={clearFilters} className="gap-2 text-muted-foreground">
                   <X className="h-4 w-4" />
-                  Réinitialiser les filtres
+                  {t('admin.filters.clearFilters')}
                 </Button>
               </div>
             )}
