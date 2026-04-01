@@ -1412,7 +1412,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                   <Users className="h-4 w-4" />
                 </div>
                 <p className="text-2xl font-bold">{countryStats.by_country.reduce((sum, c) => sum + c.total_transactions, 0)}</p>
-                <p className="mt-1 text-xs text-muted-foreground">Total transactions</p>
+                <p className="mt-1 text-xs text-muted-foreground">{t('admin.dashboard.totalTransactions')}</p>
               </div>
             </div>
 
