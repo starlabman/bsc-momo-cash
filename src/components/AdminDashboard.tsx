@@ -1231,7 +1231,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                             </p>
                           </div>
                           <div className="rounded-md bg-muted/40 p-2">
-                            <p className="text-xs text-muted-foreground">Tokens</p>
+                            <p className="text-xs text-muted-foreground">{t('admin.dashboard.tokens')}</p>
                             <p className="text-xl font-bold">{item.unique_tokens}</p>
                           </div>
                         </div>
