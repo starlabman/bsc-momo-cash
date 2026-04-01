@@ -1987,7 +1987,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                                   </div>
 
                                   <div className="space-y-2">
-                                    <Label>Statut actuel: {getStatusInfo(request.status, true).label}</Label>
+                                    <Label>{t('admin.dashboard.currentStatus')}: {getStatusInfo(request.status, true).label}</Label>
                                     <Select 
                                       value={onrampUpdateData.status} 
                                       onValueChange={(value) => setOnrampUpdateData({ ...onrampUpdateData, status: value })}
