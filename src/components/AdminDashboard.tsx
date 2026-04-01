@@ -878,7 +878,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                 <div className="text-center p-3 bg-red-50 dark:bg-red-950 rounded-lg hover:scale-105 transition-transform">
                   <XCircle className="h-5 w-5 text-red-600 dark:text-red-400 mx-auto mb-2" />
                   <p className="text-2xl font-bold text-red-600 dark:text-red-400">{stats.failed}</p>
-                  <p className="text-xs text-muted-foreground mt-1">Échoué</p>
+                  <p className="text-xs text-muted-foreground mt-1">{t('admin.dashboard.failed')}</p>
                 </div>
 
                 <div className="text-center p-3 bg-purple-50 dark:bg-purple-950 rounded-lg hover:scale-105 transition-transform">
