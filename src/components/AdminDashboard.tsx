@@ -1200,7 +1200,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                               <Badge>
                                 <span className="inline-flex items-center gap-1">
                                   <Trophy className="h-3.5 w-3.5" />
-                                  Plus utilisé
+                                  {t('admin.dashboard.mostUsed')}
                                 </span>
                               </Badge>
                             )}
