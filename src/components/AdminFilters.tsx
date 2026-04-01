@@ -375,7 +375,7 @@ const AdminFilters: React.FC<AdminFiltersProps> = ({
                         className="w-full justify-start"
                         onClick={() => exportToCSV('onramp')}
                       >
-                        Onramp seulement
+                        {t('admin.filters.onrampOnly')}
                       </Button>
                       <Button 
                         variant="ghost" 
