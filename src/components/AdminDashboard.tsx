@@ -1329,7 +1329,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                 </p>
               </div>
               <div className="rounded-lg border bg-card p-4">
-                <p className="text-sm text-muted-foreground mb-2">Volume Offramp (USD)</p>
+                <p className="text-sm text-muted-foreground mb-2">{t('admin.dashboard.volumeOfframpUsd')}</p>
                 <p className="text-2xl font-bold">
                   ${stats?.total_volume_usd?.toLocaleString('fr-FR', { maximumFractionDigits: 2 }) || '0'}
                 </p>
