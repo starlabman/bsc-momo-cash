@@ -909,7 +909,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                 <div className="text-center p-3 bg-emerald-50 dark:bg-emerald-950 rounded-lg">
                   <CheckCircle className="h-5 w-5 text-emerald-600 dark:text-emerald-400 mx-auto mb-2" />
                   <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{stats.completed_onramp || 0}</p>
-                  <p className="text-xs text-muted-foreground mt-1">Complété</p>
+                  <p className="text-xs text-muted-foreground mt-1">{t('admin.dashboard.completed')}</p>
                 </div>
 
                 <div className="text-center p-3 bg-indigo-50 dark:bg-indigo-950 rounded-lg">
