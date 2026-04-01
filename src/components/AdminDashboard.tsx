@@ -1837,10 +1837,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                                     {loading ? (
                                       <>
                                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                        Mise à jour...
+                                        {t('admin.dashboard.updating')}
                                       </>
                                     ) : (
-                                      'Mettre à jour'
+                                      t('admin.dashboard.update')
                                     )}
                                   </Button>
                                 </div>
