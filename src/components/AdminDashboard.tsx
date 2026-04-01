@@ -1108,8 +1108,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
           ) : (
             <div className="text-center py-8 text-muted-foreground">
               <Radio className="h-12 w-12 mx-auto mb-3 opacity-50 animate-pulse" />
-              <p className="font-medium">En attente de transactions blockchain...</p>
-              <p className="text-sm mt-1">Les transactions seront détectées automatiquement via le polling et les webhooks</p>
+              <p className="font-medium">{t('admin.dashboard.waitingBlockchain')}</p>
+              <p className="text-sm mt-1">{t('admin.dashboard.waitingBlockchainDesc')}</p>
             </div>
           )}
         </CardContent>
