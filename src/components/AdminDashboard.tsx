@@ -1278,7 +1278,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                       <span className="font-bold">{blockchainStats.highest_volume_network.count}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Part de marché:</span>
+                      <span className="text-muted-foreground">{t('admin.dashboard.marketShare')}:</span>
                       <span className="font-bold">
                         {blockchainStats.highest_volume_network.percentage.toFixed(1)}%
                       </span>
