@@ -1165,7 +1165,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                   <BarChart3 className="h-4 w-4" />
                 </div>
                 <p className="text-2xl font-bold">{blockchainStats.unique_networks}</p>
-                <p className="mt-1 text-xs text-muted-foreground">Réseaux actifs</p>
+                <p className="mt-1 text-xs text-muted-foreground">{t('admin.dashboard.activeNetworks')}</p>
               </div>
             </div>
 
