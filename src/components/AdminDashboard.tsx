@@ -213,6 +213,7 @@ const FlagOrFallback = ({ flag, code }: { flag: string | null | undefined; code:
 const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }) => {
   const { toast } = useToast();
   const { t } = useTranslation();
+  const [loading, setLoading] = useState(false);
   const [requests, setRequests] = useState<OfframpRequest[]>([]);
   const [onrampRequests, setOnrampRequests] = useState<OnrampRequest[]>([]);
   const [stats, setStats] = useState<DashboardStats | null>(null);
