@@ -496,7 +496,7 @@ const AdminFilters: React.FC<AdminFiltersProps> = ({
                       <SelectValue placeholder={t('admin.filters.allNetworks')} />
                     </SelectTrigger>
                     <SelectContent className="bg-background">
-                      <SelectItem value="all">Tous les réseaux</SelectItem>
+                      <SelectItem value="all">{t('admin.filters.allNetworks')}</SelectItem>
                       {networks.map((n) => (
                         <SelectItem key={n} value={n}>{n}</SelectItem>
                       ))}
