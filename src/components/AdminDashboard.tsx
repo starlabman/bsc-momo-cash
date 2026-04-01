@@ -515,8 +515,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
 
       if (data.success) {
         toast({
-          title: "Succès",
-          description: "Demande onramp mise à jour",
+          title: t('admin.dashboard.success'),
+          description: t('admin.dashboard.onrampUpdated'),
         });
         setSelectedOnrampRequest(null);
         setOnrampUpdateData({ status: '', notes: '', transaction_hash: '' });
