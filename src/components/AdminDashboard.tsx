@@ -591,14 +591,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
   };
 
   const sectionTitles: Record<DashboardSection, { title: string; subtitle: string }> = {
-    dashboard: { title: 'Vue d\'ensemble', subtitle: 'Aperçu des transactions et statistiques' },
-    offramp: { title: 'Transactions Offramp', subtitle: 'Crypto → Mobile Money' },
-    onramp: { title: 'Transactions Onramp', subtitle: 'Mobile Money → Crypto' },
-    stats: { title: 'Statistiques', subtitle: 'Analyses et métriques détaillées' },
-    visibility: { title: 'Visibilité Blockchains', subtitle: 'Gérer les réseaux affichés sur les formulaires' },
-    countries: { title: 'Visibilité Pays', subtitle: 'Gérer les pays affichés sur les formulaires' },
-    operators: { title: 'Visibilité Opérateurs', subtitle: 'Gérer les opérateurs Mobile Money par pays' },
-    tokens: { title: 'Visibilité Tokens', subtitle: 'Gérer les tokens affichés par réseau blockchain' },
+    dashboard: { title: t('admin.dashboard.overview'), subtitle: t('admin.dashboard.overviewSub') },
+    offramp: { title: t('admin.dashboard.offrampTitle'), subtitle: t('admin.dashboard.offrampSub') },
+    onramp: { title: t('admin.dashboard.onrampTitle'), subtitle: t('admin.dashboard.onrampSub') },
+    stats: { title: t('admin.dashboard.statsTitle'), subtitle: t('admin.dashboard.statsSub') },
+    visibility: { title: t('admin.dashboard.visibilityTitle'), subtitle: t('admin.dashboard.visibilitySub') },
+    countries: { title: t('admin.dashboard.countriesTitle'), subtitle: t('admin.dashboard.countriesSub') },
+    operators: { title: t('admin.dashboard.operatorsTitle'), subtitle: t('admin.dashboard.operatorsSub') },
+    tokens: { title: t('admin.dashboard.tokensTitle'), subtitle: t('admin.dashboard.tokensSub') },
   };
 
   // Determine which requests to display (search results > filters > all)
