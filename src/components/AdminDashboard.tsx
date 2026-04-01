@@ -895,7 +895,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg lg:text-xl">
                 <ArrowDownUp className="h-5 w-5" />
-                Statistiques Onramp (Mobile Money → Crypto)
+                {t('admin.dashboard.onrampStats')}
               </CardTitle>
             </CardHeader>
             <CardContent>
