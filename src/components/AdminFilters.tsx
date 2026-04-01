@@ -91,6 +91,7 @@ const AdminFilters: React.FC<AdminFiltersProps> = ({
   onFilteredOnramp,
   activeTab
 }) => {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [countries, setCountries] = useState<Country[]>([]);
   const [filters, setFilters] = useState<FilterState>({
