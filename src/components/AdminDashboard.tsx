@@ -1208,7 +1208,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                               <Badge variant="destructive">
                                 <span className="inline-flex items-center gap-1">
                                   <TrendingDown className="h-3.5 w-3.5" />
-                                  Moins utilisé
+                                  {t('admin.dashboard.leastUsed')}
                                 </span>
                               </Badge>
                             )}
