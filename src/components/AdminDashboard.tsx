@@ -527,8 +527,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
     } catch (error) {
       console.error('Error updating onramp request:', error);
       toast({
-        title: "Erreur",
-        description: error instanceof Error ? error.message : "Une erreur s'est produite",
+        title: t('admin.dashboard.error'),
+        description: error instanceof Error ? error.message : t('errors.genericError'),
         variant: "destructive",
       });
     } finally {
