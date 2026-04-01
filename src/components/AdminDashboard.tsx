@@ -1225,7 +1225,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                             <p className="text-xl font-bold">{item.count}</p>
                           </div>
                           <div className="rounded-md bg-muted/40 p-2">
-                            <p className="text-xs text-muted-foreground">Volume</p>
+                            <p className="text-xs text-muted-foreground">{t('admin.dashboard.volume')}</p>
                             <p className="text-xl font-bold">
                               {item.volume.toLocaleString('fr-FR', { maximumFractionDigits: 2 })}
                             </p>
