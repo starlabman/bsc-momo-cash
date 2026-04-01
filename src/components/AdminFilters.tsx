@@ -477,7 +477,7 @@ const AdminFilters: React.FC<AdminFiltersProps> = ({
                     <SelectValue placeholder={t('admin.filters.allCountries')} />
                   </SelectTrigger>
                   <SelectContent className="bg-background">
-                    <SelectItem value="all">Tous les pays</SelectItem>
+                    <SelectItem value="all">{t('admin.filters.allCountries')}</SelectItem>
                     {countries.map((c) => (
                       <SelectItem key={c.id} value={c.id}>
                         {c.flag_emoji} {c.name}
