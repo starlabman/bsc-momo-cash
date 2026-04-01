@@ -443,7 +443,7 @@ const AdminFilters: React.FC<AdminFiltersProps> = ({
 
               {/* Date to */}
               <div className="space-y-2">
-                <Label className="text-xs">Date fin</Label>
+                <Label className="text-xs">{t('admin.filters.dateTo')}</Label>
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button 
