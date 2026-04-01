@@ -1392,7 +1392,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                       <FlagOrFallback flag={countryStats.most_active_country.flag_emoji} code={countryStats.most_active_country.country_code} />
                     </div>
                     <p className="text-2xl font-bold">{countryStats.most_active_country.total_transactions}</p>
-                    <p className="mt-1 text-xs text-muted-foreground">Plus actif: {countryStats.most_active_country.country_name}</p>
+                    <p className="mt-1 text-xs text-muted-foreground">{t('admin.dashboard.mostActive')}: {countryStats.most_active_country.country_name}</p>
                   </div>
 
                   <div className="rounded-lg border bg-card p-3 text-center">
