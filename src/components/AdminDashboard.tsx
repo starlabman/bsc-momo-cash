@@ -649,8 +649,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
     return (
       <div className="mt-4 flex flex-col sm:flex-row items-center justify-between gap-3">
         <p className="text-xs text-muted-foreground">
-          Page <span className="font-medium text-foreground">{safePage}</span> sur{' '}
-          <span className="font-medium text-foreground">{totalPages}</span> • {totalItems} élément(s)
+          {t('admin.dashboard.page')} <span className="font-medium text-foreground">{safePage}</span> {t('admin.dashboard.of')}{' '}
+          <span className="font-medium text-foreground">{totalPages}</span> • {totalItems} {t('admin.dashboard.items')}
         </p>
 
         <Pagination className="justify-end sm:justify-center">
