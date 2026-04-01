@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { ArrowRightLeft, LogOut, User, Menu } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -12,6 +13,7 @@ import { supabase } from '@/integrations/supabase/client';
 type DashboardSection = 'dashboard' | 'offramp' | 'onramp' | 'stats' | 'visibility' | 'countries' | 'operators' | 'tokens';
 
 const Admin = () => {
+  const { t } = useTranslation();
   const [adminUser, setAdminUser] = useState<any>(null);
   const [isValidating, setIsValidating] = useState(true);
   const navigate = useNavigate();
@@ -34,10 +36,6 @@ const Admin = () => {
     const token = localStorage.getItem('admin_token');
     const user = localStorage.getItem('admin_user');
 
-    console.log('=== ADMIN SESSION VALIDATION ===');
-    console.log('Token exists:', !!token);
-    console.log('User exists:', !!user);
-
     if (!token || !user) {
       navigate('/admin/login');
       return;
@@ -45,23 +43,16 @@ const Admin = () => {
 
     try {
       const adminUser = JSON.parse(user);
-      console.log('Admin user parsed:', adminUser);
       
-      // CRITICAL: Validate token server-side using the validate-admin-token edge function
       const { data, error } = await supabase.functions.invoke('validate-admin-token', {
         body: { token }
       });
 
-      console.log('Token validation response:', { data, error });
-
       if (error || !data?.valid) {
-        console.error('Server-side token validation failed:', error);
         handleSessionExpired();
         return;
       }
 
-      // Token is valid, set admin user
-      console.log('Session validated successfully');
       setAdminUser(adminUser);
       setIsValidating(false);
     } catch (error) {
@@ -75,8 +66,8 @@ const Admin = () => {
     localStorage.removeItem('admin_user');
     
     toast({
-      title: "Session expirée",
-      description: "Votre session a expiré. Veuillez vous reconnecter.",
+      title: t('admin.header.sessionExpired'),
+      description: t('admin.header.sessionExpiredDesc'),
       variant: "destructive"
     });
     
@@ -84,15 +75,13 @@ const Admin = () => {
   };
 
   const handleLogout = () => {
-    // Clear all admin-related data from localStorage
     localStorage.removeItem('admin_token');
     localStorage.removeItem('admin_user');
-    // Also clear any cached admin session data
     localStorage.removeItem('admin_session_expires');
     
     toast({
-      title: "Déconnexion réussie",
-      description: "Session sécurisée terminée avec succès",
+      title: t('admin.header.logoutSuccess'),
+      description: t('admin.header.logoutSuccessDesc'),
     });
     navigate('/');
   };
@@ -102,7 +91,7 @@ const Admin = () => {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-4 text-muted-foreground">Validation de la session...</p>
+          <p className="mt-4 text-muted-foreground">{t('admin.header.validating')}</p>
         </div>
       </div>
     );
@@ -114,7 +103,6 @@ const Admin = () => {
         <AdminSidebar />
         
         <div className="flex-1 flex flex-col w-full">
-          {/* Header */}
           <header className="border-b bg-background/95 backdrop-blur-sm sticky top-0 z-40">
             <div className="px-4 lg:px-8 py-3">
               <div className="flex items-center justify-between">
@@ -124,8 +112,8 @@ const Admin = () => {
                     <ArrowRightLeft className="h-5 w-5 text-primary-foreground" />
                   </div>
                   <div>
-                    <h1 className="text-lg lg:text-xl font-bold">SikaPay Admin</h1>
-                    <p className="text-xs text-muted-foreground hidden sm:block">Tableau de bord administrateur</p>
+                    <h1 className="text-lg lg:text-xl font-bold">{t('admin.header.title')}</h1>
+                    <p className="text-xs text-muted-foreground hidden sm:block">{t('admin.header.subtitle')}</p>
                   </div>
                 </div>
                 
@@ -143,14 +131,13 @@ const Admin = () => {
                     className="flex items-center gap-2"
                   >
                     <LogOut className="h-4 w-4" />
-                    <span className="hidden sm:inline">Déconnexion</span>
+                    <span className="hidden sm:inline">{t('admin.header.logout')}</span>
                   </Button>
                 </div>
               </div>
             </div>
           </header>
 
-          {/* Main Content */}
           <main className="flex-1 overflow-auto">
             <div className="px-4 lg:px-8 py-6">
               <AdminDashboard section={getCurrentSection()} />
