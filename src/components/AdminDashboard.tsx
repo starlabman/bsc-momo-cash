@@ -410,8 +410,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
     } catch (error) {
       console.error('Error fetching requests:', error);
       toast({
-        title: "Erreur",
-        description: `Impossible de charger les demandes: ${error instanceof Error ? error.message : 'Erreur inconnue'}`,
+        title: t('admin.dashboard.error'),
+        description: `${t('admin.dashboard.loadError')}: ${error instanceof Error ? error.message : 'Unknown'}`,
         variant: "destructive",
       });
     } finally {
