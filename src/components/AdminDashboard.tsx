@@ -784,7 +784,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                   {searchResults.offramp.length} offramp, {searchResults.onramp.length} onramp
                 </span>
                 <Button variant="ghost" size="sm" onClick={clearSearch} className="ml-auto text-xs">
-                  Effacer la recherche
+                  {t('admin.dashboard.clearSearch')}
                 </Button>
               </div>
             )}
