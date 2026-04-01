@@ -474,8 +474,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
 
       if (data.success) {
         toast({
-          title: "Succès",
-          description: "Demande mise à jour",
+          title: t('admin.dashboard.success'),
+          description: t('admin.dashboard.requestUpdated'),
         });
         setSelectedRequest(null);
         setUpdateData({ status: '', notes: '', transaction_hash: '' });
