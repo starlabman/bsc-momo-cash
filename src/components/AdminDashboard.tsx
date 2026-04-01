@@ -293,14 +293,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
   } as const;
 
   const statusLabels = {
-    'pending_payment': 'En attente paiement crypto',
-    'pending_momo_payment': 'En attente paiement Mobile Money',
-    'momo_payment_received': 'Mobile Money reçu',
-    'received': 'Crypto reçue',
-    'processing': 'En cours de traitement',
-    'paid': 'Mobile Money envoyé',
-    'completed': 'Crypto envoyée',
-    'failed': 'Échoué'
+    'pending_payment': t('admin.dashboard.offrampStatusPending'),
+    'pending_momo_payment': t('admin.dashboard.onrampStatusPending'),
+    'momo_payment_received': t('admin.dashboard.onrampStatusReceived'),
+    'received': t('admin.dashboard.offrampStatusReceived'),
+    'processing': t('admin.dashboard.offrampStatusProcessing'),
+    'paid': t('admin.dashboard.offrampStatusPaid'),
+    'completed': t('admin.dashboard.onrampStatusCompleted'),
+    'failed': t('admin.dashboard.offrampStatusFailed')
   };
 
   useEffect(() => {
