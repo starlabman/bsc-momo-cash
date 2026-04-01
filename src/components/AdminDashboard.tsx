@@ -1174,7 +1174,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
               <div className="mb-6">
                 <h4 className="mb-4 flex items-center gap-2 text-lg font-semibold">
                   <BarChart3 className="h-4 w-4 text-muted-foreground" />
-                  Utilisation par réseau
+                  {t('admin.dashboard.usageByNetwork')}
                 </h4>
                 <div className="space-y-3">
                   {blockchainStats.volume_by_network.map((item: any, index: number) => {
