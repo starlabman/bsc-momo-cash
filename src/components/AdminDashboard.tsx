@@ -1876,14 +1876,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg lg:text-xl">
                 <ArrowDownUp className="h-5 w-5" />
-                Demandes Onramp (Mobile Money → Crypto)
+                {t('admin.dashboard.onrampRequests')}
                 <Badge variant="secondary" className="ml-2">{displayedOnrampRequests.length}</Badge>
                 {searchResults && displayedOnrampRequests.length !== onrampRequests.length && (
                   <span className="text-xs text-muted-foreground font-normal">/ {onrampRequests.length} total</span>
                 )}
               </CardTitle>
               <CardDescription>
-                Liste des demandes de conversion Mobile Money vers crypto
+                {t('admin.dashboard.onrampRequestsDesc')}
               </CardDescription>
             </CardHeader>
             <CardContent>
