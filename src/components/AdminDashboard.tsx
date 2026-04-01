@@ -903,7 +903,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                 <div className="text-center p-3 bg-amber-50 dark:bg-amber-950 rounded-lg">
                   <Clock className="h-5 w-5 text-amber-600 dark:text-amber-400 mx-auto mb-2" />
                   <p className="text-2xl font-bold text-amber-600 dark:text-amber-400">{stats.pending_onramp || 0}</p>
-                  <p className="text-xs text-muted-foreground mt-1">En attente paiement</p>
+                  <p className="text-xs text-muted-foreground mt-1">{t('admin.dashboard.pendingPayment')}</p>
                 </div>
 
                 <div className="text-center p-3 bg-emerald-50 dark:bg-emerald-950 rounded-lg">
