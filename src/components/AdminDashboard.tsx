@@ -1967,9 +1967,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                             </DialogTrigger>
                             <DialogContent className="max-w-md">
                               <DialogHeader>
-                                <DialogTitle>Mettre à jour la demande onramp</DialogTitle>
+                                <DialogTitle>{t('admin.dashboard.updateOnramp')}</DialogTitle>
                                 <DialogDescription>
-                                  Modifiez le statut et ajoutez des notes
+                                  {t('admin.dashboard.updateStatusDesc')}
                                 </DialogDescription>
                               </DialogHeader>
                               
