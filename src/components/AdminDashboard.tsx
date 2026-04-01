@@ -1370,9 +1370,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg lg:text-xl">
               <Globe className="h-5 w-5" />
-              Statistiques détaillées par Pays
+              {t('admin.dashboard.countryStats')}
             </CardTitle>
-            <CardDescription>Utilisation par pays avec répartition blockchain, offramp et onramp</CardDescription>
+            <CardDescription>{t('admin.dashboard.countryStatsDesc')}</CardDescription>
           </CardHeader>
           <CardContent>
             {/* Summary tiles */}
