@@ -1261,7 +1261,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                     <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-primary ring-1 ring-border">
                       <Trophy className="h-4 w-4" />
                     </div>
-                    <p className="text-sm font-semibold">Réseau le plus utilisé</p>
+                    <p className="text-sm font-semibold">{t('admin.dashboard.mostUsedNetwork')}</p>
                   </div>
                   <p className="mb-2 text-3xl font-bold">
                     {blockchainStats.highest_volume_network.network}
