@@ -1679,14 +1679,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg lg:text-xl">
                 <ArrowRightLeft className="h-5 w-5" />
-                Demandes Offramp (Crypto → Mobile Money)
+                {t('admin.dashboard.offrampRequests')}
                 <Badge variant="secondary" className="ml-2">{displayedOfframpRequests.length}</Badge>
                 {searchResults && displayedOfframpRequests.length !== requests.length && (
                   <span className="text-xs text-muted-foreground font-normal">/ {requests.length} total</span>
                 )}
               </CardTitle>
               <CardDescription>
-                Liste des demandes de conversion crypto vers Mobile Money
+                {t('admin.dashboard.offrampRequestsDesc')}
               </CardDescription>
             </CardHeader>
             <CardContent>
