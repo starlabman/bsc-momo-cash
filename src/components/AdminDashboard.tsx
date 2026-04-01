@@ -1780,12 +1780,12 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                                 <div className="space-y-4">
                                   {/* Status flow explanation */}
                                   <div className="bg-muted/50 p-3 rounded-lg mb-4">
-                                    <p className="text-xs font-semibold mb-2">📋 Flux Offramp (Crypto → Mobile Money):</p>
+                                    <p className="text-xs font-semibold mb-2">{t('admin.dashboard.offrampFlow')}</p>
                                     <div className="space-y-1 text-xs text-muted-foreground">
-                                      <div>1️⃣ En attente paiement crypto → Client envoie crypto</div>
-                                      <div>2️⃣ Crypto reçue → Paiement confirmé on-chain</div>
-                                      <div>3️⃣ En cours de traitement → Transfert Mobile Money en cours</div>
-                                      <div>4️⃣ Mobile Money envoyé → Transaction terminée ✓</div>
+                                      <div>{t('admin.dashboard.offrampStep1')}</div>
+                                      <div>{t('admin.dashboard.offrampStep2')}</div>
+                                      <div>{t('admin.dashboard.offrampStep3')}</div>
+                                      <div>{t('admin.dashboard.offrampStep4')}</div>
                                     </div>
                                   </div>
 
