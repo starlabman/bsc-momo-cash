@@ -107,19 +107,19 @@ const AdminFilters: React.FC<AdminFiltersProps> = ({
 
   // Status options
   const offrampStatuses = [
-    { value: 'pending_payment', label: 'En attente paiement crypto' },
-    { value: 'received', label: 'Crypto reçue' },
-    { value: 'processing', label: 'En cours de traitement' },
-    { value: 'paid', label: 'Mobile Money envoyé' },
-    { value: 'failed', label: 'Échoué' }
+    { value: 'pending_payment', label: t('admin.dashboard.offrampStatusPending') },
+    { value: 'received', label: t('admin.dashboard.offrampStatusReceived') },
+    { value: 'processing', label: t('admin.dashboard.offrampStatusProcessing') },
+    { value: 'paid', label: t('admin.dashboard.offrampStatusPaid') },
+    { value: 'failed', label: t('admin.dashboard.offrampStatusFailed') }
   ];
 
   const onrampStatuses = [
-    { value: 'pending_momo_payment', label: 'En attente paiement Mobile Money' },
-    { value: 'momo_payment_received', label: 'Mobile Money reçu' },
-    { value: 'processing', label: 'En cours de traitement' },
-    { value: 'completed', label: 'Crypto envoyée' },
-    { value: 'failed', label: 'Échoué' }
+    { value: 'pending_momo_payment', label: t('admin.dashboard.onrampStatusPending') },
+    { value: 'momo_payment_received', label: t('admin.dashboard.onrampStatusReceived') },
+    { value: 'processing', label: t('admin.dashboard.onrampStatusProcessing') },
+    { value: 'completed', label: t('admin.dashboard.onrampStatusCompleted') },
+    { value: 'failed', label: t('admin.dashboard.onrampStatusFailed') }
   ];
 
   const networks = ['Base', 'BSC', 'Ethereum', 'Arbitrum', 'Optimism', 'Polygon', 'Solana', 'Avalanche', 'Lisk'];
