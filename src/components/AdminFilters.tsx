@@ -513,7 +513,7 @@ const AdminFilters: React.FC<AdminFiltersProps> = ({
                     <SelectValue placeholder={t('admin.filters.allOperators')} />
                   </SelectTrigger>
                   <SelectContent className="bg-background">
-                    <SelectItem value="all">Tous les opérateurs</SelectItem>
+                    <SelectItem value="all">{t('admin.filters.allOperators')}</SelectItem>
                     {momoProviders.map((p) => (
                       <SelectItem key={p} value={p}>{p}</SelectItem>
                     ))}
