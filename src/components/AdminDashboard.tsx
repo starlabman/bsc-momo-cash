@@ -1293,7 +1293,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                     <div className="flex h-9 w-9 items-center justify-center rounded-full bg-destructive/10 text-destructive ring-1 ring-border">
                       <TrendingDown className="h-4 w-4" />
                     </div>
-                    <p className="text-sm font-semibold">Réseau moins utilisé</p>
+                    <p className="text-sm font-semibold">{t('admin.dashboard.leastUsedNetwork')}</p>
                   </div>
                   <p className="mb-2 text-3xl font-bold">
                     {blockchainStats.lowest_volume_network.network}
