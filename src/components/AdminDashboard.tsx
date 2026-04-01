@@ -1351,7 +1351,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                   </div>
                   <div>
                     <p className="text-2xl font-bold">
-                      {blockchainStats.supported_networks} Réseaux Blockchain
+                      {blockchainStats.supported_networks} {t('admin.dashboard.blockchainNetworks')}
                     </p>
                     <p className="text-sm text-muted-foreground">
                       Base, BSC, Ethereum, Arbitrum, Optimism, Polygon, Solana, Avalanche, Lisk
