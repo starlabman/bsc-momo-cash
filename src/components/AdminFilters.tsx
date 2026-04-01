@@ -534,7 +534,7 @@ const AdminFilters: React.FC<AdminFiltersProps> = ({
 
               {/* Max Amount */}
               <div className="space-y-2">
-                <Label className="text-xs">Montant max (USD)</Label>
+                <Label className="text-xs">{t('admin.filters.maxAmount')}</Label>
                 <Input
                   type="number"
                   placeholder="∞"
