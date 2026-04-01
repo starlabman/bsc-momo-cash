@@ -1823,7 +1823,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                                   <div className="space-y-2">
                                     <Label>{t('admin.dashboard.notes')}</Label>
                                     <Textarea
-                                      placeholder="Ajouter des notes..."
+                                      placeholder={t('admin.dashboard.notesPlaceholder')}
                                       value={updateData.notes}
                                       onChange={(e) => setUpdateData({ ...updateData, notes: e.target.value })}
                                     />
