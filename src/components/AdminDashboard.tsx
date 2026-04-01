@@ -359,7 +359,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
             const newEvent = payload.new as any;
             setLiveBlockchainEvents(prev => [newEvent, ...prev].slice(0, 50));
             toast({
-              title: "⛓️ Transaction blockchain détectée",
+              title: t('admin.dashboard.blockchainDetected'),
               description: `${newEvent.amount} ${newEvent.token_symbol} reçu sur ${newEvent.network?.toUpperCase()} via ${newEvent.webhook_source}`,
             });
           } else if (payload.eventType === 'UPDATE') {
