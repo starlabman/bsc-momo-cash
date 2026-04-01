@@ -261,20 +261,19 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
 
   // Statuts pour OFFRAMP (Crypto → Mobile Money)
   const offrampStatuses = [
-    { value: 'pending_payment', label: 'En attente paiement crypto', color: 'secondary', description: 'Client doit envoyer la crypto' },
-    { value: 'received', label: 'Crypto reçue', color: 'default', description: 'Paiement crypto confirmé' },
-    { value: 'processing', label: 'En cours de traitement', color: 'outline', description: 'Transfert mobile money en cours' },
-    { value: 'paid', label: 'Mobile Money envoyé', color: 'default', description: 'Client a reçu le mobile money' },
-    { value: 'failed', label: 'Échoué', color: 'destructive', description: 'Transaction échouée' }
+    { value: 'pending_payment', label: t('admin.dashboard.offrampStatusPending'), color: 'secondary', description: t('admin.dashboard.offrampStatusPendingDesc') },
+    { value: 'received', label: t('admin.dashboard.offrampStatusReceived'), color: 'default', description: t('admin.dashboard.offrampStatusReceivedDesc') },
+    { value: 'processing', label: t('admin.dashboard.offrampStatusProcessing'), color: 'outline', description: t('admin.dashboard.offrampStatusProcessingDesc') },
+    { value: 'paid', label: t('admin.dashboard.offrampStatusPaid'), color: 'default', description: t('admin.dashboard.offrampStatusPaidDesc') },
+    { value: 'failed', label: t('admin.dashboard.offrampStatusFailed'), color: 'destructive', description: t('admin.dashboard.offrampStatusFailedDesc') }
   ];
 
-  // Statuts pour ONRAMP (Mobile Money → Crypto)
   const onrampStatuses = [
-    { value: 'pending_momo_payment', label: 'En attente paiement Mobile Money', color: 'secondary', description: 'Client doit envoyer le mobile money' },
-    { value: 'momo_payment_received', label: 'Mobile Money reçu', color: 'default', description: 'Paiement mobile money confirmé' },
-    { value: 'processing', label: 'En cours de traitement', color: 'outline', description: 'Transfert crypto en cours' },
-    { value: 'completed', label: 'Crypto envoyée', color: 'default', description: 'Client a reçu la crypto' },
-    { value: 'failed', label: 'Échoué', color: 'destructive', description: 'Transaction échouée' }
+    { value: 'pending_momo_payment', label: t('admin.dashboard.onrampStatusPending'), color: 'secondary', description: t('admin.dashboard.onrampStatusPendingDesc') },
+    { value: 'momo_payment_received', label: t('admin.dashboard.onrampStatusReceived'), color: 'default', description: t('admin.dashboard.onrampStatusReceivedDesc') },
+    { value: 'processing', label: t('admin.dashboard.onrampStatusProcessing'), color: 'outline', description: t('admin.dashboard.onrampStatusProcessingDesc') },
+    { value: 'completed', label: t('admin.dashboard.onrampStatusCompleted'), color: 'default', description: t('admin.dashboard.onrampStatusCompletedDesc') },
+    { value: 'failed', label: t('admin.dashboard.onrampStatusFailed'), color: 'destructive', description: t('admin.dashboard.onrampStatusFailedDesc') }
   ];
 
   const getStatusInfo = (status: string, isOnramp: boolean = false) => {
