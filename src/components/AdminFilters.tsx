@@ -507,7 +507,7 @@ const AdminFilters: React.FC<AdminFiltersProps> = ({
 
               {/* Mobile Money Provider */}
               <div className="space-y-2">
-                <Label className="text-xs">Opérateur Mobile Money</Label>
+                <Label className="text-xs">{t('admin.filters.momoOperator')}</Label>
                 <Select value={filters.momoProvider} onValueChange={(v) => setFilters({ ...filters, momoProvider: v })}>
                   <SelectTrigger>
                     <SelectValue placeholder="Tous les opérateurs" />
