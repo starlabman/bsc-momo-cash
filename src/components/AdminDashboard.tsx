@@ -1962,7 +1962,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                                 size="sm"
                                 onClick={() => openOnrampUpdateDialog(request)}
                               >
-                                Modifier
+                                {t('admin.dashboard.edit')}
                               </Button>
                             </DialogTrigger>
                             <DialogContent className="max-w-md">
