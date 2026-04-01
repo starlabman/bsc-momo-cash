@@ -1147,7 +1147,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                   <Clock className="h-4 w-4" />
                 </div>
                 <p className="text-2xl font-bold">{blockchainStats.pending_events}</p>
-                <p className="mt-1 text-xs text-muted-foreground">En attente</p>
+                <p className="mt-1 text-xs text-muted-foreground">{t('admin.dashboard.pending')}</p>
               </div>
 
               <div className="rounded-lg border bg-card p-3 text-center">
