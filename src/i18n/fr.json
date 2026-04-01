@@ -177,7 +177,29 @@
   },
   "testimonials": {
     "title": "Ce que nos clients disent",
-    "subtitle": "Plus de 10 000 utilisateurs nous font confiance pour leurs conversions crypto"
+    "subtitle": "Plus de 10 000 utilisateurs nous font confiance pour leurs conversions crypto",
+    "items": [
+      {
+        "name": "Amadou Diallo",
+        "country": "🇸🇳 Sénégal",
+        "text": "Service rapide et fiable ! J'ai reçu mon argent sur Orange Money en moins de 10 minutes. Je recommande vivement."
+      },
+      {
+        "name": "Fatou Koné",
+        "country": "🇨🇮 Côte d'Ivoire",
+        "text": "Excellente plateforme pour convertir mes USDT en XOF. Les taux sont compétitifs et le support est très réactif."
+      },
+      {
+        "name": "Ousmane Traoré",
+        "country": "🇲🇱 Mali",
+        "text": "Enfin une solution simple pour envoyer de l'argent à ma famille ! Pas de KYC compliqué, juste efficace."
+      },
+      {
+        "name": "Aïcha Bamba",
+        "country": "🇧🇫 Burkina Faso",
+        "text": "J'utilise SikaPay depuis 3 mois. Transactions toujours réussies, jamais eu de problème. Top !"
+      }
+    ]
   },
   "footer": {
     "description": "Solution off-ramp crypto vers Mobile Money multi-blockchain.",
