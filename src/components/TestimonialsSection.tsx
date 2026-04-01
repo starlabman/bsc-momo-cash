@@ -4,47 +4,11 @@ import { Star, Quote } from 'lucide-react';
 import ScrollReveal from '@/components/ScrollReveal';
 import { useTranslation } from 'react-i18next';
 
-interface Testimonial {
-  name: string;
-  country: string;
-  avatar: string;
-  rating: number;
-  text: string;
-}
-
-const testimonials: Testimonial[] = [
-  {
-    name: "Amadou Diallo",
-    country: "🇸🇳 Sénégal",
-    avatar: "AD",
-    rating: 5,
-    text: "Service rapide et fiable ! J'ai reçu mon argent sur Orange Money en moins de 10 minutes. Je recommande vivement."
-  },
-  {
-    name: "Fatou Koné",
-    country: "🇨🇮 Côte d'Ivoire",
-    avatar: "FK",
-    rating: 5,
-    text: "Excellente plateforme pour convertir mes USDT en XOF. Les taux sont compétitifs et le support est très réactif."
-  },
-  {
-    name: "Ousmane Traoré",
-    country: "🇲🇱 Mali",
-    avatar: "OT",
-    rating: 5,
-    text: "Enfin une solution simple pour envoyer de l'argent à ma famille ! Pas de KYC compliqué, juste efficace."
-  },
-  {
-    name: "Aïcha Bamba",
-    country: "🇧🇫 Burkina Faso",
-    avatar: "AB",
-    rating: 5,
-    text: "J'utilise SikaPay depuis 3 mois. Transactions toujours réussies, jamais eu de problème. Top !"
-  }
-];
+const avatars = ["AD", "FK", "OT", "AB"];
 
 const TestimonialsSection = () => {
   const { t } = useTranslation();
+  const items = t('testimonials.items', { returnObjects: true }) as Array<{ name: string; country: string; text: string }>;
 
   return (
     <section className="py-10 sm:py-16 px-3 sm:px-4">
@@ -61,7 +25,7 @@ const TestimonialsSection = () => {
         </ScrollReveal>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-          {testimonials.map((testimonial, index) => (
+          {Array.isArray(items) && items.map((testimonial, index) => (
             <ScrollReveal key={index} delay={index * 100}>
               <Card 
                 className="glass-card border-primary/10 hover:border-primary/30 transition-all duration-300 hover:-translate-y-1 h-full"
@@ -75,7 +39,7 @@ const TestimonialsSection = () => {
 
                   <div className="flex items-center gap-3 pt-4 border-t border-border/50">
                     <div className="h-10 w-10 rounded-full bg-gradient-primary flex items-center justify-center text-white font-semibold text-sm">
-                      {testimonial.avatar}
+                      {avatars[index] || testimonial.name.split(' ').map(n => n[0]).join('')}
                     </div>
                     <div className="flex-1">
                       <p className="font-medium text-sm">{testimonial.name}</p>
@@ -84,7 +48,7 @@ const TestimonialsSection = () => {
                   </div>
 
                   <div className="flex gap-0.5 mt-3">
-                    {[...Array(testimonial.rating)].map((_, i) => (
+                    {[...Array(5)].map((_, i) => (
                       <Star key={i} className="h-4 w-4 fill-yellow-500 text-yellow-500" />
                     ))}
                   </div>
