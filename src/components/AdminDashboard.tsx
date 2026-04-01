@@ -1221,7 +1221,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                         
                         <div className="grid grid-cols-3 gap-4 mb-3">
                           <div className="rounded-md bg-muted/40 p-2">
-                            <p className="text-xs text-muted-foreground">Transactions</p>
+                            <p className="text-xs text-muted-foreground">{t('admin.dashboard.transactions')}</p>
                             <p className="text-xl font-bold">{item.count}</p>
                           </div>
                           <div className="rounded-md bg-muted/40 p-2">
