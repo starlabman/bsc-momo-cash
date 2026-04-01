@@ -549,7 +549,7 @@ const AdminFilters: React.FC<AdminFiltersProps> = ({
               <div className="flex justify-end">
                 <Button variant="ghost" size="sm" onClick={clearFilters} className="gap-2 text-muted-foreground">
                   <X className="h-4 w-4" />
-                  Réinitialiser les filtres
+                  {t('admin.filters.clearFilters')}
                 </Button>
               </div>
             )}
