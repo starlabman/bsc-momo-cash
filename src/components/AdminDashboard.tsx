@@ -1131,7 +1131,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                   <Hash className="h-4 w-4" />
                 </div>
                 <p className="text-2xl font-bold">{blockchainStats.total_events}</p>
-                <p className="mt-1 text-xs text-muted-foreground">Total événements</p>
+                <p className="mt-1 text-xs text-muted-foreground">{t('admin.dashboard.totalEvents')}</p>
               </div>
 
               <div className="rounded-lg border bg-card p-3 text-center">
