@@ -2009,7 +2009,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                                   </div>
 
                                   <div className="space-y-2">
-                                    <Label>Hash de transaction (optionnel)</Label>
+                                    <Label>{t('admin.dashboard.txHashOptional')}</Label>
                                     <Input
                                       placeholder="0x..."
                                       value={onrampUpdateData.transaction_hash}
