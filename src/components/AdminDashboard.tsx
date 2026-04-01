@@ -1139,7 +1139,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                   <CheckCircle className="h-4 w-4" />
                 </div>
                 <p className="text-2xl font-bold">{blockchainStats.processed_events}</p>
-                <p className="mt-1 text-xs text-muted-foreground">Traités</p>
+                <p className="mt-1 text-xs text-muted-foreground">{t('admin.dashboard.processed')}</p>
               </div>
 
               <div className="rounded-lg border bg-card p-3 text-center">
