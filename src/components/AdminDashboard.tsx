@@ -866,7 +866,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                 <div className="text-center p-3 bg-orange-50 dark:bg-orange-950 rounded-lg hover:scale-105 transition-transform">
                   <Settings className="h-5 w-5 text-orange-600 dark:text-orange-400 mx-auto mb-2" />
                   <p className="text-2xl font-bold text-orange-600 dark:text-orange-400">{stats.processing}</p>
-                  <p className="text-xs text-muted-foreground mt-1">En cours</p>
+                  <p className="text-xs text-muted-foreground mt-1">{t('admin.dashboard.processing')}</p>
                 </div>
 
                 <div className="text-center p-3 bg-green-50 dark:bg-green-950 rounded-lg hover:scale-105 transition-transform">
