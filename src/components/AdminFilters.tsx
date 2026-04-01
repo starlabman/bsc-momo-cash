@@ -490,7 +490,7 @@ const AdminFilters: React.FC<AdminFiltersProps> = ({
               {/* Network filter (for offramp) */}
               {(activeTab === 'offramp' || activeTab === 'all') && (
                 <div className="space-y-2">
-                  <Label className="text-xs">Réseau Blockchain</Label>
+                  <Label className="text-xs">{t('admin.filters.blockchainNetwork')}</Label>
                   <Select value={filters.network} onValueChange={(v) => setFilters({ ...filters, network: v })}>
                     <SelectTrigger>
                       <SelectValue placeholder="Tous les réseaux" />
