@@ -402,7 +402,7 @@ const AdminFilters: React.FC<AdminFiltersProps> = ({
                 <Label className="text-xs">{t('admin.filters.status')}</Label>
                 <Select value={filters.status} onValueChange={(v) => setFilters({ ...filters, status: v })}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Tous les statuts" />
+                    <SelectValue placeholder={t('admin.filters.allStatuses')} />
                   </SelectTrigger>
                   <SelectContent className="bg-background">
                     <SelectItem value="all">Tous les statuts</SelectItem>
