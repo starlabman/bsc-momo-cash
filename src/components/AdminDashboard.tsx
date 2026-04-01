@@ -778,7 +778,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
             {searchResults && (
               <div className="mt-3 flex items-center gap-2 text-sm">
                 <Badge variant="secondary">
-                  {searchResults.offramp.length + searchResults.onramp.length} résultat(s)
+                  {searchResults.offramp.length + searchResults.onramp.length} {t('admin.dashboard.results', { count: searchResults.offramp.length + searchResults.onramp.length }).split(' ').slice(1).join(' ')}
                 </Badge>
                 <span className="text-muted-foreground">
                   {searchResults.offramp.length} offramp, {searchResults.onramp.length} onramp
