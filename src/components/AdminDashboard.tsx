@@ -1858,9 +1858,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
               
               {displayedOfframpRequests.length === 0 && !loading && (
                 <div className="rounded-lg border border-dashed p-8 text-center">
-                  <p className="text-sm font-medium">Aucune demande offramp</p>
+                  <p className="text-sm font-medium">{t('admin.dashboard.noOfframpRequests')}</p>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    {searchResults ? "Aucun résultat pour cette recherche." : "Aucune transaction ne correspond aux filtres actuels."}
+                    {searchResults ? t('admin.dashboard.noSearchResults') : t('admin.dashboard.noFilterResults')}
                   </p>
                 </div>
               )}
