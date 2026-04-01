@@ -1419,8 +1419,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
             {/* Detailed Country Cards */}
             <div className="mb-6">
               <h4 className="mb-4 flex items-center gap-2 text-lg font-semibold">
-                <BarChart3 className="h-4 w-4 text-muted-foreground" />
-                Détails par pays
+                  <BarChart3 className="h-4 w-4 text-muted-foreground" />
+                  {t('admin.dashboard.detailsByCountry')}
               </h4>
               <div className="space-y-4">
                 {countryStats.by_country.map((country) => {
