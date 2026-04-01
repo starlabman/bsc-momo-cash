@@ -426,7 +426,7 @@ const AdminFilters: React.FC<AdminFiltersProps> = ({
                       )}
                     >
                       <CalendarIcon className="mr-2 h-4 w-4" />
-                      {filters.dateFrom ? format(filters.dateFrom, 'dd/MM/yyyy') : 'Sélectionner'}
+                      {filters.dateFrom ? format(filters.dateFrom, 'dd/MM/yyyy') : t('admin.filters.select')}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0 bg-background" align="start">
