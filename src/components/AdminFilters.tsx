@@ -493,7 +493,7 @@ const AdminFilters: React.FC<AdminFiltersProps> = ({
                   <Label className="text-xs">{t('admin.filters.blockchainNetwork')}</Label>
                   <Select value={filters.network} onValueChange={(v) => setFilters({ ...filters, network: v })}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Tous les réseaux" />
+                      <SelectValue placeholder={t('admin.filters.allNetworks')} />
                     </SelectTrigger>
                     <SelectContent className="bg-background">
                       <SelectItem value="all">Tous les réseaux</SelectItem>
