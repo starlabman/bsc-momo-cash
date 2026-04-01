@@ -1993,7 +1993,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                                       onValueChange={(value) => setOnrampUpdateData({ ...onrampUpdateData, status: value })}
                                     >
                                       <SelectTrigger>
-                                        <SelectValue placeholder="Choisir un statut" />
+                                        <SelectValue placeholder={t('admin.dashboard.chooseStatus')} />
                                       </SelectTrigger>
                                       <SelectContent>
                                         {onrampStatuses.map((status) => (
