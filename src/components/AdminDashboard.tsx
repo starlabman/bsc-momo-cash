@@ -860,7 +860,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                 <div className="text-center p-3 bg-blue-50 dark:bg-blue-950 rounded-lg hover:scale-105 transition-transform">
                   <TrendingUp className="h-5 w-5 text-blue-600 dark:text-blue-400 mx-auto mb-2" />
                   <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{stats.received}</p>
-                  <p className="text-xs text-muted-foreground mt-1">Reçu</p>
+                  <p className="text-xs text-muted-foreground mt-1">{t('admin.dashboard.received')}</p>
                 </div>
 
                 <div className="text-center p-3 bg-orange-50 dark:bg-orange-950 rounded-lg hover:scale-105 transition-transform">
