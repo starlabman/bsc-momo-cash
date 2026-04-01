@@ -2018,7 +2018,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                                   </div>
 
                                   <div className="space-y-2">
-                                    <Label>Notes</Label>
+                                    <Label>{t('admin.dashboard.notes')}</Label>
                                     <Textarea
                                       placeholder="Ajouter des notes..."
                                       value={onrampUpdateData.notes}
