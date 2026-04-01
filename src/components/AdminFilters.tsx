@@ -343,7 +343,7 @@ const AdminFilters: React.FC<AdminFiltersProps> = ({
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <Filter className="h-5 w-5 text-primary" />
-                <span className="font-medium">Filtres avancés</span>
+                <span className="font-medium">{t('admin.filters.advancedFilters')}</span>
                 {hasActiveFilters() && (
                   <Badge variant="secondary" className="bg-primary text-primary-foreground">
                     {getActiveFilterCount()} actif(s)
