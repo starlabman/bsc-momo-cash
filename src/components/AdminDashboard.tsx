@@ -1323,7 +1323,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
             {/* Volume comparison */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
               <div className="rounded-lg border bg-card p-4">
-                <p className="text-sm text-muted-foreground mb-2">Volume Offramp (XOF)</p>
+                <p className="text-sm text-muted-foreground mb-2">{t('admin.dashboard.volumeOfframpXof')}</p>
                 <p className="text-2xl font-bold">
                   {stats?.total_volume_xof?.toLocaleString('fr-FR', { maximumFractionDigits: 0 }) || '0'} XOF
                 </p>
