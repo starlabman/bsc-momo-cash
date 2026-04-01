@@ -1120,9 +1120,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg lg:text-xl">
               <BarChart3 className="h-5 w-5" />
-              Statistiques par Réseau Blockchain
+              {t('admin.dashboard.blockchainStatsByNetwork')}
             </CardTitle>
-            <CardDescription>Utilisation et volume des différents réseaux blockchain</CardDescription>
+            <CardDescription>{t('admin.dashboard.blockchainStatsByNetworkDesc')}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 gap-4 mb-6 md:grid-cols-5">
