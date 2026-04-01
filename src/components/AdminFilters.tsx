@@ -346,7 +346,7 @@ const AdminFilters: React.FC<AdminFiltersProps> = ({
                 <span className="font-medium">{t('admin.filters.advancedFilters')}</span>
                 {hasActiveFilters() && (
                   <Badge variant="secondary" className="bg-primary text-primary-foreground">
-                    {getActiveFilterCount()} actif(s)
+                    {getActiveFilterCount()} {t('admin.filters.active', { count: getActiveFilterCount() }).split(' ').slice(1).join(' ')}
                   </Badge>
                 )}
               </div>
