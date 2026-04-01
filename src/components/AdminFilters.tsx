@@ -474,7 +474,7 @@ const AdminFilters: React.FC<AdminFiltersProps> = ({
                 <Label className="text-xs">{t('admin.filters.country')}</Label>
                 <Select value={filters.country} onValueChange={(v) => setFilters({ ...filters, country: v })}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Tous les pays" />
+                    <SelectValue placeholder={t('admin.filters.allCountries')} />
                   </SelectTrigger>
                   <SelectContent className="bg-background">
                     <SelectItem value="all">Tous les pays</SelectItem>
