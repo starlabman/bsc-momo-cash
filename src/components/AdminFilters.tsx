@@ -405,7 +405,7 @@ const AdminFilters: React.FC<AdminFiltersProps> = ({
                     <SelectValue placeholder={t('admin.filters.allStatuses')} />
                   </SelectTrigger>
                   <SelectContent className="bg-background">
-                    <SelectItem value="all">Tous les statuts</SelectItem>
+                    <SelectItem value="all">{t('admin.filters.allStatuses')}</SelectItem>
                     {statuses.map((s) => (
                       <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
                     ))}
