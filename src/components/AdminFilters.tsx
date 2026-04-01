@@ -523,7 +523,7 @@ const AdminFilters: React.FC<AdminFiltersProps> = ({
 
               {/* Min Amount */}
               <div className="space-y-2">
-                <Label className="text-xs">Montant min (USD)</Label>
+                <Label className="text-xs">{t('admin.filters.minAmount')}</Label>
                 <Input
                   type="number"
                   placeholder="0"
