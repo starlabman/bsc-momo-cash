@@ -415,7 +415,7 @@ const AdminFilters: React.FC<AdminFiltersProps> = ({
 
               {/* Date from */}
               <div className="space-y-2">
-                <Label className="text-xs">Date début</Label>
+                <Label className="text-xs">{t('admin.filters.dateFrom')}</Label>
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button 
