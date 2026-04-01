@@ -1977,12 +1977,12 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
                                 <div className="space-y-4">
                                   {/* Status flow explanation */}
                                   <div className="bg-muted/50 p-3 rounded-lg mb-4">
-                                    <p className="text-xs font-semibold mb-2">📋 Flux Onramp (Mobile Money → Crypto):</p>
+                                    <p className="text-xs font-semibold mb-2">{t('admin.dashboard.onrampFlow')}</p>
                                     <div className="space-y-1 text-xs text-muted-foreground">
-                                      <div>1️⃣ En attente paiement Mobile Money → Client envoie Mobile Money</div>
-                                      <div>2️⃣ Mobile Money reçu → Paiement confirmé</div>
-                                      <div>3️⃣ En cours de traitement → Transfert crypto en cours</div>
-                                      <div>4️⃣ Crypto envoyée → Transaction terminée ✓</div>
+                                      <div>{t('admin.dashboard.onrampStep1')}</div>
+                                      <div>{t('admin.dashboard.onrampStep2')}</div>
+                                      <div>{t('admin.dashboard.onrampStep3')}</div>
+                                      <div>{t('admin.dashboard.onrampStep4')}</div>
                                     </div>
                                   </div>
 
