@@ -827,11 +827,11 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ section = 'dashboard' }
 
               <Card className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950 dark:to-green-900 border-green-200 dark:border-green-800 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02]">
                 <CardHeader>
-                  <CardTitle className="text-xl flex items-center gap-2">
-                    <TrendingUp className="h-5 w-5 text-green-600 dark:text-green-400" />
-                    Volume Total XOF
-                  </CardTitle>
-                  <CardDescription>Total des transactions en XOF</CardDescription>
+                    <CardTitle className="text-xl flex items-center gap-2">
+                      <TrendingUp className="h-5 w-5 text-green-600 dark:text-green-400" />
+                      {t('admin.dashboard.totalVolumeXof')}
+                    </CardTitle>
+                    <CardDescription>{t('admin.dashboard.totalVolumeXofDesc')}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <p className="text-3xl lg:text-4xl font-bold text-green-600 dark:text-green-400">
