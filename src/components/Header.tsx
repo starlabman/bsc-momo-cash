@@ -68,8 +68,8 @@ const Header = () => {
             <ThemeToggle />
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-9 w-9">
-                <Menu className="h-6 w-6" />
+                <Button variant="ghost" size="icon" className="h-9 w-9" aria-label={t('header.openMenu', 'Menu')}>
+                <Menu className="h-6 w-6" aria-hidden="true" />
               </Button>
             </SheetTrigger>
             <SheetContent side="right" className="w-[280px]">

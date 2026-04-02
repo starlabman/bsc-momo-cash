@@ -586,5 +586,54 @@
       "maxAmount": "Montant max (USD)",
       "clearFilters": "Effacer les filtres"
     }
+  },
+  "cookies": {
+    "title": "🍪 Utilisation des cookies",
+    "description": "Nous utilisons des cookies essentiels pour le bon fonctionnement du site. Aucune donnée personnelle n'est partagée avec des tiers.",
+    "learnMore": "En savoir plus",
+    "accept": "Accepter",
+    "decline": "Refuser",
+    "close": "Fermer"
+  },
+  "privacy": {
+    "title": "Politique de Confidentialité",
+    "lastUpdated": "Dernière mise à jour : Avril 2026",
+    "collectTitle": "Données collectées",
+    "collectDesc": "Dans le cadre de nos services, nous collectons les informations suivantes :",
+    "collectItem1": "Numéro de téléphone Mobile Money pour le traitement des transactions",
+    "collectItem2": "Adresse de portefeuille blockchain pour l'envoi/réception de crypto",
+    "collectItem3": "Adresse IP pour la sécurité et la prévention de la fraude",
+    "useTitle": "Utilisation des données",
+    "useDesc": "Vos données sont utilisées exclusivement pour traiter vos transactions, assurer la sécurité de la plateforme et respecter les obligations légales. Aucun KYC n'est requis.",
+    "shareTitle": "Partage des données",
+    "shareDesc": "Nous ne partageons jamais vos données personnelles avec des tiers, sauf obligation légale. Vos transactions sont traitées de manière confidentielle.",
+    "securityTitle": "Sécurité",
+    "securityDesc": "Nous utilisons des protocoles de chiffrement avancés pour protéger vos données. Toutes les communications sont sécurisées via HTTPS.",
+    "contactTitle": "Contact",
+    "contactDesc": "Pour toute question relative à vos données personnelles, contactez-nous à support@sikapay.com."
+  },
+  "terms": {
+    "title": "Conditions Générales d'Utilisation",
+    "lastUpdated": "Dernière mise à jour : Avril 2026",
+    "acceptTitle": "Acceptation des conditions",
+    "acceptDesc": "En utilisant SikaPay, vous acceptez les présentes conditions générales d'utilisation. Si vous n'acceptez pas ces conditions, veuillez ne pas utiliser nos services.",
+    "serviceTitle": "Description du service",
+    "serviceDesc": "SikaPay est une plateforme de conversion de cryptomonnaies (USDC, USDT) en Mobile Money XOF et vice versa, opérant sans vérification d'identité (KYC).",
+    "eligibilityTitle": "Éligibilité",
+    "eligibilityDesc": "Vous devez être âgé d'au moins 18 ans et disposer d'un numéro de téléphone Mobile Money valide dans l'un des pays supportés pour utiliser nos services.",
+    "transactionsTitle": "Transactions",
+    "transactionsDesc": "Les transactions sont irréversibles une fois confirmées sur la blockchain. SikaPay n'est pas responsable des erreurs d'adresse ou de montant saisies par l'utilisateur.",
+    "feesTitle": "Frais",
+    "feesDesc": "Les frais de conversion sont inclus dans le taux de change affiché. Aucun frais caché n'est appliqué. Les frais de réseau blockchain sont à la charge de l'utilisateur.",
+    "liabilityTitle": "Limitation de responsabilité",
+    "liabilityDesc": "SikaPay ne peut être tenu responsable des pertes résultant de la volatilité des cryptomonnaies, des retards de réseau blockchain ou des interruptions de service des opérateurs Mobile Money.",
+    "terminationTitle": "Résiliation",
+    "terminationDesc": "SikaPay se réserve le droit de suspendre ou résilier l'accès à ses services en cas de violation des présentes conditions ou de comportement frauduleux.",
+    "contactTitle": "Contact",
+    "contactDesc": "Pour toute question, contactez-nous à support@sikapay.com ou via WhatsApp au +228 98 24 48 50."
+  },
+  "legal": {
+    "privacy": "Politique de Confidentialité",
+    "terms": "Conditions Générales"
   }
 }

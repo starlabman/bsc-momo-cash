@@ -20,7 +20,7 @@ const Index = () => {
       <Header />
 
       {/* Main Content */}
-      <main className="container mx-auto px-3 sm:px-4 py-4 sm:py-8">
+      <main id="main-content" className="container mx-auto px-3 sm:px-4 py-4 sm:py-8">
         <div className="space-y-8 sm:space-y-12">
           {/* Hero Section */}
           <div className="text-center space-y-6 sm:space-y-8 py-10 sm:py-16 md:py-24 relative">

@@ -586,5 +586,54 @@
       "maxAmount": "Max amount (USD)",
       "clearFilters": "Clear filters"
     }
+  },
+  "cookies": {
+    "title": "🍪 Cookie Usage",
+    "description": "We use essential cookies for the proper functioning of the site. No personal data is shared with third parties.",
+    "learnMore": "Learn more",
+    "accept": "Accept",
+    "decline": "Decline",
+    "close": "Close"
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "lastUpdated": "Last updated: April 2026",
+    "collectTitle": "Data Collected",
+    "collectDesc": "As part of our services, we collect the following information:",
+    "collectItem1": "Mobile Money phone number for transaction processing",
+    "collectItem2": "Blockchain wallet address for sending/receiving crypto",
+    "collectItem3": "IP address for security and fraud prevention",
+    "useTitle": "Data Usage",
+    "useDesc": "Your data is used exclusively to process your transactions, ensure platform security, and comply with legal obligations. No KYC is required.",
+    "shareTitle": "Data Sharing",
+    "shareDesc": "We never share your personal data with third parties, except when required by law. Your transactions are processed confidentially.",
+    "securityTitle": "Security",
+    "securityDesc": "We use advanced encryption protocols to protect your data. All communications are secured via HTTPS.",
+    "contactTitle": "Contact",
+    "contactDesc": "For any questions about your personal data, contact us at support@sikapay.com."
+  },
+  "terms": {
+    "title": "Terms of Service",
+    "lastUpdated": "Last updated: April 2026",
+    "acceptTitle": "Acceptance of Terms",
+    "acceptDesc": "By using SikaPay, you accept these terms of service. If you do not accept these terms, please do not use our services.",
+    "serviceTitle": "Service Description",
+    "serviceDesc": "SikaPay is a cryptocurrency (USDC, USDT) to Mobile Money XOF conversion platform and vice versa, operating without identity verification (KYC).",
+    "eligibilityTitle": "Eligibility",
+    "eligibilityDesc": "You must be at least 18 years old and have a valid Mobile Money phone number in one of the supported countries to use our services.",
+    "transactionsTitle": "Transactions",
+    "transactionsDesc": "Transactions are irreversible once confirmed on the blockchain. SikaPay is not responsible for address or amount errors entered by the user.",
+    "feesTitle": "Fees",
+    "feesDesc": "Conversion fees are included in the displayed exchange rate. No hidden fees are applied. Blockchain network fees are the user's responsibility.",
+    "liabilityTitle": "Limitation of Liability",
+    "liabilityDesc": "SikaPay cannot be held responsible for losses resulting from cryptocurrency volatility, blockchain network delays, or Mobile Money operator service interruptions.",
+    "terminationTitle": "Termination",
+    "terminationDesc": "SikaPay reserves the right to suspend or terminate access to its services in case of violation of these terms or fraudulent behavior.",
+    "contactTitle": "Contact",
+    "contactDesc": "For any questions, contact us at support@sikapay.com or via WhatsApp at +228 98 24 48 50."
+  },
+  "legal": {
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service"
   }
 }
