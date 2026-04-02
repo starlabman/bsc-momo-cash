@@ -74,12 +74,12 @@ const Footer = () => {
             {t('footer.rights')}
           </div>
           <div className="flex items-center gap-3 sm:gap-6 text-[10px] sm:text-xs text-muted-foreground">
+            <Link to="/privacy" className="hover:text-primary transition-colors">{t('legal.privacy')}</Link>
+            <Link to="/terms" className="hover:text-primary transition-colors">{t('legal.terms')}</Link>
             <span className="flex items-center gap-2">
-              <div className="h-2 w-2 bg-green-500 rounded-full animate-pulse"></div>
+              <div className="h-2 w-2 bg-green-500 rounded-full animate-pulse" aria-hidden="true"></div>
               {t('footer.online')}
             </span>
-            <span>USDC/USDT ↔ XOF</span>
-            <span>Multi-Blockchain</span>
           </div>
         </div>
       </div>
