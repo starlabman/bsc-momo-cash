@@ -3,34 +3,63 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="/sikapay-favicon.png" />
+    <link rel="apple-touch-icon" href="/sikapay-favicon.png" />
+    <link rel="manifest" href="/manifest.json" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SikaPay - Conversion Crypto ↔ Mobile Money</title>
-    <meta name="description" content="Solution multi-blockchain rapide et sécurisée pour convertir vos cryptomonnaies en Mobile Money XOF. Support BSC, Ethereum, Tron, Solana et plus." />
-    <meta name="keywords" content="crypto, mobile money, BSC, Ethereum, USDC, USDT, XOF, Sénégal, Mali, Burkina Faso" />
-    
+    <meta name="theme-color" content="#7c3aed" />
+    <title>SikaPay — Conversion Crypto ↔ Mobile Money sans KYC</title>
+    <meta name="description" content="Convertissez vos cryptos (USDC, USDT) en Mobile Money XOF instantanément, sans KYC. Support BSC, Ethereum, Tron, Solana, Base et plus. Sénégal, Mali, Burkina Faso." />
+    <meta name="keywords" content="crypto, mobile money, BSC, Ethereum, USDC, USDT, XOF, Sénégal, Mali, Burkina Faso, sans KYC, offramp, onramp" />
+    <link rel="canonical" href="https://sikapay.com/" />
+
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://sikapay.com/" />
-    <meta property="og:title" content="SikaPay - Conversion Crypto ↔ Mobile Money" />
-    <meta property="og:description" content="Solution multi-blockchain rapide et sécurisée pour convertir vos cryptomonnaies en Mobile Money XOF." />
-    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    <meta property="og:title" content="SikaPay — Crypto ↔ Mobile Money sans KYC" />
+    <meta property="og:description" content="Convertissez vos cryptos en Mobile Money XOF instantanément. Multi-blockchain, rapide et sécurisé." />
+    <meta property="og:image" content="https://sikapay.com/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:site_name" content="SikaPay" />
+    <meta property="og:locale" content="fr_FR" />
+    <meta property="og:locale:alternate" content="en_US" />
 
     <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content="https://sikapay.com/" />
-    <meta property="twitter:title" content="SikaPay - Conversion Crypto ↔ Mobile Money" />
-    <meta property="twitter:description" content="Solution multi-blockchain rapide et sécurisée pour convertir vos cryptomonnaies en Mobile Money XOF." />
-    <meta property="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
-    
-    <!-- Google Fonts - Modern fintech fonts -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://sikapay.com/" />
+    <meta name="twitter:title" content="SikaPay — Crypto ↔ Mobile Money sans KYC" />
+    <meta name="twitter:description" content="Convertissez vos cryptos en Mobile Money XOF instantanément. Multi-blockchain, rapide et sécurisé." />
+    <meta name="twitter:image" content="https://sikapay.com/og-image.jpg" />
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FinancialService",
+      "name": "SikaPay",
+      "description": "Plateforme de conversion crypto vers Mobile Money XOF sans KYC",
+      "url": "https://sikapay.com",
+      "logo": "https://sikapay.com/sikapay-favicon.png",
+      "areaServed": ["SN", "ML", "BF", "CI", "TG", "BJ"],
+      "serviceType": "Cryptocurrency Exchange",
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "email": "support@sikapay.com",
+        "contactType": "customer support",
+        "availableLanguage": ["French", "English"]
+      }
+    }
+    </script>
+
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-    
-    <!-- Preload critical resources -->
-    <link rel="preload" href="/src/index.css" as="style" />
   </head>
   <body>
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[200] focus:bg-primary focus:text-primary-foreground focus:px-4 focus:py-2 focus:rounded-md">
+      Aller au contenu principal
+    </a>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
