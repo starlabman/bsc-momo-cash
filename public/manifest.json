@@ -1,0 +1,21 @@
+{
+  "name": "SikaPay - Crypto ↔ Mobile Money",
+  "short_name": "SikaPay",
+  "description": "Solution multi-blockchain rapide et sécurisée pour convertir vos cryptomonnaies en Mobile Money XOF.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0b",
+  "theme_color": "#7c3aed",
+  "icons": [
+    {
+      "src": "/sikapay-favicon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/sikapay-favicon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
