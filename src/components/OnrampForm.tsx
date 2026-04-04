@@ -222,6 +222,22 @@ const OnrampForm = () => {
 
   const currentNetwork = SUPPORTED_NETWORKS.find(n => n.id === formData.network);
 
+  const isEvmNetwork = ['base', 'bsc', 'ethereum', 'arbitrum', 'optimism', 'polygon', 'avalanche', 'lisk'].includes(formData.network);
+  const isSolanaNetwork = formData.network === 'solana';
+
+  const validateAddress = (address: string): string | null => {
+    if (!address) return null;
+    if (isEvmNetwork && !/^0x[a-fA-F0-9]{40}$/.test(address)) {
+      return t('errors.invalidAddress', { network: currentNetwork?.name });
+    }
+    if (isSolanaNetwork && !/^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(address)) {
+      return t('errors.invalidAddress', { network: currentNetwork?.name });
+    }
+    return null;
+  };
+
+  const isAddressValid = !formData.recipientAddress || validateAddress(formData.recipientAddress) === null;
+
   const formSteps = useMemo(() => [
     { id: 'network', label: t('common.steps.network'), completed: !!formData.network && !!formData.token, active: !formData.network },
     { id: 'amount', label: t('common.steps.amount'), completed: !!formData.xofAmount && parseFloat(formData.xofAmount) > 0, active: !!formData.network && !formData.xofAmount },
