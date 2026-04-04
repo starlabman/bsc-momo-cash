@@ -69,6 +69,8 @@ const OnrampForm = () => {
   const [selectedCountryData, setSelectedCountryData] = useState<any>(null);
   const [selectedOperatorData, setSelectedOperatorData] = useState<MobileOperator | null>(null);
   const [isPhoneNumberValid, setIsPhoneNumberValid] = useState(false);
+  const [addressError, setAddressError] = useState<string | null>(null);
+  const [addressTouched, setAddressTouched] = useState(false);
 
   useEffect(() => {
     fetchExchangeRate();
