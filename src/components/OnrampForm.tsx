@@ -518,13 +518,27 @@ const OnrampForm = () => {
                   type="text"
                   placeholder={formData.network === 'solana' ? t('onramp.walletPlaceholder') : t('onramp.walletPlaceholderEvm')}
                   value={formData.recipientAddress}
-                  onChange={(e) => setFormData({ ...formData, recipientAddress: e.target.value })}
-                  className="text-base font-mono h-11"
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setFormData({ ...formData, recipientAddress: val });
+                    if (addressTouched) {
+                      setAddressError(validateAddress(val));
+                    }
+                  }}
+                  onBlur={() => {
+                    setAddressTouched(true);
+                    setAddressError(validateAddress(formData.recipientAddress));
+                  }}
+                  className={`text-base font-mono h-11 ${addressTouched && addressError ? 'border-destructive focus-visible:ring-destructive' : addressTouched && formData.recipientAddress && !addressError ? 'border-green-500 focus-visible:ring-green-500' : ''}`}
                   required
                 />
-                <p className="text-xs text-muted-foreground">
-                  {t('onramp.walletHint', { network: currentNetwork?.name, token: formData.token })}
-                </p>
+                {addressTouched && addressError ? (
+                  <p className="text-xs text-destructive">{addressError}</p>
+                ) : (
+                  <p className="text-xs text-muted-foreground">
+                    {t('onramp.walletHint', { network: currentNetwork?.name, token: formData.token })}
+                  </p>
+                )}
               </div>
             </div>
 
