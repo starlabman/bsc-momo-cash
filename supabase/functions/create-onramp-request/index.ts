@@ -14,6 +14,15 @@ const supabase = createClient(
 );
 
 
+// Address format validators
+const EVM_ADDRESS_REGEX = /^0x[a-fA-F0-9]{40}$/;
+const SOLANA_ADDRESS_REGEX = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/;
+
+const recipientAddressSchema = z.string().min(1).refine(
+  (addr) => EVM_ADDRESS_REGEX.test(addr) || SOLANA_ADDRESS_REGEX.test(addr),
+  { message: 'Invalid blockchain address. Must be a valid EVM (0x...) or Solana address.' }
+);
+
 // Validation schema using zod
 const onrampRequestSchema = z.object({
   xofAmount: z.number().min(100).max(600000),
@@ -27,7 +36,7 @@ const onrampRequestSchema = z.object({
   momoProvider: z.string()
     .max(50)
     .optional(),
-  recipientAddress: z.string().min(1),
+  recipientAddress: recipientAddressSchema,
   countryId: z.string().uuid().optional(),
   generatePaymentLink: z.boolean().optional(),
   requesterName: z.string().max(100).optional()
