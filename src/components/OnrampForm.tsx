@@ -472,6 +472,8 @@ const OnrampForm = () => {
                   const newNetwork = SUPPORTED_NETWORKS.find(n => n.id === network);
                   const firstToken = newNetwork?.tokens[0]?.symbol || 'USDC';
                   setFormData({ ...formData, network, token: firstToken });
+                  setAddressTouched(false);
+                  setAddressError(null);
                 }}
                 selectedToken={formData.token}
                 onTokenChange={(token) => setFormData({ ...formData, token })}
