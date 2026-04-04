@@ -598,7 +598,7 @@ const OnrampForm = () => {
             <Button 
               type="submit" 
               className="w-full h-12 text-base bg-gradient-primary hover:opacity-90 transition-all duration-300" 
-              disabled={loading || !exchangeRate || loadingRate || !isPhoneNumberValid || !selectedCountry || !formData.xofAmount || !formData.recipientAddress}
+              disabled={loading || !exchangeRate || loadingRate || !isPhoneNumberValid || !selectedCountry || !formData.xofAmount || !formData.recipientAddress || !isAddressValid}
             >
               {loading ? (
                 <>
