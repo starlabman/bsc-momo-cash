@@ -69,6 +69,8 @@ const OnrampForm = () => {
   const [selectedCountryData, setSelectedCountryData] = useState<any>(null);
   const [selectedOperatorData, setSelectedOperatorData] = useState<MobileOperator | null>(null);
   const [isPhoneNumberValid, setIsPhoneNumberValid] = useState(false);
+  const [addressError, setAddressError] = useState<string | null>(null);
+  const [addressTouched, setAddressTouched] = useState(false);
 
   useEffect(() => {
     fetchExchangeRate();
@@ -219,6 +221,22 @@ const OnrampForm = () => {
   };
 
   const currentNetwork = SUPPORTED_NETWORKS.find(n => n.id === formData.network);
+
+  const isEvmNetwork = ['base', 'bsc', 'ethereum', 'arbitrum', 'optimism', 'polygon', 'avalanche', 'lisk'].includes(formData.network);
+  const isSolanaNetwork = formData.network === 'solana';
+
+  const validateAddress = (address: string): string | null => {
+    if (!address) return null;
+    if (isEvmNetwork && !/^0x[a-fA-F0-9]{40}$/.test(address)) {
+      return t('errors.invalidAddress', { network: currentNetwork?.name });
+    }
+    if (isSolanaNetwork && !/^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(address)) {
+      return t('errors.invalidAddress', { network: currentNetwork?.name });
+    }
+    return null;
+  };
+
+  const isAddressValid = !formData.recipientAddress || validateAddress(formData.recipientAddress) === null;
 
   const formSteps = useMemo(() => [
     { id: 'network', label: t('common.steps.network'), completed: !!formData.network && !!formData.token, active: !formData.network },
@@ -454,6 +472,8 @@ const OnrampForm = () => {
                   const newNetwork = SUPPORTED_NETWORKS.find(n => n.id === network);
                   const firstToken = newNetwork?.tokens[0]?.symbol || 'USDC';
                   setFormData({ ...formData, network, token: firstToken });
+                  setAddressTouched(false);
+                  setAddressError(null);
                 }}
                 selectedToken={formData.token}
                 onTokenChange={(token) => setFormData({ ...formData, token })}
@@ -500,13 +520,27 @@ const OnrampForm = () => {
                   type="text"
                   placeholder={formData.network === 'solana' ? t('onramp.walletPlaceholder') : t('onramp.walletPlaceholderEvm')}
                   value={formData.recipientAddress}
-                  onChange={(e) => setFormData({ ...formData, recipientAddress: e.target.value })}
-                  className="text-base font-mono h-11"
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setFormData({ ...formData, recipientAddress: val });
+                    if (addressTouched) {
+                      setAddressError(validateAddress(val));
+                    }
+                  }}
+                  onBlur={() => {
+                    setAddressTouched(true);
+                    setAddressError(validateAddress(formData.recipientAddress));
+                  }}
+                  className={`text-base font-mono h-11 ${addressTouched && addressError ? 'border-destructive focus-visible:ring-destructive' : addressTouched && formData.recipientAddress && !addressError ? 'border-green-500 focus-visible:ring-green-500' : ''}`}
                   required
                 />
-                <p className="text-xs text-muted-foreground">
-                  {t('onramp.walletHint', { network: currentNetwork?.name, token: formData.token })}
-                </p>
+                {addressTouched && addressError ? (
+                  <p className="text-xs text-destructive">{addressError}</p>
+                ) : (
+                  <p className="text-xs text-muted-foreground">
+                    {t('onramp.walletHint', { network: currentNetwork?.name, token: formData.token })}
+                  </p>
+                )}
               </div>
             </div>
 
@@ -566,7 +600,7 @@ const OnrampForm = () => {
             <Button 
               type="submit" 
               className="w-full h-12 text-base bg-gradient-primary hover:opacity-90 transition-all duration-300" 
-              disabled={loading || !exchangeRate || loadingRate || !isPhoneNumberValid || !selectedCountry || !formData.xofAmount || !formData.recipientAddress}
+              disabled={loading || !exchangeRate || loadingRate || !isPhoneNumberValid || !selectedCountry || !formData.xofAmount || !formData.recipientAddress || !isAddressValid}
             >
               {loading ? (
                 <>
