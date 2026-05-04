@@ -49,7 +49,7 @@ async function validateAdminToken(authHeader: string | null): Promise<boolean> {
     
     // If it's a JSON object, validate using the parsed data
     if (tokenData && typeof tokenData === 'object') {
-      console.log('Validating JSON token:', tokenData);
+      // Validating parsed JSON token (do not log token contents)
       
       // Check if token has required fields
       if (!tokenData.admin_id || !tokenData.expires_at || !tokenData.token_type) {
