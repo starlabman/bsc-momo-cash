@@ -28,7 +28,6 @@ async function validateAdminToken(authHeader: string | null): Promise<boolean> {
   }
 
   const token = authHeader.substring(7); // Remove 'Bearer ' prefix
-  console.log('Received token for validation:', token);
   
   try {
     // Parse the token if it's a JSON string
