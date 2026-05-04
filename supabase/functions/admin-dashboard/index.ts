@@ -28,7 +28,6 @@ async function validateAdminToken(authHeader: string | null): Promise<boolean> {
   }
 
   const token = authHeader.substring(7); // Remove 'Bearer ' prefix
-  console.log('Received token for validation:', token);
   
   try {
     // Parse the token if it's a JSON string
@@ -50,7 +49,7 @@ async function validateAdminToken(authHeader: string | null): Promise<boolean> {
     
     // If it's a JSON object, validate using the parsed data
     if (tokenData && typeof tokenData === 'object') {
-      console.log('Validating JSON token:', tokenData);
+      // Validating parsed JSON token (do not log token contents)
       
       // Check if token has required fields
       if (!tokenData.admin_id || !tokenData.expires_at || !tokenData.token_type) {
@@ -122,9 +121,7 @@ serve(async (req) => {
     const authHeader = req.headers.get('authorization');
     console.log('Auth header received:', authHeader ? 'YES' : 'NO');
     
-    if (authHeader) {
-      console.log('Auth header value:', authHeader.substring(0, 50) + '...');
-    }
+    // Do not log Authorization header contents to avoid leaking tokens
     
     const isValidAdmin = await validateAdminToken(authHeader);
     console.log('Token validation result:', isValidAdmin);
