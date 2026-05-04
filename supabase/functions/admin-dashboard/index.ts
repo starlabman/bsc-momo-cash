@@ -121,9 +121,7 @@ serve(async (req) => {
     const authHeader = req.headers.get('authorization');
     console.log('Auth header received:', authHeader ? 'YES' : 'NO');
     
-    if (authHeader) {
-      console.log('Auth header value:', authHeader.substring(0, 50) + '...');
-    }
+    // Do not log Authorization header contents to avoid leaking tokens
     
     const isValidAdmin = await validateAdminToken(authHeader);
     console.log('Token validation result:', isValidAdmin);
