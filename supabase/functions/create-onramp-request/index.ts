@@ -17,13 +17,18 @@ const supabase = createClient(
 // Address format validators
 const EVM_ADDRESS_REGEX = /^0x[a-fA-F0-9]{40}$/;
 const SOLANA_ADDRESS_REGEX = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/;
+const EVM_NETWORKS = ['base', 'bsc', 'ethereum', 'arbitrum', 'optimism', 'polygon', 'avalanche', 'lisk'];
+const SOLANA_NETWORKS = ['solana'];
 
-const recipientAddressSchema = z.string().min(1).refine(
-  (addr) => EVM_ADDRESS_REGEX.test(addr) || SOLANA_ADDRESS_REGEX.test(addr),
-  { message: 'Invalid blockchain address. Must be a valid EVM (0x...) or Solana address.' }
-);
+function isValidAddressForNetwork(address: string, network?: string): boolean {
+  const net = (network || '').toLowerCase();
+  if (SOLANA_NETWORKS.includes(net)) return SOLANA_ADDRESS_REGEX.test(address);
+  if (EVM_NETWORKS.includes(net)) return EVM_ADDRESS_REGEX.test(address);
+  // Unknown network: accept either valid format
+  return EVM_ADDRESS_REGEX.test(address) || SOLANA_ADDRESS_REGEX.test(address);
+}
 
-// Validation schema using zod
+// Validation schema using zod (network-aware refinement applied below)
 const onrampRequestSchema = z.object({
   xofAmount: z.number().min(100).max(600000),
   token: z.enum(['USDC', 'USDT']),
@@ -36,11 +41,14 @@ const onrampRequestSchema = z.object({
   momoProvider: z.string()
     .max(50)
     .optional(),
-  recipientAddress: recipientAddressSchema,
+  recipientAddress: z.string().min(1).max(64),
   countryId: z.string().uuid().optional(),
   generatePaymentLink: z.boolean().optional(),
   requesterName: z.string().max(100).optional()
-});
+}).refine(
+  (data) => isValidAddressForNetwork(data.recipientAddress, data.network),
+  { path: ['recipientAddress'], message: 'Invalid blockchain address for the selected network. EVM networks require 0x... addresses; Solana requires a base58 address.' }
+);
 
 serve(async (req) => {
   // Handle CORS preflight requests
