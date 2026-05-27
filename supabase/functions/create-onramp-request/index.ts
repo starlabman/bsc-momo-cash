@@ -2,6 +2,7 @@ import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.52.1';
 import { z } from 'https://deno.land/x/zod@v3.22.4/mod.ts';
+import { validateMomoNumber } from '../_shared/momoValidation.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -76,8 +77,20 @@ serve(async (req) => {
 
     const { xofAmount, token, network, tokenAddress, momoNumber, momoProvider, recipientAddress, countryId, generatePaymentLink, requesterName } = validationResult.data;
 
-    // Sanitize mobile number - remove all non-digit/+ characters
-    const sanitizedMomoNumber = momoNumber.replace(/[^\d+]/g, '');
+    // Contextual momo number validation against country + operator
+    const momoCheck = await validateMomoNumber(supabase, momoNumber, countryId, momoProvider);
+    if (!momoCheck.valid) {
+      return new Response(JSON.stringify({
+        success: false,
+        error: 'Invalid mobile money number',
+        details: momoCheck.error,
+      }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+    const sanitizedMomoNumber = momoCheck.sanitizedNumber;
+    
     
     // Combine token and network for storage (e.g., "USDC-BSC")
     const tokenWithNetwork = network ? `${token}-${network.toUpperCase()}` : token;
