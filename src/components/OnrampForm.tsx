@@ -491,40 +491,39 @@ const OnrampForm = () => {
             </div>
 
 
-
-              <div className="space-y-2">
-                <Label htmlFor="recipientAddress" className="text-sm font-medium flex items-center gap-2">
-                  <Wallet className="h-4 w-4" />
-                  {t('onramp.walletLabel', { network: currentNetwork?.name })}
-                </Label>
-                <Input
-                  id="recipientAddress"
-                  type="text"
-                  placeholder={formData.network === 'solana' ? t('onramp.walletPlaceholder') : t('onramp.walletPlaceholderEvm')}
-                  value={formData.recipientAddress}
-                  onChange={(e) => {
-                    const val = e.target.value;
-                    setFormData({ ...formData, recipientAddress: val });
-                    if (addressTouched) {
-                      setAddressError(validateAddress(val));
-                    }
-                  }}
-                  onBlur={() => {
-                    setAddressTouched(true);
-                    setAddressError(validateAddress(formData.recipientAddress));
-                  }}
-                  className={`text-base font-mono h-11 ${addressTouched && addressError ? 'border-destructive focus-visible:ring-destructive' : addressTouched && formData.recipientAddress && !addressError ? 'border-green-500 focus-visible:ring-green-500' : ''}`}
-                  required
-                />
-                {addressTouched && addressError ? (
-                  <p className="text-xs text-destructive">{addressError}</p>
-                ) : (
-                  <p className="text-xs text-muted-foreground">
-                    {t('onramp.walletHint', { network: currentNetwork?.name, token: formData.token })}
-                  </p>
-                )}
-              </div>
+            <div className="space-y-2">
+              <Label htmlFor="recipientAddress" className="text-sm font-medium flex items-center gap-2">
+                <Wallet className="h-4 w-4" />
+                {t('onramp.walletLabel', { network: currentNetwork?.name })}
+              </Label>
+              <Input
+                id="recipientAddress"
+                type="text"
+                placeholder={formData.network === 'solana' ? t('onramp.walletPlaceholder') : t('onramp.walletPlaceholderEvm')}
+                value={formData.recipientAddress}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setFormData({ ...formData, recipientAddress: val });
+                  if (addressTouched) {
+                    setAddressError(validateAddress(val));
+                  }
+                }}
+                onBlur={() => {
+                  setAddressTouched(true);
+                  setAddressError(validateAddress(formData.recipientAddress));
+                }}
+                className={`text-base font-mono h-11 ${addressTouched && addressError ? 'border-destructive focus-visible:ring-destructive' : addressTouched && formData.recipientAddress && !addressError ? 'border-green-500 focus-visible:ring-green-500' : ''}`}
+                required
+              />
+              {addressTouched && addressError ? (
+                <p className="text-xs text-destructive">{addressError}</p>
+              ) : (
+                <p className="text-xs text-muted-foreground">
+                  {t('onramp.walletHint', { network: currentNetwork?.name, token: formData.token })}
+                </p>
+              )}
             </div>
+
 
             <div className="pt-2 border-t border-border/50">
               <CountryOperatorSelector
