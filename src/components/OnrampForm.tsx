@@ -428,14 +428,24 @@ const OnrampForm = () => {
 
   return (
     <div className="max-w-2xl mx-auto space-y-6 animate-slide-in-up">
-      <LiveConversionPreview
-        fromAmount={formData.xofAmount}
-        fromCurrency="XOF"
-        toAmount={calculatedCrypto}
-        toCurrency={formData.token}
+      <SwapCard
+        direction="onramp"
+        sendAmount={formData.xofAmount}
+        onSendAmountChange={(v) => setFormData({ ...formData, xofAmount: v })}
+        sendCurrency="XOF"
+        sendMin={1000}
+        sendMax={600000}
+        sendStep="1"
+        receiveAmount={calculatedCrypto}
+        receiveCurrency={formData.token}
+        network={formData.network}
+        token={formData.token}
         rate={exchangeRate?.onramp_rate}
         loading={loadingRate}
         onRefresh={fetchExchangeRate}
+        presets={XOF_PRESETS}
+        presetCurrency="XOF"
+        momoLabel={selectedOperatorData?.name || selectedCountryData?.name}
       />
 
       <Card className="shadow-card border-primary/10 bg-gradient-card overflow-hidden">
@@ -457,12 +467,12 @@ const OnrampForm = () => {
               {t('onramp.noKyc')}
             </Badge>
           </div>
-          
+
           <div className="mt-4">
             <FormStepIndicator steps={formSteps} />
           </div>
         </CardHeader>
-        
+
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-4">
@@ -480,35 +490,7 @@ const OnrampForm = () => {
               />
             </div>
 
-            <div className="grid grid-cols-1 gap-4">
-              <div className="space-y-3">
-                <Label htmlFor="xofAmount" className="text-sm font-medium flex items-center gap-2">
-                  {t('onramp.amountLabel')}
-                </Label>
-                
-                <AmountPresets
-                  presets={XOF_PRESETS}
-                  currency="XOF"
-                  onSelect={(amount) => setFormData({ ...formData, xofAmount: String(amount) })}
-                  selectedAmount={formData.xofAmount}
-                />
-                
-                <Input
-                  id="xofAmount"
-                  type="number"
-                  placeholder={t('onramp.amountPlaceholder')}
-                  min="1000"
-                  max="600000"
-                  step="1"
-                  value={formData.xofAmount}
-                  onChange={(e) => setFormData({ ...formData, xofAmount: e.target.value })}
-                  className="text-base h-11"
-                  required
-                />
-                <p className="text-xs text-muted-foreground">
-                  {t('onramp.amountRange')}
-                </p>
-              </div>
+
 
               <div className="space-y-2">
                 <Label htmlFor="recipientAddress" className="text-sm font-medium flex items-center gap-2">
