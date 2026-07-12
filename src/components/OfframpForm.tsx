@@ -387,14 +387,23 @@ const OfframpForm = () => {
 
   return (
     <div className="max-w-2xl mx-auto space-y-6 animate-slide-in-up">
-      <LiveConversionPreview
-        fromAmount={formData.amount}
-        fromCurrency="USD"
-        toAmount={calculatedXOF}
-        toCurrency="XOF"
+      <SwapCard
+        direction="offramp"
+        sendAmount={formData.amount}
+        onSendAmountChange={(v) => setFormData({ ...formData, amount: v })}
+        sendCurrency={formData.token}
+        sendMin={1}
+        sendMax={1000}
+        receiveAmount={calculatedXOF}
+        receiveCurrency="XOF"
+        network={formData.network}
+        token={formData.token}
         rate={exchangeRate?.offramp_rate}
         loading={loadingRate}
         onRefresh={fetchExchangeRate}
+        presets={USD_PRESETS}
+        presetCurrency="$"
+        momoLabel={selectedOperatorData?.name || selectedCountryData?.name}
       />
 
       <Card className="shadow-card border-primary/10 bg-gradient-card overflow-hidden">
@@ -416,12 +425,12 @@ const OfframpForm = () => {
               {t('offramp.noKyc')}
             </Badge>
           </div>
-          
+
           <div className="mt-4">
             <FormStepIndicator steps={formSteps} />
           </div>
         </CardHeader>
-        
+
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-4">
@@ -437,34 +446,6 @@ const OfframpForm = () => {
               />
             </div>
 
-            <div className="space-y-3">
-              <Label htmlFor="amount" className="text-sm font-medium flex items-center gap-2">
-                {t('offramp.amountLabel')}
-              </Label>
-              
-              <AmountPresets
-                presets={USD_PRESETS}
-                currency="$"
-                onSelect={(amount) => setFormData({ ...formData, amount: String(amount) })}
-                selectedAmount={formData.amount}
-              />
-              
-              <Input
-                id="amount"
-                type="number"
-                placeholder={t('offramp.amountPlaceholder')}
-                min="1"
-                max="1000"
-                step="0.01"
-                value={formData.amount}
-                onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
-                className="text-base h-11"
-                required
-              />
-              <p className="text-xs text-muted-foreground">
-                {t('offramp.amountRange')}
-              </p>
-            </div>
 
             <div className="pt-2 border-t border-border/50">
               <CountryOperatorSelector
