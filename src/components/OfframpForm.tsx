@@ -16,7 +16,7 @@ import { Switch } from '@/components/ui/switch';
 import { Link2 } from 'lucide-react';
 import AmountPresets from './AmountPresets';
 import FormStepIndicator from './FormStepIndicator';
-import LiveConversionPreview from './LiveConversionPreview';
+import SwapCard from './SwapCard';
 import { useTranslation } from 'react-i18next';
 
 interface ExchangeRate {

@@ -16,7 +16,7 @@ import { Link2 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import AmountPresets from './AmountPresets';
 import FormStepIndicator from './FormStepIndicator';
-import LiveConversionPreview from './LiveConversionPreview';
+import SwapCard from './SwapCard';
 import { useTranslation } from 'react-i18next';
 
 interface ExchangeRate {
