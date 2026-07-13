@@ -306,6 +306,17 @@ const TransactionHistory = () => {
                           <TableCell className="text-sm font-mono text-muted-foreground">
                             {tx.reference_id}
                           </TableCell>
+                          <TableCell className="text-right">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleDownloadInvoice(tx)}
+                              className="gap-1"
+                            >
+                              <FileDown className="h-4 w-4" />
+                              <span className="hidden md:inline">PDF</span>
+                            </Button>
+                          </TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
