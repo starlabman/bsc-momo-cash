@@ -240,8 +240,19 @@ const TransactionHistory = () => {
                           {format(new Date(tx.created_at), 'dd MMM HH:mm', { locale: dateLocale })}
                         </span>
                       </div>
-                      <div className="text-xs font-mono text-muted-foreground truncate">
-                        {t('transactions.ref')}: {tx.reference_id}
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="text-xs font-mono text-muted-foreground truncate flex-1">
+                          {t('transactions.ref')}: {tx.reference_id}
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleDownloadInvoice(tx)}
+                          className="h-7 px-2 gap-1 text-xs"
+                        >
+                          <FileDown className="h-3.5 w-3.5" />
+                          PDF
+                        </Button>
                       </div>
                     </div>
                   ))}
