@@ -122,7 +122,7 @@ export async function validateMomoNumber(
 
   // No provider: must match at least one operator
   const detected = visibleOps.find((o: any) =>
-    matchesPattern(sanitizedNumber, o.number_patterns as string[]),
+    matchesPattern(localNumber, o.number_patterns as string[]),
   );
   if (!detected) {
     return {
