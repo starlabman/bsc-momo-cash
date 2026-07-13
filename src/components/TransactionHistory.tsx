@@ -268,6 +268,7 @@ const TransactionHistory = () => {
                         <TableHead>{t('transactions.amountXof')}</TableHead>
                         <TableHead>{t('transactions.statusCol')}</TableHead>
                         <TableHead>{t('transactions.reference')}</TableHead>
+                        <TableHead className="text-right">Facture</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
