@@ -105,7 +105,7 @@ export async function validateMomoNumber(
     if (!target) {
       return { valid: false, sanitizedNumber, error: 'Selected operator is not available for this country' };
     }
-    if (!matchesPattern(sanitizedNumber, target.number_patterns as string[])) {
+    if (!matchesPattern(localNumber, target.number_patterns as string[])) {
       return {
         valid: false,
         sanitizedNumber,
