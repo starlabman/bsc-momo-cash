@@ -81,13 +81,22 @@ export async function validateMomoNumber(
     return { valid: true, sanitizedNumber };
   }
 
-  const matchesPattern = (number: string, patterns: string[] | null | undefined): boolean => {
+  // Patterns are regexes matching the LOCAL part of the number (without country prefix).
+  const localNumber = countryDigits && sanitizedNumber.startsWith(countryDigits)
+    ? sanitizedNumber.slice(countryDigits.length)
+    : sanitizedNumber;
+
+  const matchesPattern = (local: string, patterns: string[] | null | undefined): boolean => {
     if (!patterns || patterns.length === 0) return false;
     return patterns.some((p) => {
-      const digits = String(p).replace(/[^\d]/g, '');
-      return digits && number.startsWith(digits);
+      try {
+        return new RegExp(String(p)).test(local);
+      } catch {
+        return false;
+      }
     });
   };
+
 
   if (momoProvider) {
     const target = visibleOps.find(
