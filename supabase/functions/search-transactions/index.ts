@@ -51,7 +51,7 @@ serve(async (req) => {
     // Fetch offramp requests using service role (bypasses RLS)
     const { data: offrampData, error: offrampError } = await supabase
       .from('offramp_requests')
-      .select('id, amount, xof_amount, status, created_at, reference_id')
+      .select('id, amount, xof_amount, status, created_at, reference_id, momo_number, momo_operator, country, token, network, exchange_rate')
       .ilike('momo_number', `%${sanitizedPhone}%`)
       .order('created_at', { ascending: false })
       .limit(50);
@@ -63,7 +63,7 @@ serve(async (req) => {
     // Fetch onramp requests using service role (bypasses RLS)
     const { data: onrampData, error: onrampError } = await supabase
       .from('onramp_requests')
-      .select('id, crypto_amount, xof_amount, status, created_at, reference_id')
+      .select('id, crypto_amount, xof_amount, status, created_at, reference_id, momo_number, momo_operator, country, token, network, exchange_rate, recipient_address')
       .ilike('momo_number', `%${sanitizedPhone}%`)
       .order('created_at', { ascending: false })
       .limit(50);
@@ -74,7 +74,7 @@ serve(async (req) => {
 
     // Combine and format transactions
     const transactions = [
-      ...(offrampData || []).map(tx => ({
+      ...(offrampData || []).map((tx: any) => ({
         id: tx.id,
         type: 'offramp',
         amount: tx.amount,
@@ -82,8 +82,14 @@ serve(async (req) => {
         status: tx.status,
         created_at: tx.created_at,
         reference_id: tx.reference_id,
+        phone: tx.momo_number,
+        operator: tx.momo_operator,
+        country: tx.country,
+        token: tx.token,
+        network: tx.network,
+        exchange_rate: tx.exchange_rate,
       })),
-      ...(onrampData || []).map(tx => ({
+      ...(onrampData || []).map((tx: any) => ({
         id: tx.id,
         type: 'onramp',
         amount: tx.crypto_amount,
@@ -91,6 +97,13 @@ serve(async (req) => {
         status: tx.status,
         created_at: tx.created_at,
         reference_id: tx.reference_id,
+        phone: tx.momo_number,
+        operator: tx.momo_operator,
+        country: tx.country,
+        token: tx.token,
+        network: tx.network,
+        exchange_rate: tx.exchange_rate,
+        recipient_address: tx.recipient_address,
       })),
     ].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 

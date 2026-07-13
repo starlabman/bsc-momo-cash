@@ -1,14 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Search, History, ArrowUpRight, ArrowDownLeft, Loader2, RefreshCw } from 'lucide-react';
+import { Search, History, ArrowUpRight, ArrowDownLeft, Loader2, RefreshCw, FileDown } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { format } from 'date-fns';
 import { fr, enUS } from 'date-fns/locale';
 import { useTranslation } from 'react-i18next';
+import { generateInvoicePDF } from '@/lib/invoice';
+import { useToast } from '@/hooks/use-toast';
 
 interface Transaction {
   id: string;
@@ -18,6 +20,13 @@ interface Transaction {
   status: string;
   created_at: string;
   reference_id: string;
+  phone?: string;
+  operator?: string;
+  country?: string;
+  token?: string;
+  network?: string;
+  exchange_rate?: number;
+  recipient_address?: string;
 }
 
 const statusColors: Record<string, string> = {
@@ -33,17 +42,23 @@ const statusColors: Record<string, string> = {
 
 const TransactionHistory = () => {
   const { t, i18n } = useTranslation();
+  const { toast } = useToast();
   const [phoneNumber, setPhoneNumber] = useState('');
   const [searchedPhone, setSearchedPhone] = useState('');
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
+  const transactionsRef = useRef<Transaction[]>([]);
 
   const dateLocale = i18n.language?.startsWith('fr') ? fr : enUS;
 
+  useEffect(() => {
+    transactionsRef.current = transactions;
+  }, [transactions]);
+
   const fetchTransactions = async (phone: string) => {
     if (!phone.trim()) return;
-    
+
     setLoading(true);
     setSearchedPhone(phone);
     setHasSearched(true);
@@ -72,18 +87,77 @@ const TransactionHistory = () => {
     }
   };
 
+  // Fallback slow polling in case realtime misses
   useEffect(() => {
     if (!searchedPhone) return;
     const interval = setInterval(() => {
       fetchTransactions(searchedPhone);
-    }, 30000);
+    }, 60000);
     return () => clearInterval(interval);
   }, [searchedPhone]);
+
+  // Realtime: instant status updates when admin modifies a transaction
+  useEffect(() => {
+    if (!hasSearched) return;
+    const channel = supabase
+      .channel('tx_updates')
+      .on(
+        'broadcast',
+        { event: 'status_update' },
+        (msg: any) => {
+          const payload = msg?.payload;
+          if (!payload?.reference_id) return;
+          const known = transactionsRef.current.find(t => t.reference_id === payload.reference_id);
+          if (!known) return;
+          setTransactions(prev =>
+            prev.map(t =>
+              t.reference_id === payload.reference_id ? { ...t, status: payload.status } : t
+            )
+          );
+          toast({
+            title: t('transactions.statusUpdated', 'Statut mis à jour'),
+            description: `${payload.reference_id} → ${payload.status}`,
+          });
+        }
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [hasSearched, t, toast]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     fetchTransactions(phoneNumber);
   };
+
+  const handleDownloadInvoice = (tx: Transaction) => {
+    try {
+      generateInvoicePDF({
+        reference_id: tx.reference_id,
+        type: tx.type,
+        status: tx.status,
+        created_at: tx.created_at,
+        xof_amount: tx.xof_amount,
+        amount: tx.amount,
+        token: tx.token,
+        network: tx.network,
+        phone: tx.phone,
+        operator: tx.operator,
+        country: tx.country,
+        recipient_address: tx.recipient_address,
+        exchange_rate: tx.exchange_rate,
+      });
+    } catch (err) {
+      console.error('Invoice error:', err);
+      toast({
+        title: 'Erreur',
+        description: 'Impossible de générer la facture',
+        variant: 'destructive',
+      });
+    }
+  };
+
 
   return (
     <Card className="glass-card border-primary/20">
@@ -166,8 +240,19 @@ const TransactionHistory = () => {
                           {format(new Date(tx.created_at), 'dd MMM HH:mm', { locale: dateLocale })}
                         </span>
                       </div>
-                      <div className="text-xs font-mono text-muted-foreground truncate">
-                        {t('transactions.ref')}: {tx.reference_id}
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="text-xs font-mono text-muted-foreground truncate flex-1">
+                          {t('transactions.ref')}: {tx.reference_id}
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleDownloadInvoice(tx)}
+                          className="h-7 px-2 gap-1 text-xs"
+                        >
+                          <FileDown className="h-3.5 w-3.5" />
+                          PDF
+                        </Button>
                       </div>
                     </div>
                   ))}
@@ -183,6 +268,7 @@ const TransactionHistory = () => {
                         <TableHead>{t('transactions.amountXof')}</TableHead>
                         <TableHead>{t('transactions.statusCol')}</TableHead>
                         <TableHead>{t('transactions.reference')}</TableHead>
+                        <TableHead className="text-right">Facture</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -219,6 +305,17 @@ const TransactionHistory = () => {
                           </TableCell>
                           <TableCell className="text-sm font-mono text-muted-foreground">
                             {tx.reference_id}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleDownloadInvoice(tx)}
+                              className="gap-1"
+                            >
+                              <FileDown className="h-4 w-4" />
+                              <span className="hidden md:inline">PDF</span>
+                            </Button>
                           </TableCell>
                         </TableRow>
                       ))}
