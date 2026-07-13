@@ -1,14 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Search, History, ArrowUpRight, ArrowDownLeft, Loader2, RefreshCw } from 'lucide-react';
+import { Search, History, ArrowUpRight, ArrowDownLeft, Loader2, RefreshCw, FileDown } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { format } from 'date-fns';
 import { fr, enUS } from 'date-fns/locale';
 import { useTranslation } from 'react-i18next';
+import { generateInvoicePDF } from '@/lib/invoice';
+import { useToast } from '@/hooks/use-toast';
 
 interface Transaction {
   id: string;
@@ -18,6 +20,13 @@ interface Transaction {
   status: string;
   created_at: string;
   reference_id: string;
+  phone?: string;
+  operator?: string;
+  country?: string;
+  token?: string;
+  network?: string;
+  exchange_rate?: number;
+  recipient_address?: string;
 }
 
 const statusColors: Record<string, string> = {
