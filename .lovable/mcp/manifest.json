@@ -1,0 +1,203 @@
+{
+  "version": 1,
+  "sdk_version": "0.24.0",
+  "path": "/functions/v1/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://xusensadnrsodukuzndm.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "sikapay-mcp",
+      "version": "0.1.0",
+      "title": "SikaPay"
+    },
+    "tools": [
+      {
+        "name": "get_exchange_rate",
+        "title": "Get exchange rate",
+        "description": "Get the current USD/XOF exchange rate used by SikaPay (includes the platform margin).",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_my_transactions",
+        "title": "List my transactions",
+        "description": "List the signed-in user's SikaPay transactions (both offramp and onramp), most recent first.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "limit": {
+              "description": "Max rows per type (default 20).",
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50
+            },
+            "type": {
+              "description": "Filter by transaction type. Defaults to 'all'.",
+              "type": "string",
+              "enum": [
+                "all",
+                "offramp",
+                "onramp"
+              ]
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_transaction",
+        "title": "Get transaction",
+        "description": "Fetch one SikaPay transaction by its reference id (OFF-XXXXXX or ONR-XXXXXX). Only returns a row if it belongs to the signed-in user.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "reference_id": {
+              "type": "string",
+              "minLength": 3,
+              "description": "Transaction reference id, e.g. OFF-A1B2C3 or ONR-X9Y8Z7."
+            }
+          },
+          "required": [
+            "reference_id"
+          ]
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "create_onramp_request",
+        "title": "Create onramp request",
+        "description": "Create a new onramp request (Mobile Money XOF -> stablecoin) on behalf of the signed-in user. Delegates to the create-onramp-request edge function, then tags the created row with the user's id.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "xofAmount": {
+              "type": "number",
+              "minimum": 100,
+              "maximum": 600000
+            },
+            "token": {
+              "type": "string",
+              "enum": [
+                "USDC",
+                "USDT"
+              ]
+            },
+            "network": {
+              "type": "string",
+              "description": "Blockchain network, e.g. base, bsc, ethereum, polygon, solana."
+            },
+            "recipientAddress": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64,
+              "description": "Destination wallet address."
+            },
+            "momoNumber": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 20
+            },
+            "momoProvider": {
+              "type": "string"
+            },
+            "countryId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          },
+          "required": [
+            "xofAmount",
+            "token",
+            "network",
+            "recipientAddress",
+            "momoNumber"
+          ]
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "create_offramp_request",
+        "title": "Create offramp request",
+        "description": "Create a new offramp request (stablecoin -> Mobile Money XOF) on behalf of the signed-in user. Delegates to the create-offramp-request edge function, then tags the created row with the user's id.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "amount": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "description": "Stablecoin amount the user will send."
+            },
+            "token": {
+              "type": "string",
+              "enum": [
+                "USDC",
+                "USDT"
+              ]
+            },
+            "network": {
+              "type": "string"
+            },
+            "momoNumber": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 20
+            },
+            "momoProvider": {
+              "type": "string"
+            },
+            "countryId": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          },
+          "required": [
+            "amount",
+            "token",
+            "momoNumber"
+          ]
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}

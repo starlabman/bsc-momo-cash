@@ -364,6 +364,7 @@ export type Database = {
           transaction_hash: string | null
           updated_at: string
           usd_amount: number
+          user_id: string | null
           xof_amount: number
         }
         Insert: {
@@ -388,6 +389,7 @@ export type Database = {
           transaction_hash?: string | null
           updated_at?: string
           usd_amount: number
+          user_id?: string | null
           xof_amount: number
         }
         Update: {
@@ -412,6 +414,7 @@ export type Database = {
           transaction_hash?: string | null
           updated_at?: string
           usd_amount?: number
+          user_id?: string | null
           xof_amount?: number
         }
         Relationships: [
@@ -447,6 +450,7 @@ export type Database = {
           transaction_hash: string | null
           updated_at: string
           usd_amount: number
+          user_id: string | null
           xof_amount: number
         }
         Insert: {
@@ -471,6 +475,7 @@ export type Database = {
           transaction_hash?: string | null
           updated_at?: string
           usd_amount: number
+          user_id?: string | null
           xof_amount: number
         }
         Update: {
@@ -495,6 +500,7 @@ export type Database = {
           transaction_hash?: string | null
           updated_at?: string
           usd_amount?: number
+          user_id?: string | null
           xof_amount?: number
         }
         Relationships: [
