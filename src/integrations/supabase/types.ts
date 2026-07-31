@@ -554,7 +554,6 @@ export type Database = {
         Returns: string
       }
       get_request_stats: { Args: never; Returns: Json }
-      is_admin_user: { Args: never; Returns: boolean }
       reminder_configure_otp_expiry: { Args: never; Returns: undefined }
       validate_admin_jwt: { Args: { p_token: string }; Returns: boolean }
       verify_admin_credentials: {
