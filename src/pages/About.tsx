@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Footer from "@/components/Footer";
+import Seo from "@/components/Seo";
 import Header from "@/components/Header";
 import { useTranslation } from "react-i18next";
 
@@ -20,6 +21,11 @@ const About = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Seo
+        title="À propos de SikaPay — Notre mission"
+        description="Découvrez SikaPay : une plateforme de conversion crypto ↔ Mobile Money pensée pour l'Afrique de l'Ouest, rapide, sécurisée et sans KYC."
+        path="/about"
+      />
       <Header />
 
       <section className="py-16 px-4">
