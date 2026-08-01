@@ -8,6 +8,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import Footer from "@/components/Footer";
+import Seo from "@/components/Seo";
 import Header from "@/components/Header";
 import { useTranslation } from "react-i18next";
 
@@ -15,8 +16,24 @@ const FAQ = () => {
   const { t } = useTranslation();
   const faqItems = t('faq.items', { returnObjects: true }) as Array<{ q: string; a: string }>;
 
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: (faqItems || []).map((faq) => ({
+      "@type": "Question",
+      name: faq.q,
+      acceptedAnswer: { "@type": "Answer", text: faq.a },
+    })),
+  };
+
   return (
     <div className="min-h-screen bg-background">
+      <Seo
+        title="FAQ SikaPay — Questions fréquentes"
+        description="Réponses aux questions fréquentes sur SikaPay : délais, frais, réseaux blockchain supportés, opérateurs Mobile Money et sécurité des transactions."
+        path="/faq"
+        jsonLd={faqJsonLd}
+      />
       <Header />
 
       <section className="py-16 px-4">

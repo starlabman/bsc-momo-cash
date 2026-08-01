@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import Footer from "@/components/Footer";
+import Seo from "@/components/Seo";
 import Header from "@/components/Header";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
@@ -62,6 +63,11 @@ const Contact = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Seo
+        title="Contact SikaPay — Support 24/7"
+        description="Contactez l'équipe SikaPay pour toute question sur vos conversions crypto vers Mobile Money. Support disponible 24h/24 et 7j/7."
+        path="/contact"
+      />
       <Header />
 
       <section className="py-16 px-4">

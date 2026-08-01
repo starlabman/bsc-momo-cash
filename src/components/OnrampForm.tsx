@@ -290,8 +290,9 @@ const OnrampForm = () => {
                       }
                     }}
                     className="shrink-0"
+                    aria-label={t('paymentLinkCard.copyAria', 'Copier le lien de paiement')}
                   >
-                    <Copy className="h-4 w-4" />
+                    <Copy className="h-4 w-4" aria-hidden="true" />
                   </Button>
                 </div>
               </div>

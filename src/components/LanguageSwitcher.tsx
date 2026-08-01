@@ -18,6 +18,7 @@ const LanguageSwitcher = () => {
       onClick={toggleLanguage}
       className="h-9 w-9 relative"
       title={currentLang === 'fr' ? 'Switch to English' : 'Passer en français'}
+      aria-label={currentLang === 'fr' ? 'Switch language to English' : 'Passer la langue en français'}
     >
       <Languages className="h-4 w-4" />
       <span className="absolute -bottom-0.5 -right-0.5 text-[9px] font-bold bg-primary text-primary-foreground rounded-full h-3.5 w-3.5 flex items-center justify-center">

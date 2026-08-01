@@ -1,3 +1,4 @@
+import Seo from "@/components/Seo";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useTranslation } from "react-i18next";
@@ -7,6 +8,11 @@ const TermsOfService = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Seo
+        title="Conditions d'utilisation — SikaPay"
+        description="Les conditions générales d'utilisation du service SikaPay : responsabilités, limites de transaction et règles d'usage de la plateforme."
+        path="/terms"
+      />
       <Header />
       <main className="container max-w-3xl mx-auto px-4 py-12 sm:py-16">
         <h1 className="text-3xl sm:text-4xl font-bold mb-8 text-foreground">{t("terms.title")}</h1>

@@ -4,6 +4,7 @@ import { ArrowRightLeft, ArrowDownUp } from 'lucide-react';
 import OfframpForm from '@/components/OfframpForm';
 import OnrampForm from '@/components/OnrampForm';
 import Footer from '@/components/Footer';
+import Seo from '@/components/Seo';
 import Header from '@/components/Header';
 import TestimonialsSection from '@/components/TestimonialsSection';
 import TransactionHistory from '@/components/TransactionHistory';
@@ -17,6 +18,11 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 relative overflow-hidden">
       <FloatingParticles />
+      <Seo
+        title="SikaPay — Crypto ↔ Mobile Money XOF sans KYC"
+        description="Convertissez vos USDT et USDC en Mobile Money XOF (Orange, MTN, Moov, Wave) en quelques minutes, sans KYC, sur 9 blockchains."
+        path="/"
+      />
       <Header />
 
       {/* Main Content */}

@@ -33,7 +33,10 @@ const Header = () => {
               <ArrowRightLeft className="h-4 w-4 sm:h-6 sm:w-6 text-white" />
             </div>
             <div>
-              <h1 className="text-xl sm:text-2xl font-bold bg-gradient-hero bg-clip-text text-transparent">SikaPay</h1>
+              <h1 className="text-xl sm:text-2xl font-bold bg-gradient-hero bg-clip-text text-transparent">
+                SikaPay
+                <span className="sr-only"> — Conversion Crypto ↔ Mobile Money</span>
+              </h1>
               <p className="text-[10px] sm:text-xs text-muted-foreground font-medium hidden xs:block">{t('header.subtitle')}</p>
             </div>
           </Link>

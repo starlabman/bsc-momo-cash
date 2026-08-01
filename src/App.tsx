@@ -17,6 +17,7 @@ const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const TermsOfService = lazy(() => import("./pages/TermsOfService"));
 const Auth = lazy(() => import("./pages/Auth"));
 const OAuthConsent = lazy(() => import("./pages/OAuthConsent"));
+const UsdtToOrangeMoney = lazy(() => import("./pages/guides/UsdtToOrangeMoney"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
@@ -38,6 +39,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/about" element={<About />} />
             <Route path="/faq" element={<FAQ />} />
+            <Route path="/guides/usdt-to-orange-money" element={<UsdtToOrangeMoney />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/privacy" element={<PrivacyPolicy />} />
             <Route path="/terms" element={<TermsOfService />} />
