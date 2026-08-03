@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { Calculator, Clock, ShieldCheck, CheckCircle2, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ScrollReveal from "@/components/ScrollReveal";
 import {
@@ -15,6 +16,14 @@ import { useTranslation } from "react-i18next";
 const FAQ = () => {
   const { t } = useTranslation();
   const faqItems = t('faq.items', { returnObjects: true }) as Array<{ q: string; a: string }>;
+  const topItems = t('faq.top.items', { returnObjects: true }) as Array<{ q: string; a: string }>;
+  const rateExamples = t('faq.rate.examples', { returnObjects: true }) as Array<{ amount: string; calc: string; result: string }>;
+  const rateNotes = t('faq.rate.notes', { returnObjects: true }) as string[];
+  const payoutRows = t('faq.payout.rows', { returnObjects: true }) as Array<{ label: string; value: string }>;
+  const payoutFactors = t('faq.payout.factors', { returnObjects: true }) as string[];
+  const safetyChecklist = t('faq.safety.checklist', { returnObjects: true }) as string[];
+  const safetyKnow = t('faq.safety.know', { returnObjects: true }) as string[];
+
 
   const faqJsonLd = {
     "@context": "https://schema.org",
