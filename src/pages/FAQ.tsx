@@ -56,7 +56,28 @@ const FAQ = () => {
         </div>
       </section>
 
+      <section className="pb-4 px-4">
+        <div className="container max-w-3xl mx-auto">
+          <h3 className="text-2xl font-bold mb-2 text-foreground">{t('faq.top.title')}</h3>
+          <p className="text-muted-foreground mb-6">{t('faq.top.subtitle')}</p>
+          <div className="space-y-5">
+            {topItems.map((item, index) => (
+              <ScrollReveal key={item.q} delay={index * 60}>
+                <article className="rounded-xl border border-border/60 bg-card/50 p-6">
+                  <h4 className="font-semibold text-foreground mb-2">
+                    <span className="text-primary mr-2">{index + 1}.</span>
+                    {item.q}
+                  </h4>
+                  <p className="text-muted-foreground leading-relaxed">{item.a}</p>
+                </article>
+              </ScrollReveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section className="py-12 px-4">
+
         <div className="container max-w-3xl mx-auto">
           <Accordion type="single" collapsible className="w-full space-y-4">
             {faqItems.map((faq, index) => (
