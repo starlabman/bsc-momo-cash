@@ -297,12 +297,138 @@
       {
         "q": "Comment contacter le support ?",
         "a": "Notre équipe de support est disponible 24h/24 et 7j/7. Vous pouvez nous contacter via WhatsApp, Telegram, ou par email. Les coordonnées de contact sont disponibles sur notre site."
+      },
+      {
+        "q": "Comment vendre mes USDT/USDC et recevoir des XOF sur mon Mobile Money ?",
+        "a": "Ouvrez l'onglet « Crypto → Mobile Money », choisissez le token (USDT ou USDC) et le réseau sur lequel vous détenez vos fonds (Base, BSC, Ethereum, Arbitrum, Optimism, Polygon, Solana, Avalanche, Lisk), saisissez le montant, puis renseignez votre pays, votre opérateur (Orange Money, MTN, Moov, Wave, Free Money) et votre numéro. Envoyez ensuite exactement le montant affiché à l'adresse de dépôt indiquée, sur le même réseau. Dès confirmation on-chain, le paiement Mobile Money est déclenché."
+      },
+      {
+        "q": "Quels sont les frais et le taux — combien de XOF vais-je réellement recevoir ?",
+        "a": "Aucun frais caché : tout est inclus dans le taux affiché. Nous partons du taux USD/XOF du marché, auquel nous appliquons une marge de service de 5 %. En vente (offramp), vous recevez montant × taux marché × 0,95. En achat (onramp), vous payez montant × taux marché × 1,05. Le montant final en XOF est visible avant toute confirmation et avant l'envoi de vos fonds."
+      },
+      {
+        "q": "Combien de temps avant de recevoir le paiement sur mon Mobile Money ?",
+        "a": "Comptez généralement 5 à 30 minutes de bout en bout. Le dépôt crypto est confirmé en moins d'une minute sur Base, BSC, Solana ou Polygon, et en quelques minutes sur Ethereum selon la congestion. Le paiement Mobile Money est ensuite déclenché immédiatement ; la distribution finale dépend de la disponibilité du réseau de votre opérateur."
+      },
+      {
+        "q": "Faut-il un KYC, et est-ce sûr ?",
+        "a": "Non, aucun KYC : ni compte, ni pièce d'identité, ni selfie. Vous n'avez besoin que d'un montant en stablecoin et d'un numéro Mobile Money valide dans la zone XOF. Chaque transaction reçoit une référence unique (OFF-XXXXXX en vente, ONR-XXXXXX en achat), suivable en temps réel, avec une facture PDF téléchargeable."
+      },
+      {
+        "q": "Quels sont les montants minimum et maximum, et quels opérateurs/réseaux sont supportés ?",
+        "a": "Les montants vont de 100 à 600 000 XOF par transaction (des limites propres à votre opérateur peuvent s'appliquer). Nous supportons USDT et USDC sur 9 réseaux (Base, BSC, Ethereum, Arbitrum, Optimism, Polygon, Solana, Avalanche, Lisk) et les opérateurs Orange Money, MTN Mobile Money, Moov Money, Wave et Free Money au Sénégal, Mali, Burkina Faso, Côte d'Ivoire, Togo et Bénin."
       }
     ],
     "moreQTitle": "Vous avez d'autres questions ?",
     "moreQSubtitle": "Notre équipe est disponible 24/7 pour vous aider.",
     "startTransaction": "Commencer une transaction",
-    "learnMore": "En savoir plus sur nos services crypto"
+    "learnMore": "En savoir plus sur nos services crypto",
+    "top": {
+      "title": "Les 5 questions les plus posées",
+      "subtitle": "L'essentiel sur la conversion crypto → Mobile Money en Afrique de l'Ouest.",
+      "items": [
+        {
+          "q": "Comment vendre mes USDT/USDC et recevoir des XOF sur mon Mobile Money ?",
+          "a": "Ouvrez l'onglet « Crypto → Mobile Money », choisissez le token (USDT ou USDC) et le réseau sur lequel vous détenez vos fonds (Base, BSC, Ethereum, Arbitrum, Optimism, Polygon, Solana, Avalanche, Lisk), saisissez le montant, puis renseignez votre pays, votre opérateur (Orange Money, MTN, Moov, Wave, Free Money) et votre numéro. Envoyez ensuite exactement le montant affiché à l'adresse de dépôt indiquée, sur le même réseau. Dès confirmation on-chain, le paiement Mobile Money est déclenché."
+        },
+        {
+          "q": "Quels sont les frais et le taux — combien de XOF vais-je réellement recevoir ?",
+          "a": "Aucun frais caché : tout est inclus dans le taux affiché. Nous partons du taux USD/XOF du marché, auquel nous appliquons une marge de service de 5 %. En vente (offramp), vous recevez montant × taux marché × 0,95. En achat (onramp), vous payez montant × taux marché × 1,05. Le montant final en XOF est visible avant toute confirmation et avant l'envoi de vos fonds."
+        },
+        {
+          "q": "Combien de temps avant de recevoir le paiement sur mon Mobile Money ?",
+          "a": "Comptez généralement 5 à 30 minutes de bout en bout. Le dépôt crypto est confirmé en moins d'une minute sur Base, BSC, Solana ou Polygon, et en quelques minutes sur Ethereum selon la congestion. Le paiement Mobile Money est ensuite déclenché immédiatement ; la distribution finale dépend de la disponibilité du réseau de votre opérateur."
+        },
+        {
+          "q": "Faut-il un KYC, et est-ce sûr ?",
+          "a": "Non, aucun KYC : ni compte, ni pièce d'identité, ni selfie. Vous n'avez besoin que d'un montant en stablecoin et d'un numéro Mobile Money valide dans la zone XOF. Chaque transaction reçoit une référence unique (OFF-XXXXXX en vente, ONR-XXXXXX en achat), suivable en temps réel, avec une facture PDF téléchargeable."
+        },
+        {
+          "q": "Quels sont les montants minimum et maximum, et quels opérateurs/réseaux sont supportés ?",
+          "a": "Les montants vont de 100 à 600 000 XOF par transaction (des limites propres à votre opérateur peuvent s'appliquer). Nous supportons USDT et USDC sur 9 réseaux (Base, BSC, Ethereum, Arbitrum, Optimism, Polygon, Solana, Avalanche, Lisk) et les opérateurs Orange Money, MTN Mobile Money, Moov Money, Wave et Free Money au Sénégal, Mali, Burkina Faso, Côte d'Ivoire, Togo et Bénin."
+        }
+      ]
+    },
+    "rate": {
+      "title": "Taux, marge et montant reçu",
+      "intro": "Notre taux de vente (offramp) est le taux USD/XOF du marché moins une marge de service de 5 %. Voici le calcul exact, sans frais additionnels.",
+      "formulaLabel": "Formule",
+      "formula": "XOF reçus = montant en stablecoin × taux marché USD/XOF × 0,95",
+      "exampleLabel": "Exemple (taux marché 620 XOF)",
+      "examples": [
+        {
+          "amount": "10 USDT",
+          "calc": "10 × 620 × 0,95",
+          "result": "5 890 XOF"
+        },
+        {
+          "amount": "100 USDT",
+          "calc": "100 × 620 × 0,95",
+          "result": "58 900 XOF"
+        },
+        {
+          "amount": "500 USDC",
+          "calc": "500 × 620 × 0,95",
+          "result": "294 500 XOF"
+        }
+      ],
+      "notes": [
+        "Le taux marché est récupéré en direct : le montant affiché sur le formulaire est celui qui fait foi.",
+        "À l'achat (onramp), la marge s'applique en sens inverse : vous payez montant × taux × 1,05.",
+        "Les frais de réseau blockchain (gas) sont payés par votre portefeuille lors de l'envoi et ne sont pas prélevés par SikaPay."
+      ]
+    },
+    "payout": {
+      "title": "Délais de paiement",
+      "intro": "Fourchettes de délais observées, du dépôt crypto jusqu'au crédit Mobile Money.",
+      "rows": [
+        {
+          "label": "Confirmation du dépôt (Base, BSC, Solana, Polygon)",
+          "value": "< 1 minute"
+        },
+        {
+          "label": "Confirmation du dépôt (Ethereum, Arbitrum, Optimism, Avalanche, Lisk)",
+          "value": "1 à 5 minutes"
+        },
+        {
+          "label": "Déclenchement du paiement Mobile Money",
+          "value": "Immédiat après confirmation"
+        },
+        {
+          "label": "Total de bout en bout",
+          "value": "5 à 30 minutes"
+        }
+      ],
+      "factorsTitle": "Ce qui influence la vitesse de règlement",
+      "factors": [
+        "Le réseau blockchain choisi et sa congestion au moment de l'envoi.",
+        "Le nombre de confirmations requises avant validation du dépôt.",
+        "La disponibilité et les délais de traitement du réseau de votre opérateur Mobile Money.",
+        "Le montant : les gros montants peuvent nécessiter une vérification manuelle de sécurité.",
+        "Un numéro Mobile Money erroné ou un envoi sur un mauvais réseau, qui interrompt le traitement."
+      ]
+    },
+    "safety": {
+      "title": "Sans KYC et en sécurité",
+      "intro": "SikaPay ne demande ni compte ni pièce d'identité. En contrepartie, vous envoyez vos USDT/USDC vers une adresse de dépôt gérée par SikaPay : voici ce qu'il faut savoir avant d'envoyer.",
+      "checklistTitle": "À vérifier avant d'envoyer",
+      "checklist": [
+        "Le réseau de votre envoi doit correspondre exactement au réseau sélectionné : un envoi inter-réseaux est irrécupérable.",
+        "Copiez l'adresse de dépôt depuis la page ou scannez le QR code — ne la saisissez jamais à la main.",
+        "L'adresse de dépôt est propre à votre transaction : ne la réutilisez pas pour un envoi ultérieur.",
+        "Envoyez exactement le montant affiché ; un montant différent peut retarder le traitement.",
+        "Vérifiez votre numéro Mobile Money et l'opérateur avant de confirmer : le paiement part vers ce numéro.",
+        "Conservez votre référence (OFF-XXXXXX ou ONR-XXXXXX) et la facture PDF pour tout suivi."
+      ],
+      "knowTitle": "Ce que « sans KYC » implique",
+      "know": [
+        "Aucune donnée d'identité n'est collectée : nous ne conservons que les informations nécessaires à la transaction (montant, numéro, adresse, référence).",
+        "L'adresse de dépôt est custodiale : les fonds transitent par SikaPay le temps du règlement, puis sont payés en XOF.",
+        "N'envoyez que des USDT ou USDC sur un réseau supporté : les autres tokens ne sont pas traités et ne peuvent pas être restitués automatiquement.",
+        "Le service est réservé aux montants entre 100 et 600 000 XOF ; au-delà, contactez le support avant l'envoi.",
+        "En cas de doute, faites un premier envoi de faible montant pour valider le parcours."
+      ]
+    }
   },
   "contact": {
     "title": "Contactez-nous",
